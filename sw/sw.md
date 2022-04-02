@@ -16,14 +16,15 @@
   * 반복하여 그리고 차근차근 진행해야한다.
 
 ### How?
-1. 행위를 제일 먼저 생각하여 다이어그램을 짜본다.
-2. 구조를 점검한다.
-  * ㅋ
+1. 동적인것부터 행위를 제일 먼저 생각하여 다이어그램을 짜본다.
+2. 정적관계에서 의미를 조사한다.
+3. 정적관계를 개선한다.
+4. 위 내용을 바탕으로 기존 동적 다이어그램을 개선한다.
  
 ## 클래스다이어그램
 ![classDiagram](https://user-images.githubusercontent.com/56966606/161099775-fc161555-3026-4680-93c7-a93d091f5ce6.png)
 박스를 클래스라고한다.     
--->는 관계를 맺는다고한다.     
+-->는 연관관계를 맺는다고한다.     
 클래스안에를 나누어 중요한 함수 or 변수를 표현한다.   
 클래스내 함수는 +를 붙인다.   
 * TreeMap 클래스   
@@ -76,3 +77,20 @@
 * Button은 이로써 가진 기능을 다이얼어뎁터로 보낸다.
 **인터페이스 추가로 다이어그램 변화가 생김으로 원래 동적 다이어 그램도 수정해야한다.**
 ![Adapter2](https://user-images.githubusercontent.com/56966606/161108167-edc35dc8-f91a-4314-a63d-82104d1c4cd1.png)
+
+## 클래스 다이어그램 김게 공부해보기
+**기본**
+![classDiagram2](https://user-images.githubusercontent.com/56966606/161286100-a2728fa0-52cf-4749-a007-0e5e3d06a235.png)
+* 클래스 다이어그램은 클래스이름 / 변수 / 맴버함수로 나뉜다.
+* ( - )는 private ( + )는 public ( # ) protected로 표현한다.
+* ( : )는 정의한 타입을 쓸때 이용한다.
+**연관**
+![classDiagram3](https://user-images.githubusercontent.com/56966606/161286143-0e1d97be-aae9-40dd-b108-a1293689202a.png)
+* 연관을 지을때 선언 변수와 변수의 개수를 보여준다.
+![classDiagram4](https://user-images.githubusercontent.com/56966606/161286149-6669a7b9-3820-4e39-b51b-658404d54c34.png)
+* ( * )은 여러개라는 뜻을 가지며 컨테이너 타입이라는 뜻도가진다. ex.vector
+**상속**
+![classDiagram5](https://user-images.githubusercontent.com/56966606/161286154-54a52f68-b411-4411-9966-c3e605c3969c.png)
+* 관계에있어 상속은 세로로 일반 연관관계는 가로로 그려 가시성을 편하게 한다.
+* 인터페이스의 상속 방식도 알고 있을 것.
+* 화살표 방향은 소스코드의 의존방향이다.
