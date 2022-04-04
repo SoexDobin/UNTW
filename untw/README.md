@@ -47,6 +47,8 @@ rigid.velocity = new Vector2(Speed3 , 0);
   // 레이어 마스크는 레이어 값을 가져옴 
   ```
 
+## 3 코루틴
+
 ### 1 이동구현코드
   1.1 변수선언 목록
   ```
@@ -197,3 +199,40 @@ rigid.velocity = new Vector2(Speed3 , 0);
       }
     }
   ```
+### 3 코루틴 && UI
+3.1 변수선언 목록
+```
+bool Cool;
+```
+3.2 시작시 선언 목록
+```
+없음
+```
+3.3 코루틴
+* 코루틴은 함수에 지정한 조건동안 유니티에게 제어권을 넘겨준다.
+```
+void Attack()
+  {
+    if (Input.GetKeyDown(KeyCode.Q))
+    {
+      if (!Cool)
+      {
+        Cool = true;
+        Debug.Log("Attack!");
+        StartCoroutine(CoolTime(3f));
+        // "CoolTime", 3f || (CoolTime(3f)
+      }
+      else
+      {
+        Debug.Log("쿨타임!");
+      }
+    }
+  }
+IEnumerator CoolTime(float time)
+//IEnumerator사용에 주의 able함수도 존재
+  {
+    yield return new WaitForSeconds(time);
+    // 지정한 값만큼 유니티에 제어권을 돌려줌
+    Cool = false;
+  }
+```

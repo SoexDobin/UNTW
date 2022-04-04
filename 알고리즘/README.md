@@ -46,7 +46,7 @@ int main(){
 }
 ```
 값복사를 자제하고 참조를 통해 효율적인 코드를 쳐야한다.
-## 큐의 진화
+## 연속메모리기반 큐와 스택
 ### 다른 함수를 참조하는 선형큐(c활용)
 ```c
 struct Queue {
@@ -115,59 +115,163 @@ int main(){}
 ### rear와 front의 중복 문제점을 잡은 원형큐
 ```c++
 class Queue {
-	int queue[5];
+	int* queue;
 	int front;
 	int rear;
+	int capacity;
 public:
-	Queue(int f = 0, int r = 0):front(f), rear(r){}
-	void AddQueue(int data) {
-		if (rear + 1 == front)
-			return;
-			// 빈 메모리상태 
-
-		queue[rear++] = data;
-		rear = rear == 5 ? 0 : rear;
-		// 큐가 5개의 공간에 의해 rear값이 5가되면 
-		// rear를 처음 큐로 되돌린다.
+	Queue(int f = 0, int r = 0, int cap = 0) :front(f), rear(r), capacity(cap) {}
+	void Allocate(int cap) {
+		capacity = cap;
+		queue = (int*)malloc(sizeof(int)*capacity); // c
+		queue = new int[capacity]; //c++
+		//큐의 새로운 동적 메모리 배열을 할당
 	}
-	int DeleteQueue() {
-		if (front == rear)
-			return 0xffffff;
-		// 큐메모리가 빈상태를 정의 
-
-		int value = queue[front++];
-		front = front == 5 ? 0 : front;
-		// 반환식으로 인해 fornt값을 보관해야 함
-		return value;
+	void DeAllocate(){
+		free(queue); // c
+		delete[] queue; // c++
 	}
-};
-int main(){}
-```
-DeleteQueue함수에서는 메모리가 텅비었을때 rear와 fornt 값이 같으므로 빈메모리라는 것을 알리기 위해 0값을 준다.
-AddQueue함수에는 메모리가 꽉차면 DeleteQueue의 if문과 겹치지 않고 더 할당 할수 없도록 꽉 찼을때 if로 메모리 할당을 멈춘다.
-* 함수 반환에따라 return 식이 달라진다. int > 0xffffff / void > 아무값도 보내지 않음
-
-```
-class Queue {
-	int queue[5];
-	int front;
-	int rear;
-public:
-	Queue(int f = 0, int r = 0):front(f), rear(r){}
 	void AddQueue(int data) {
-		if ((rear + 1) % 5 == front) { return; }
-		//5번재큐에서 돌리면 5 == 0이되어버려 front와 rear가만남
-		//그러므로 (rear+1)%5로 0 == 0만들어 실행되게해야한다.
-
-		queue[rear = (rear+1)%5] = data;
-		// 큐 rear값으로 자동으로 돌리기
+		if ((rear + 1) % capacity == front) { return; }
+		queue[rear = (rear + 1) % capacity] = data;
 	}
 	int DeleteQueue() {
 		if (front == rear) { return 0xffffff; }
-			
-		int value = queue[front = (front+1)%5];
-		// 큐 front값으로 자동으로 돌리기
+
+		int value = queue[front = (front + 1) % capacity];
 		return value;
 	}
 };
+int main(){
+	Queue q;
+	q.Allocate(10);
+	q.DeAllocate();
+}
+```
+큐 메모리를 클라이언트가 직접 할당 가능하게 바꾸고 rear와 front의 문제점을 수정했다.   
+Allocate와 DeAllocate 함수로 할당과 제거를 하게 만들었다.
+```c++
+class Queue {
+	int* queue;
+	int front;
+	int rear;
+	int capacity;
+public:
+	Queue(int cap) { //생성자
+		front = 0;
+		rear = 0;
+		capacity = cap;
+		queue = (int*)malloc(sizeof(int) * capacity);
+	}
+	~Queue() { //소멸자
+		free(queue);
+	}
+	void AddQueue(int data) {
+		if ((rear + 1) % capacity == front) { return; }
+		queue[rear = (rear + 1) % capacity] = data;
+	}
+	int DeleteQueue() {
+		if (front == rear) { return 0xffffff; }
+
+		int value = queue[front = (front + 1) % capacity];
+		return value;
+	}
+};
+int main() {
+	Queue q(10);
+}
+```
+마무리는 생성자와 소멸자를 이용해 정리해준다.
+
+#### <stack>과 <queue>
+* <stack>
+	- 선언: stack<타입> 변수;
+	- push(): 저장
+	- top(): 값 반환
+	- pop(): 제거
+* <queue>
+	- 선언: queue<타입> 변수;
+	- push(): 저장
+	- front(): 값 반환
+	- pop(): 제거	
+
+## 노드기반 비연속메모리 
+* 이중 연결 리스트
+```c++
+struct Node {
+	int data;
+	Node* link;
+};
+Node* AllocNode(int data) {
+	Node* n = (Node*)malloc(sizeof(Node));
+	//노드형 주소인것을 밝히고 Node사이즈의 메모리를 할당
+	//Node* n = new Node[NULL];
+	n->data = data;
+	//노드n 데이터에 접근하여 매개변수 할당
+	n->link = NULL;
+	// 값 할당한 노드의 주소에 NULL값을 넣어둠
+	// 비워두면 개발자들이 안좋아한데여
+	return n;
+}
+int main() {
+	Node* n = NULL;		// 계속 움직일 메모리
+	Node* p = NULL;		// 기존 변수
+
+	// -->메모리
+	n = AllocNode(10);	// n노드에 10변수 할당
+	p = n;				// 길잡이 노드 p에 n의 주소넣기
+	n = AllocNode(20);	// n은 다른 노드에 20 할당
+	p->link = n;		// p는의 link는 n의 주소를 담음
+	// <--메모리
+	n = AllocNode(30);	// n노드에 30 할당
+	p = n;				// 길잡이 노드 p에 n의 주소넣기
+	n = AllocNode(40);	// n은 다른 노드에 40 할당
+	n->link = p;		// n의 링크에 p가 가진 전메모리 주소 할당
+	p = n;				// p에 새로만든 n의 주소 할당
+
+	printf("%d\n", p->data);
+	printf("%d\n", p->link->data);
+	// --> 10 20
+	// <-- 40 30
+}
+```
+**하지만 노드의 중간이 끊어저 버리는 형태로 연결 노드가 아님 10 20 30을 만들면 20노드의 주소를 알아갈 수 없음**
+* tail 끝노드를 통한 연결 메모리
+```c++
+//노드 이중 연결리스트
+struct Node {
+	int data;
+	Node* link;
+};
+Node* AllocNode(int data) {
+	Node* n = (Node*)malloc(sizeof(Node));
+	n->data = data;
+	n->link = NULL;
+	return n;
+}
+Node* GetTail(Node* p) { //끝노드를 찾아주며 중간노드들을 거침
+	Node* t = p;
+	while (t->link != NULL)
+		t = t->link;
+
+	return t;
+}
+int main() {
+	Node* n = NULL;		
+	Node* p = NULL;		
+	Node* t = NULL;
+	n = AllocNode(10);	
+	p = n;
+	t = p;
+	n = AllocNode(20);	
+	t = GetTail(p);
+	t->link = n;
+	n = AllocNode(30);
+	t = GetTail(p);
+	t->link = n;
+	for(Node* cur = p; cur!=NULL; cur=cur->link)
+	printf("%d\n", cur->data);
+	// p노드는 초기 주소
+	// t노드는 함수를 통해 계속해서 링크를 이어나감
+}
 ```
