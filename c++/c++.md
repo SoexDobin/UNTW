@@ -12,7 +12,7 @@
   1.1 new 
     
   1.2 delete 
-#3차시
+# 3차시
 ```c++
   int main() {
     Point pt(2, 3);
@@ -99,4 +99,151 @@ deep copy는 객체의 참조속성을 복사
   5. 이동 생성자
   6. 이동 대입 연산자
 
- 
+# 4차시
+## namespace
+* using namespace std; 선언을 안할 경우 3가지
+```c++
+std::cout << x << std::endl;
+//::연산자 사용에 유의할 것
+```
+* 직접 namespace를 만들어 사용할 수 있다.
+```c++
+namespace Alpha {
+	class Move {
+		const char a[14] = "CH24485-31283";
+	public:
+		void Print() { cout << "좌표: " << a << endl; } }; }
+namespace Bravo {
+	class Move {
+		const char b[14] = "CG24135-31078";
+	public:
+		void Print() { cout << "좌표: " << b << endl; } }; }
+using Bravo::Move;      // 1. 네이밍 지정
+using namespace Bravo;  // 2. 네임스페이스 지정      
+int main() {
+	Alpha::Move r1;       // 3. 직접 지정
+	Move r2;
+	r1.Print();
+	r2.Print();
+}
+```
+* 1.네임스페이스 로컬요소를 꺼낼 경우
+* 2.네임스페이스 자체를 가져와서 사용할 경우
+* 3.직접 ::연산자로 지정하는 경우
+```c++
+namespace MyNameA {
+	int x = 10;
+	void Print(int n) { cout << "n: " << n << endl; }
+	struct Data { int k; };
+}
+int main() {
+	MyNameA::Data d = { 200 };
+	MyNameA::Print(100);
+	cout << MyNameA::x << endl;
+	cout << d.k << endl;
+}
+```
+* 직접 네임 스페이스로 값을 가져올 수 있다.
+
+* 복사생성자 re
+```c++
+class Point { 
+	int x;
+	int* py;
+public: 
+	Point(int _x = 0, int _y = 0): x(_x), py(nullptr){
+		py = new int(_y); }
+	//nullptr 주소값이 아무것도 안가르킨다는 것을 명시
+	Point(const Point& arg) : x(arg.x), py(nullptr) {
+		py = new int(*arg.py);
+	}
+	~Point(){ delete py; }
+	void Print() { cout << x << ", " << *py << endl; }
+};
+int main() {
+	Point pt1(1, 2);
+	pt1.Print();
+	Point pt2 = pt1;
+	pt2.Print();
+	//참조 객체 상태인 깊은 복사 실행
+}
+```
+* 주소의 값을 가져올땐 참조해온다는것을 명시!!
+
+* this에 대해서 알아보자
+```c++
+struct Data {
+	int a, b, c;
+	void SetData(int a, int b, int c) {
+		this->a = a; // this > Data
+		b = b;
+		c = c;
+	}
+	void PrintData() {
+		printf("%p %d %d %d\n", this, this->a, b, c);
+    // 숨겨진 매개변수로 이미 객체주소를 받아 온다는 것을 알 수 있다.
+	}
+};
+int main() {
+	Data d1 = { 1,2,3 };
+	d1.SetData(10, 50, 90);
+	d1.PrintData();	//PrintData(&d1);
+                  // 보이진 않지만 객체의 주소값은 인수로 넘겨줌                 
+}
+```
+* this 객체가 호출될때 그 자신의 주소값을 넘겨준다.
+* 객체의 주소값은 인수로 넘겨줌 PrintData(&d1);
+
+* typedef문법
+```c++
+typedef int I;
+typedef int* PI;
+typedef int** PPI;
+int main() {
+	int a = 10;
+	int* pa = &a;
+	int** ppa = &pa;
+	I b = 20;
+	PI pb = &b;
+	PPI ppb = &pb;
+	cout << a << ", " << *pa << ", " << **ppa<< endl;
+	cout << b << ", " << *pb << ", " << **ppb << endl;
+}
+```
+* 자료형의 이름이 긴 경우 자료형을 재정의한다.
+
+* Vector와 복사생성자
+```c++
+class IntVector {
+	int* buf;
+	int size;
+	int capacity;
+	const IntVector& operator = (const IntVector&);
+public:
+	IntVector(int cap) :size(0), buf(nullptr), capacity(cap) {
+		buf = new int[capacity]; }
+	IntVector(IntVector& pv)      // 복사 생성자
+  :size(pv.size), buf(nullptr), capacity(pv.capacity) {
+		buf = new int[capacity];
+		for (int i = 0; i < capacity; i++)
+			buf[i] = pv.buf[i];}
+	~IntVector() { delete[] buf; }// 복사 소멸자
+	void Add(int data) {
+		if (size < capacity) {
+			buf[size++] = data; }
+		else {
+			throw "배열의 용량을 넘었다.";} }
+	int Size()const { return size; }
+	int At(int idx)const { return buf[idx]; }
+};
+int main()
+{
+	IntVector v(1000);
+	v.Add(10); v.Add(20); v.Add(30); v.Add(40); v.Add(50);
+	for (int i = 0; i < v.Size(); i++) {
+		cout << v.At(i) << endl; }
+	IntVector v2(v);
+	for (int i = 0; i < v2.Size(); i++) {
+		cout << v.At(i) << endl; }
+}
+```

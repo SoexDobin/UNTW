@@ -150,12 +150,12 @@ rigid.velocity = new Vector2(Speed3 , 0);
   }
   ```
   * OnCollisionStay()
-  ```
+  ```c++
   private void OnCollisionStay2D(Collision2D collision) {}
   // 충돌이 되는 매 프레임마다 호출
   ```
   * OnCollisionExit()
-  ```
+  ```c++
   private void OnCollisionExit2D(Collision2D collision){}
    // 충돌이 끝날 때 호출
   ```
@@ -210,7 +210,7 @@ bool Cool;
 ```
 3.3 코루틴
 * 코루틴은 함수에 지정한 조건동안 유니티에게 제어권을 넘겨준다.
-```
+```c++
 void Attack()
   {
     if (Input.GetKeyDown(KeyCode.Q))

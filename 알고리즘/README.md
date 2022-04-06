@@ -32,13 +32,8 @@ int main(){
 class Point{
   int x, y;
 public:
-  Point(int _x, int _y) {
-    x = _x;
-    y = _y;
-  }
-  void Print(){
-    printf("&d %d\n", x, y)
-  }
+  Point(int _x, int _y) { x = _x; y = _y; }
+  void Print(){ printf("&d %d\n", x, y) }
 };
 int main(){
   Point pt(2, 3); //클래스 객체 선언
@@ -48,7 +43,7 @@ int main(){
 값복사를 자제하고 참조를 통해 효율적인 코드를 쳐야한다.
 ## 연속메모리기반 큐와 스택
 ### 다른 함수를 참조하는 선형큐(c활용)
-```c
+```c++
 struct Queue {
 	int queue[100];
 	int front; //꺼낼 위치
@@ -56,7 +51,7 @@ struct Queue {
 };
 void AddQueue(Queue* q, int data) {
 	q->queue[q->rear++] = data;
-}// c언어 참조 함수 
+} // c언어 참조 함수 
 int DeleteQueue(Queue& q) {
 	return q.queue[q.front++];
 }// c++언어 참조 함수
@@ -114,11 +109,7 @@ int main(){}
 **그러나 rear와 front의 메모리상 위치가 같게 되면 값할당과 출력에 문제가 생긴다.**
 ### rear와 front의 중복 문제점을 잡은 원형큐
 ```c++
-class Queue {
-	int* queue;
-	int front;
-	int rear;
-	int capacity;
+class Queue { int* queue; int front; int rear; int capacity;
 public:
 	Queue(int f = 0, int r = 0, int cap = 0) :front(f), rear(r), capacity(cap) {}
 	void Allocate(int cap) {
@@ -151,11 +142,7 @@ int main(){
 큐 메모리를 클라이언트가 직접 할당 가능하게 바꾸고 rear와 front의 문제점을 수정했다.   
 Allocate와 DeAllocate 함수로 할당과 제거를 하게 만들었다.
 ```c++
-class Queue {
-	int* queue;
-	int front;
-	int rear;
-	int capacity;
+class Queue { int* queue; int front; int rear; int capacity;
 public:
 	Queue(int cap) { //생성자
 		front = 0;
@@ -163,16 +150,13 @@ public:
 		capacity = cap;
 		queue = (int*)malloc(sizeof(int) * capacity);
 	}
-	~Queue() { //소멸자
-		free(queue);
-	}
+	~Queue() { free(queue); } //소멸자
 	void AddQueue(int data) {
 		if ((rear + 1) % capacity == front) { return; }
 		queue[rear = (rear + 1) % capacity] = data;
 	}
 	int DeleteQueue() {
 		if (front == rear) { return 0xffffff; }
-
 		int value = queue[front = (front + 1) % capacity];
 		return value;
 	}
@@ -183,7 +167,7 @@ int main() {
 ```
 마무리는 생성자와 소멸자를 이용해 정리해준다.
 
-#### <stack>과 <queue>
+### <stack>과 <queue>
 * <stack>
 	- 선언: stack<타입> 변수;
 	- push(): 저장
@@ -195,13 +179,10 @@ int main() {
 	- front(): 값 반환
 	- pop(): 제거	
 
-## 노드기반 비연속메모리 
+### 노드기반 비연속메모리 
 * 이중 연결 리스트
 ```c++
-struct Node {
-	int data;
-	Node* link;
-};
+struct Node { int data; Node* link; };
 Node* AllocNode(int data) {
 	Node* n = (Node*)malloc(sizeof(Node));
 	//노드형 주소인것을 밝히고 Node사이즈의 메모리를 할당
@@ -239,10 +220,7 @@ int main() {
 * tail 끝노드를 통한 연결 메모리
 ```c++
 //노드 이중 연결리스트
-struct Node {
-	int data;
-	Node* link;
-};
+struct Node { int data; Node* link; };
 Node* AllocNode(int data) {
 	Node* n = (Node*)malloc(sizeof(Node));
 	n->data = data;
@@ -253,13 +231,12 @@ Node* GetTail(Node* p) { //끝노드를 찾아주며 중간노드들을 거침
 	Node* t = p;
 	while (t->link != NULL)
 		t = t->link;
-
 	return t;
 }
 int main() {
 	Node* n = NULL;		
-	Node* p = NULL;		
-	Node* t = NULL;
+	Node* p = NULL;		// p노드는 초기 주소
+	Node* t = NULL;		// t노드는 함수를 통해 계속해서 링크를 이어나감
 	n = AllocNode(10);	
 	p = n;
 	t = p;
@@ -271,7 +248,8 @@ int main() {
 	t->link = n;
 	for(Node* cur = p; cur!=NULL; cur=cur->link)
 	printf("%d\n", cur->data);
-	// p노드는 초기 주소
-	// t노드는 함수를 통해 계속해서 링크를 이어나감
 }
 ```
+
+### 이중연결리스트
+* 인터페이스는 서버와 클라이언트사이 소통을 연결해준다.
