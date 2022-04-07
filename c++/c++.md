@@ -233,7 +233,7 @@ public:
 			buf[size++] = data; }
 		else {
 			throw "배열의 용량을 넘었다.";} }
-	int Size()const { return size; }
+	int Size()const { return size; } // vector의 기본 함수
 	int At(int idx)const { return buf[idx]; }
 };
 int main()
@@ -247,3 +247,4 @@ int main()
 		cout << v.At(i) << endl; }
 }
 ```
+* 

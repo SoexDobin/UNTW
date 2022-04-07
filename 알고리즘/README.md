@@ -253,3 +253,38 @@ int main() {
 
 ### 이중연결리스트
 * 인터페이스는 서버와 클라이언트사이 소통을 연결해준다.
+* 노드기반 선형적으로 앞뒤 메모리 참조가 가능해야한다.
+
+**★★★시험 이중리스트 끝노드tail과 p 관계 tail을 찾는 2가지 방법**
+* tail은 null값을 가지고 있으므로 null가진 끝값을 찾으면 된다.
+*	메모리는 낭비가 되지만 tail의 값을 계속 저장해두기
+* 이중변수는 앞뒤 메모리 참조가 가능하므로 Add메서드가 2개이다. 
+```c++
+struct Node { int data; Node* prev; Node* next; };
+Node* AllocNode(int data) { // 노드생성 및 값 리턴
+	Node* n = NULL;
+	n = (Node*)malloc(sizeof(Node));
+	n->data = data;
+	//노드만큼 메모리 생성
+	n->prev = n->next = NULL;
+	return n; }
+int main() {
+	Node* head = NULL;	// 맨앞 노드
+	Node* tail = NULL;	// 맨뒤 노드
+	Node* p = NULL;		// 추가 노드
+	
+	p = AllocNode(0xffffff);
+	tail = head = p;
+
+	p = AllocNode(10);
+	tail->next = p;	// 선언노드 next에 다음노드주소 할당
+	p->prev = tail;	// 생성된노드prev에 이전주소 tail할당
+	tail = p;		// 끝노드로 tail 위치 옮겨줌
+	
+	for (Node* cur = head->next; cur != NULL; cur = cur->next)
+		printf("%d\n", cur->data);	// 정방향
+	for (Node* cur = tail; cur->prev != NULL; cur = cur->prev)
+		printf("%d\n", cur->data);	// 역방향
+}
+```
+* 앞뒤로 Add메서드를 달아주고 tail, head둘다 더미노드로 만들기
