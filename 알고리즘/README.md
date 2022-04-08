@@ -42,6 +42,50 @@ int main(){
 ```
 값복사를 자제하고 참조를 통해 효율적인 코드를 쳐야한다.
 ## 연속메모리기반 큐와 스택
+
+### 스택
+```c++
+struct Stack { int stack[100]; int top; };
+void Push(Stack* st, int data) 
+{ st->stack[st->top++] = data; }
+int Pop(Stack* st)
+ { return st->stack[--st->top]; }
+int main() {
+	Stack st = { 0 };
+
+	Push(&st, 10);
+	Push(&st, 20);
+	printf("%d\n", Pop(&st));
+	printf("%d\n", Pop(&st)); 
+}
+```
+10, 20 넣고 출력하면 20 10 출력됨
+### 함수 이용한 스택
+```c++
+class Stack {
+	int* stack;
+	int top;
+	int capacity;
+public:
+	Stack(int cap = 100) :top(0), capacity(cap) 
+	{ stack = new int[capacity]; }
+	~Stack() { free(stack); }
+	void Push(int data) { stack[top++] = data; }
+	int Pop() { return stack[--top]; }
+};
+int main() {
+	Stack st;
+
+	st.Push(10);
+	st.Push(20);
+	st.Push(30);
+	printf("%d\n", st.Pop());
+	printf("%d\n", st.Pop());
+	printf("%d\n", st.Pop());
+
+}				
+```
+
 ### 다른 함수를 참조하는 선형큐(c활용)
 ```c++
 struct Queue {
@@ -200,15 +244,15 @@ int main() {
 
 	// -->메모리
 	n = AllocNode(10);	// n노드에 10변수 할당
-	p = n;				// 길잡이 노드 p에 n의 주소넣기
+	p = n;							// 길잡이 노드 p에 n의 주소넣기
 	n = AllocNode(20);	// n은 다른 노드에 20 할당
-	p->link = n;		// p는의 link는 n의 주소를 담음
+	p->link = n;				// p는의 link는 n의 주소를 담음
 	// <--메모리
 	n = AllocNode(30);	// n노드에 30 할당
-	p = n;				// 길잡이 노드 p에 n의 주소넣기
+	p = n;							// 길잡이 노드 p에 n의 주소넣기
 	n = AllocNode(40);	// n은 다른 노드에 40 할당
-	n->link = p;		// n의 링크에 p가 가진 전메모리 주소 할당
-	p = n;				// p에 새로만든 n의 주소 할당
+	n->link = p;				// n의 링크에 p가 가진 전메모리 주소 할당
+	p = n;							// p에 새로만든 n의 주소 할당
 
 	printf("%d\n", p->data);
 	printf("%d\n", p->link->data);
@@ -271,15 +315,15 @@ Node* AllocNode(int data) { // 노드생성 및 값 리턴
 int main() {
 	Node* head = NULL;	// 맨앞 노드
 	Node* tail = NULL;	// 맨뒤 노드
-	Node* p = NULL;		// 추가 노드
+	Node* p = NULL;			// 추가 노드
 	
 	p = AllocNode(0xffffff);
 	tail = head = p;
 
 	p = AllocNode(10);
-	tail->next = p;	// 선언노드 next에 다음노드주소 할당
-	p->prev = tail;	// 생성된노드prev에 이전주소 tail할당
-	tail = p;		// 끝노드로 tail 위치 옮겨줌
+	tail->next = p;		// 선언노드 next에 다음노드주소 할당
+	p->prev = tail;		// 생성된노드prev에 이전주소 tail할당
+	tail = p;					// 끝노드로 tail 위치 옮겨줌
 	
 	for (Node* cur = head->next; cur != NULL; cur = cur->next)
 		printf("%d\n", cur->data);	// 정방향
@@ -288,3 +332,59 @@ int main() {
 }
 ```
 * 앞뒤로 Add메서드를 달아주고 tail, head둘다 더미노드로 만들기
+```c++
+struct Node { int data; Node* prev; Node* next; };
+struct List { Node* head; Node* tail; };
+Node* AllocNode(int data) { 
+	Node* n = NULL;
+	n = (Node*)malloc(sizeof(Node));
+	n->data = data;
+	n->prev = n->next = NULL;
+	return n; }
+void AddTailList(List* lt, int data) {
+	Node* n = AllocNode(data);
+	Node* t = lt->tail;	// t = 더미tail
+	Node* pt = t->prev;	// pt = 더미head 
+	pt->next = n;		// head 뒤는 새노드 n
+	n->prev = pt;		// 새노드 앞 head요소
+	n->next = t;		// 새노드 뒤 tail요소
+	t->prev = n;		// tail의 앞은 새노드 n
+}
+void AddHeadList(List* lt, int data) {
+	Node* n = AllocNode(data);
+	Node* h = lt->head;	// t = 더미tail
+	Node* ph = h->next;	// pt = 더미head 
+	ph->prev = n;		// head 뒤는 새노드 n
+	n->prev = h;		// 새노드 앞 head요소
+	n->next = ph;		// 새노드 뒤 tail요소
+	h->next = n;		// tail의 앞은 새노드 n
+}
+void InitList(List* lt) {
+	lt->head = AllocNode(0xffffff);
+	lt->tail = AllocNode(0xffffff);
+	lt->head->next = lt->tail;
+	lt->tail->prev = lt->head;
+}
+Node* GetHead(List* lt) { return lt->head->next; }
+int HasNext(List* lt, Node* p) { return p->next ? 1 : 0; }
+Node* Next(List* lt, Node* p) { return p->next; }
+Node* GetTail(List* lt) { return lt->tail->prev; }
+int HasPrev(List* lt, Node* p) { return p->prev ? 1 : 0; }
+Node* Prev(List* lt, Node* p) { return p->prev; }
+int GetData(List* lt, Node* p) { return p->data; }
+int main() {
+	List lt;
+	
+	InitList(&lt);
+	AddTailList(&lt, 10);
+	AddTailList(&lt, 20);
+	AddTailList(&lt, 30);
+	
+	//원소의 조회(순회)
+	for (Node* p = GetHead(&lt); HasNext(&lt, p); p = Next(&lt, p)) {
+		printf("%5d", GetData(&lt, p)); }
+	// 10 20 30
+	for (Node* p = GetTail(&lt); HasPrev(&lt, p); p = Prev(&lt, p) )
+		printf("%5d", GetData(&lt, p)); }
+	// 30 20 10	
+```

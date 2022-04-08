@@ -71,9 +71,28 @@ public IEnumerator Delay()
   }
 }
 ```
+DelayTime이 true일때 5초 쿨타임의 이미지UI 작동
+5초 이후 false값을 반환하여 UI작동후 종료
+
 * 조건마다 UI를 돌려줄 코루틴
 ```c++
+IEnumerator CoolTime2()
+{
+  while (Ctime2 >= 0)
+  {
+    yield return null;
+    Ctime2 -= Time.deltaTime;
+    StartCoroutine(AttackUiCanvas.transform.GetChild(0).GetComponent<AttackUi>().Delay());
+  }
+  yield return new WaitForSeconds(Ctime);
+  Ctime2 = 5f;
+  Cool = false;
+}
 ```
+while문으로 받아온 UI작동 코루틴을 Ctime2(5f)동안매 프레임마다 돌려준다.
+이후 Ctime(5f)이 지나면 코루틴 종료
+
+
 
 
 
