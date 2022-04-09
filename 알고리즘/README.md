@@ -359,32 +359,232 @@ void AddHeadList(List* lt, int data) {
 	n->next = ph;		// 새노드 뒤 tail요소
 	h->next = n;		// tail의 앞은 새노드 n
 }
+```
+* 삽입함수와 제거함수 만들기
+```c++
+void EraseList(List* lt, Node* p) { //어디에 있는걸 없에야 하는지
+	Node* pp = p->prev;
+	Node* pn = p->next;
+	free(p);
+	pp->next = pn;
+	pn->prev = pp;
+}
+void InsertTailList(List* lt, Node* p, int data ) { //어디에 집어 넣어야하는지
+	Node* pp = p->prev;
+	Node* n = AllocNode(data);
+	pp->next = n;
+	n->next = p;
+	n->prev = pp;
+	p->prev = n;
+}
+void InsertHeadList(List* lt, Node* p, int data) {
+	Node* pn = p->next;
+	Node* n = AllocNode(data);
+	pn->prev = n;
+	n->next = pn;
+	n->prev = p;
+	p->next = n;
+}
+```
+* 최종 c로 만들어보는 비연속 이중리스트
+```c++
+struct Node { int data; Node* prev; Node* next; };
+struct List { Node* head; Node* tail; };
+Node* AllocNode(int data) {
+	Node* n = NULL;
+	n = (Node*)malloc(sizeof(Node));
+	n->data = data;
+	n->prev = n->next = NULL;
+	return n;
+}
 void InitList(List* lt) {
 	lt->head = AllocNode(0xffffff);
 	lt->tail = AllocNode(0xffffff);
 	lt->head->next = lt->tail;
 	lt->tail->prev = lt->head;
 }
-Node* GetHead(List* lt) { return lt->head->next; }
-int HasNext(List* lt, Node* p) { return p->next ? 1 : 0; }
-Node* Next(List* lt, Node* p) { return p->next; }
+void InsertTailList(List* lt, Node* p, int data) { 
+	Node* pp = p->prev;
+	Node* n = AllocNode(data);
+	pp->next = n;
+	n->next = p;
+	n->prev = pp;
+	p->prev = n;
+}
+void InsertHeadList(List* lt, Node* p, int data) {
+	Node* pn = p->next;
+	Node* n = AllocNode(data);
+	pn->prev = n;
+	n->next = pn;
+	n->prev = p;
+	p->next = n;
+}
+void AddTailList(List* lt, int data) {
+	InsertTailList(lt, lt->tail, data);
+}
+void AddHeadList(List* lt, int data) {
+	InsertHeadList(lt, lt->head, data);
+}
+void EraseList(List* lt, Node* p) { //어디에 있는걸 없에야 하는지
+	Node* pp = p->prev;
+	Node* pn = p->next;
+	free(p);
+	pp->next = pn;
+	pn->prev = pp;
+}
+void UnInitList(){
+	Node* p = head;
+	while(p != NULL) {
+		Node* pn = p->next;
+		free(p);
+		p = pn;
+	}
+}
+Node* GetHead(List* lt){ return lt->head->next; }
+int HasNext(List* lt, Node* p){ return p->next ? 1 : 0; }
+Node* Next(List* lt, Node* p){ return p->next; }
 Node* GetTail(List* lt) { return lt->tail->prev; }
 int HasPrev(List* lt, Node* p) { return p->prev ? 1 : 0; }
 Node* Prev(List* lt, Node* p) { return p->prev; }
 int GetData(List* lt, Node* p) { return p->data; }
+
+Node* FindLinkedList(List* plt, int key) {
+	for (Node* p = GetHead(plt); HasNext(plt, p); p = Next(plt, p)) {
+		if (GetData(plt, p) == key)
+			return p;
+
+		return NULL; } }
+void PrintHeadLinkedList(List* plt) {
+	for (Node* p = GetHead(plt); HasNext(plt, p); p = Next(plt, p)) {
+		printf("%d\n", GetData(plt, p));
+	}
+}
+void PrintTailLinkedList(List* plt) {
+	for (Node* p = GetTail(plt); HasPrev(plt, p); p = Prev(plt, p)) {
+		printf("%d\n", GetData(plt, p));
+	}
+}
 int main() {
-	List lt;
-	
+	List lt; 
 	InitList(&lt);
-	AddTailList(&lt, 10);
-	AddTailList(&lt, 20);
-	AddTailList(&lt, 30);
-	
-	//원소의 조회(순회)
-	for (Node* p = GetHead(&lt); HasNext(&lt, p); p = Next(&lt, p)) {
-		printf("%5d", GetData(&lt, p)); }
-	// 10 20 30
-	for (Node* p = GetTail(&lt); HasPrev(&lt, p); p = Prev(&lt, p) )
-		printf("%5d", GetData(&lt, p)); }
-	// 30 20 10	
+	AddHeadList(&lt, 10);
+	AddHeadList(&lt, 20);
+	AddHeadList(&lt, 30);
+
+	PrintHeadLinkedList(&lt);
+	printf("\n");
+
+	Node* p = FindLinkedList(&lt, 20);
+	if (p != NULL) {
+		InsertHeadList(&lt, p, 450);
+		p = Prev(&lt, p);
+		//EraseList(&lt, p);
+	}
+
+	printf("\n");
+	PrintTailLinkedList(&lt);
+}
+```
+* c++로 바꿔보기
+```c++
+struct Node { int data; Node* prev; Node* next; };
+class List { 
+	Node* head; 
+	Node* tail;
+public:
+	Node* AllocNode(int data) {
+		Node* n = NULL;
+		n = (Node*)malloc(sizeof(Node));
+		n->data = data;
+		n->prev = n->next = NULL;
+		return n;
+	}
+	void Init() {
+		head = AllocNode(0xffffff);
+		tail = AllocNode(0xffffff);
+		head->next = tail;
+		tail->prev = head;
+	}
+	void InsertTail(Node* p, int data) {
+		Node* pp = p->prev;
+		Node* n = AllocNode(data);
+		pp->next = n;
+		n->next = p;
+		n->prev = pp;
+		p->prev = n;
+	}
+	void InsertHead(Node* p, int data) {
+		Node* pn = p->next;
+		Node* n = AllocNode(data);
+		pn->prev = n;
+		n->next = pn;
+		n->prev = p;
+		p->next = n;
+	}
+	void AddTail(int data) {
+		InsertTail(tail, data);
+	}
+	void AddHead(int data) {
+		InsertHead(head, data);
+	}
+	void Erase(Node* p) { //어디에 있는걸 없에야 하는지
+		Node* pp = p->prev;
+		Node* pn = p->next;
+		free(p);
+		pp->next = pn;
+		pn->prev = pp;
+	}
+	void UnInit() {
+		Node* p = head;
+		while (p != NULL) {
+			Node* pn = p->next;
+			free(p);
+			p = pn;
+		}
+	}
+	Node* GetHead() { return head->next; }
+	int HasNext(Node* p) { return p->next ? 1 : 0; }
+	Node* Next(Node* p) { return p->next; }
+	Node* GetTail() { return tail->prev; }
+	int HasPrev(Node* p) { return p->prev ? 1 : 0; }
+	Node* Prev(Node* p) { return p->prev; }
+	int GetData(Node* p) { return p->data; }
+};
+// client
+Node* FindLinkedList(List& plt, int key) {
+	for (Node* p = plt.GetHead(); plt.HasNext(p); p = plt.Next(p)) {
+		if (plt.GetData(p) == key) {
+			return p;
+		}
+	}
+	return NULL;
+}
+void PrintHeadLinkedList(List& plt) {
+	for (Node* p = plt.GetHead(); plt.HasNext(p); p = plt.Next(p)) {
+		printf("%d\n", plt.GetData(p));
+	}
+}
+void PrintTailLinkedList(List& plt) {
+	for (Node* p = plt.GetTail(); plt.HasPrev(p); p = plt.Prev(p)) {
+		printf("%d\n", plt.GetData(p));
+	}
+}
+int main() {
+	List lt; 
+	lt.Init();
+	lt.AddHead(10);
+	lt.AddHead(20);
+	lt.AddHead(30);
+
+	PrintHeadLinkedList(lt);
+	printf("\n");
+
+	Node* p = FindLinkedList(lt, 20);
+	if (p != NULL) {
+		lt.InsertHead(p, 450);
+		p = lt.Prev(p);
+		//EraseList(&lt, p);
+	}
+	PrintTailLinkedList(lt);
+	lt.UnInit();
 ```
