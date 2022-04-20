@@ -10,7 +10,7 @@ int main(){
 ```
 모두 같은 주소값을 가지며 n을 참조한다. 
 #### 클래스와 구조체
-구조체
+* 구조체
 ``` c++
 struct Point{
   int x, y;
@@ -27,7 +27,7 @@ int main(){
   Print(pt); //c++
 }
 ```
-클래스
+* 클래스
 ``` c++
 class Point{
   int x, y;
@@ -41,6 +41,43 @@ int main(){
 }
 ```
 값복사를 자제하고 참조를 통해 효율적인 코드를 쳐야한다.
+## 배열 알고리즘
+```c++
+void CreateArray(int**& arr, int row ,int col) {
+	arr = new int*[row];
+	for (int i = 0; i < row; ++i)
+		arr[i] = new int[col];
+}
+void Init(int** arr, int row, int col) {
+	for (int i = 0; i < row; ++i)
+		for (int j = 0; j < col; ++j)
+			arr[i][j] = i * j;
+}
+void Print(int** arr, int row, int col) {
+	for (int i = 0; i < row; ++i) {
+		for (int j = 0; j < col; ++j) {
+			printf("%3d ", arr[i][j]);
+		}
+		printf("\n");
+	}
+}
+void Delete(int** arr, int row, int col) {
+	for (int i = 0; i < row; ++i)
+		delete[] arr[i];
+	delete[] arr;
+}
+int main() {
+	int** arr = NULL;
+	CreateArray(arr, 5, 5);
+	Init(arr, 5, 5);
+	Print(arr, 5, 5);
+	Delete(arr, 5, 5);
+}
+```
+* 2진 배열은 arr, arr[], arr[][] 3가지 주소를 할당해야하기에 **형식으로 받는다.
+* 함수로 만들시 함수가 직적 참조 할 수 있게 &연산자를 붙여 간소화 한다.
+* delete는 col메모리 삭제후에 row를 없에게 두번 돌려 제거해준다.
+
 ## 연속메모리기반 큐와 스택
 
 ### 스택
@@ -85,7 +122,6 @@ int main() {
 
 }				
 ```
-
 ### 다른 함수를 참조하는 선형큐(c활용)
 ```c++
 struct Queue {
@@ -244,15 +280,15 @@ int main() {
 
 	// -->메모리
 	n = AllocNode(10);	// n노드에 10변수 할당
-	p = n;							// 길잡이 노드 p에 n의 주소넣기
+	p = n;	// 길잡이 노드 p에 n의 주소넣기
 	n = AllocNode(20);	// n은 다른 노드에 20 할당
-	p->link = n;				// p는의 link는 n의 주소를 담음
+	p->link = n;	// p는의 link는 n의 주소를 담음
 	// <--메모리
 	n = AllocNode(30);	// n노드에 30 할당
-	p = n;							// 길잡이 노드 p에 n의 주소넣기
+	p = n;	// 길잡이 노드 p에 n의 주소넣기
 	n = AllocNode(40);	// n은 다른 노드에 40 할당
-	n->link = p;				// n의 링크에 p가 가진 전메모리 주소 할당
-	p = n;							// p에 새로만든 n의 주소 할당
+	n->link = p;	// n의 링크에 p가 가진 전메모리 주소 할당
+	p = n;	// p에 새로만든 n의 주소 할당
 
 	printf("%d\n", p->data);
 	printf("%d\n", p->link->data);
@@ -323,7 +359,7 @@ int main() {
 	p = AllocNode(10);
 	tail->next = p;		// 선언노드 next에 다음노드주소 할당
 	p->prev = tail;		// 생성된노드prev에 이전주소 tail할당
-	tail = p;					// 끝노드로 tail 위치 옮겨줌
+	tail = p;		// 끝노드로 tail 위치 옮겨줌
 	
 	for (Node* cur = head->next; cur != NULL; cur = cur->next)
 		printf("%d\n", cur->data);	// 정방향
@@ -587,4 +623,50 @@ int main() {
 	}
 	PrintTailLinkedList(lt);
 	lt.UnInit();
+```
+
+#### 콜백 함수
+```c++
+void PrintArray(int* pa, int size) {
+	for (int i = 0; i < size; ++i) {
+		printf("%d ", pa[i]);
+	} }
+int Search(int* pa, int size, int (*cmp)(int data)) {
+	for (int i = 0; i < size; ++i) {
+		if (cmp(pa[i]))			 // 콜백
+			return i;
+
+	return -1;
+}
+///아래는 클라이언트 코드
+int cmp(int data) {			// 콜백 함수
+	printf("\n찾아본 값은 %d\n", data);
+	return 50 < data && data % 2 == 0;
+}
+int main() {
+	int arr[10] = { 50, 69, 35, 62, 19, 90, 93, 72, 45, 27 };
+	int size = 10;
+
+	PrintArray(arr, size);
+	int idx = Search(arr, size, cmp);
+	if (-1 != idx) {
+		printf("\n[%d] : %d\n", idx, arr[idx]);
+	}
+}
+```
+```c++
+void Print(int (*cf)(int a)) {
+	printf("server start!\n");
+	if( cf(100) )		//callback
+	printf("middle print!\n");
+	printf("server close!\n");
+}
+
+int predicate(int data) {	//callback function
+	printf("client code!\n");
+	return data%2 == 0 ;
+}
+int main() {
+	Print(predicate);
+}
 ```

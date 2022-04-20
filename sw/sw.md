@@ -1,3 +1,113 @@
+# 객체지향
+**캡슐화, 다형성, 상속으로 프로그램의 재사용성, 확장성, 수정용이성 3ㅏ지의 유연성을 좋게하고 유지보수를 쉽게하기 위해서 배워야 한다.
+
+* 추상화
+  + 정적요소 프로퍼티와 동적요소 메서드의 정의한 것들을 추상화라고 한다.
+
+* 인터페이스
+  + public method의 시그니쳐
+  ```c++
+  void Print(int n)const //이부분이 시그니쳐이자, 인터페이스
+  private void Error(double h) //이건 인터페이스가 아님
+
+  int main(){
+    Person p("최재욱", 23, "010-9018-9829");
+    p.Print();
+  }
+  // p.Print();는 main함수가 p객체에게 Print()메세지를 보낸다라는 뜻
+  ```
+
+* 계층구조
+  + is a 관계를 가지는 객체를 부르는 말이다.
+  + 동물 객체는 사자와, 까지 객체를 가질때 두 객체는 (is a 동물) 관계이다.
+```c++
+class Person {};
+class Student : public Person {};
+int main(){
+  Person p; Student s;
+  p = s;  //학생 is a 사람이다. //사용 x
+  Person& rp = s; // 부분 참조가 일어나서 사용가능하다.
+  Person* pp s&; // Person부분까지만 주소로 가르키기에 사용가능하다.
+}
+```
+**시험(p = s;)는 맞는 의미지만 메모리상으로 s가 구체화되어있어 p,s내용 두개가 있기 때문에 메모리 아작으로 사용하면 안된다.**
+
+```c++
+class Person {
+  string name;
+public:
+  virtual void Print(){ cout << name << endl; } 
+}; // 최상위 부모 버츄얼 정의
+class Student : public Person {
+  int grade;
+public:
+  void Print(){ cout << name << grade << endl; }
+};
+int main(){
+  Person p; Student s;
+  Person& rp = s; 
+  Person* pp s&; 
+  rp.Print(); // 다형성에 의한 다형적 메서드
+  pp->Print(); // 다형성에 의한 다형적 메서드
+}
+```
+**부모클래스 버츄얼 정의를 통해 grade까지 모두 가져올 수 있다.**
+* 어느 자식객체든 Person부모 형식으로 만들어야하고 할 수 있다.
+* 조립구조
+  + has a 관계를 가지는 객체를 부르는 말이다.
+  + 삼각형과 사각형은 (has a 점)을 가진 관계이다.
+
+```c++
+class Shape { //추상객체
+	string name;
+public:
+	Shape(const string& n = "") :name(n){}
+	virtual void Draw() = 0; //순수가상함수(=abstract메서드) <-요놈때문에 추상객체가됨
+	virtual void PrintInfo() { cout << "Info: " << name << endl; }
+	const string GetName() { return name; }
+	const string SetName(const string& n) { name = n; }
+};
+class Rectangle :public Shape {
+	int x, y;
+	int width, height;
+public:
+	Rectangle(int _x = 0, int _y = 0, int w = 0, int h = 0, const string& n = ""):
+		Shape(n), x(_x), y(_y), width(w), height(h) {}
+	void Draw() { cout << "R: "<< x << "," << y << "," << width << "," << height << endl; }
+};
+class Circle :public Shape {
+	int x, y;
+	int radius;
+public:
+	Circle(int _x = 0, int _y = 0, int r = 0 , const string& n = "") :
+		Shape(n), x(_x), y(_y), radius(r) {}
+	void Draw() { cout << "C: " << x << "," << y << "," << radius << endl; }
+	void PrintInfo() {
+		Shape::PrintInfo();
+		cout << "--Info:" << "Circle" << endl;
+	}
+};
+int main() {
+	Shape* ps = NULL;
+	Rectangle r1(10, 10, 4, 500, "Rect");
+	Circle c1(0, 0, 5, "Cir");
+
+	ps = &r1;
+	ps->Draw();
+	ps->PrintInfo();
+	ps = &c1;
+	ps->Draw();
+	ps->PrintInfo();
+}
+```
+* 상속의 3가지 종류
+			      인터페이스	구현부   
+(비virtual) 		O		      O     	
+(virtual)		    O		    △선택        
+(astract)		    O		  X(강제구현)    
+* abstract는 virtual void Draw() = 0; 와 같이 선언하며 추상메서드는 반드시 자식 클래스에서 재정의 되어야 한다. 순수가상함수라고도 한다.
+* virtual은 추상메서드로 구현부인 implement를 재정의 할수도 있고 또는 상속 만 받을수있게 선택적으로 사용 할 수 있다.
+
 # UML
 소스코드 작성전 다이어그램으로 쉽게 알수있도록 미리 만들어보는것.
 ### why?
@@ -20,7 +130,7 @@
 2. 정적관계에서 의미를 조사한다.
 3. 정적관계를 개선한다.
 4. 위 내용을 바탕으로 기존 동적 다이어그램을 개선한다.
- 
+
 ## 클래스다이어그램
 ![classDiagram](https://user-images.githubusercontent.com/56966606/161099775-fc161555-3026-4680-93c7-a93d091f5ce6.png)
 박스를 클래스라고한다.     
@@ -124,28 +234,47 @@ dependency의존
 
 연관클래스
 ## 객체지향 설계 원칙 SOLID
-* 단일 책임 원칙 SRP 88 
+* 단일 책임 원칙 Single Responsibility Principle 88 
   - 객체 == 서비스를 제공하는 책임이다.
   - 클래스는 단 하나의 책임을 가져야한다.
   - 너무 많은 변수, 함수등의 선언을 자제하라는 것이다.
   - 다양한 인터페이스 클래스 분할로 책임을 나누어야한다.
   - SRP => 변화
   - ★★ 데이터 추상화 중요!
-* 개방-패쇄 원칙 OCP 94
-  - 확장 기능변경을 하면서 그기능의 코드는 수정하면 안된다.
-  - ★★추상화를 이용한 OCP구현
-  - 인터페이스를 이용해서 코드변경 없이 사용해야한다.
-  - 다형성과 상속을 이용해서 구현해야한다.
+* 개방 패쇄 원칙 Open Closed Principle 94
+  - 확장은 열려있고 수정에 닫혀 있어야한다.
+  - 다운 캐스팅 과 if else 사용이 최대한 없어야한다.
+  - 다형성과 상속을 이용 인터페이스 기반으로 코드변경없이 들어야한다.
   - OCP => 유연성
-  - 다운 캐스팅 과 if else 사용이 최대한 없어야함
-* 리스코프 치환 원칙 LSP
+  - ★★추상화를 이용한 OCP구현
+* 리스코프 치환 원칙 Liskov Substitution Principle
+  - 똑바로 상속해라
   - 파생된 클래스에 대하여 알 필요없이 사용하게 해야한다.
   - 서브 타입이 베이스 타입에 교체될 수 있어야함.
-  - 더 이상의 요구도 없고 더 이하의 약속이 없어야 한다.
   - 굳이 연결 할때 연관으로 이어주는 것이 아닌 호출로써 불러오는게 안전하다.
-* 인터페이스 분리 원칙 DIP
-  - 추상클래스, 메서드가 구체화된 클래스에 의존하면 안된다.
+    + 명시된 명세에서 벗어난 값을 리턴​
+    + 명시된 명세에서 벗어난 함수, 명령 발생​
+    + 명시된 명세에서 벗어난 기능을 수행​
+* 인터페이스 분리 원칙 Interface Segregation Principle
+  - 인터페이스에 너무 많은 메서드를 가지지말고 분리하여 세부적인것만 가지게 해야한다.
+  - 클라이언트는 자신이 사용하는 메서드에만 의존해야 한다.
+  - 클라이언트가 추상클래스, 메서드가 구체화된 클래스에 의존하면 안된다.
   - 인터페이스, 추상클래스가 더 안전하다.(높은 수준 개념)
-* 의존 역전 원칙 ISP
-  - 낮은 수준의 객체체들이 높은 수준의 객체에 의존하게 만들어야 한다.
+* 의존 역전 원칙 Dependency Inversion Principle
+  - 모듈과 패키지는 객체가 모여만들어진 하나의 기능을 의미한다.
+    + 모듈은 가르키는 의존 객체를 제외하고 단일(한개)의 파일만을 의미한다.
+    + 패키지는 다른 의존 객체를 모두 포함해서 패키지라도 한다.
+  - 인터페이스는 클라이언트를 위해 있는 것이다.  
+  - 낮은 수준의 모듈들이 높은 수준의 모듈에 의존하게 만들어야 한다.
   - 자신이 사용하지 않을 메서드에 의존하면 안된다.
+  - 클라이언트 하나당 인터페이스 하나같이 기능을 분배한다.
+
+### 전략패턴 strategy pattern
+* OCP원칙이 따라오지만 때론 SRP, ISP 원칙도 따라온다. 
+* 동일 계열 알고리즘을 개별적으로 캡슐화하여 상호작용 할 수있게 정의한다.
+* 클라이언트에 영향없이 전략을 바꾸어 변경이 가능하다.
+* 클라이언트는 독립적으로 원하는 알고리즘을 선택하여 사용할 수 있다.
+## 템플릿메서드 template Method
+* 상위 클래스에서 골격을 정의하고, 하위 클래스에서 세부 처리를 구체화 한다.
+* 유사한 서브 클래스를 묶어 공통된 내용을 상위 클래스에 정의한다.
+* 코드 양이 줄고 유지보수를 용이하게 해준다.

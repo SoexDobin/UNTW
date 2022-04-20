@@ -1,17 +1,116 @@
 # untw
-#1 Stack, Queue, Heap
-  1.1 Stack
-  후입선출방식으로 가장 나중에 메모리에 할당된 데이터가 먼저 빠져나감
-  프로그램 전역변수, 정적변수가 저장되는 영역이다. 컴파일전에 실행
-  1.2 Queue
-  선입선출방식으로 가장 먼저 메모리에 할당된 데이터가 먼저 빠져나감
-  1.3 Heap
-  이진트리 자료구조 최대, 최소 값을 찾아내는 연산을 잘함
-  Node 비선형메모리 형태가 예시를 가짐
-#2 new, delete 동적메모리(Heap) 할당
-  1.1 new 
-    
-  1.2 delete 
+# 1 Stack, Queue, Heap
+1. Stack
+후입선출방식으로 가장 나중에 메모리에 할당된 데이터가 먼저 빠져나감
+프로그램 전역변수, 정적변수가 저장되는 영역이다. 컴파일전에 실행
+2. Queue
+선입선출방식으로 가장 먼저 메모리에 할당된 데이터가 먼저 빠져나감
+3. Heap
+이진트리 자료구조 최대, 최소 값을 찾아내는 연산을 잘함
+Node 비선형메모리 형태가 예시를 가짐
+# 다형성
+* 함수 중복 overloading
+* overriding 상속 받은 메서드 재정의
+**시험 public 메소드의 시그니쳐 == 인터페이스 == 퍼블릭 클래스의 인스턴스**
+
+# 1차시
+* 기본
+```c++
+int main() {
+  int a1 = 10; // 변수 할당 법
+  int a2(20); // 객체 할당 법
+
+	int* pn2 = (int*)new int;
+	*pn2 = 200;
+	cout << *pn2 << endl;
+	delete pn2;
+}
+```
+* c++의 구조체 정의
+```c++
+struct Data{
+  int n;
+  double d;
+};
+void PrintData(Data arg){
+  cout << arg.n << ", " << arg.d << endl;
+}
+int main(){
+  Data d1 = { 5, 10.5 };
+  PrintData(d1);
+}
+```
+**참조와 포인터**
+* (*)와 (&)둘다 주소위치를 표현한다.
+* pointer와 reference라고 한다.
+* 참조는 초기화시에만 가능하다.
+```c++
+int n = 10;
+int* p = &n;
+int& r = n;
+//모두 같은 주소를 가르키고 있다.
+//참조를 통한 값 변경
+void Swap(int& pa, int& pb) {
+	int t = pa;
+	pa = pb;
+	pb = t;
+}
+int main() {
+	int a = 10, b = 20;
+	cout << a << ", " << b << endl;
+	Swap(a, b);
+	cout << a << ", " << b << endl;
+}
+```
+**중요 const R, W매개변수 설정**
+* 아웃파라미터 같은 변경 목적은 const를 안붙인다.
+* 인파라미터는 변경 목적이 아니기에 const를 붙여야 한다.
+```c++
+void Increment(int& pn) {//출력 매개변수(out parameter)
+	++pn; // pn = pn + 1
+}
+void Print(const int& pn) { //입력 매개변수(in parameter)
+	cout << pn << endl;
+}
+int main() {
+	int num = 1;
+	Increment(num); // R, W
+	Print(num); // R
+}
+```
+* R, w요소가 R요소로 사용가능하지만 R요소가 R, W요소가 될 순 없다.
+```c++
+int n = 10; //R, W
+const int* p = &n;// R
+int* p2 = p; // 이건 오류
+```
+# 2차시
+* 정적 요소: 상태값 (프로퍼티 ex.n = 1)
+* 동적 요소 : 상태의 변화 (메서드)
+* 객체지향은 이 두가지 속성과 메서드를 가진다.
+* c++객체는 멤버변수와 멤버함수를 가진다.
+```c++
+class Point{
+public:
+  int x, y; //Type 정의! 중요
+};
+int main(){
+  Point pt1 = {1, 2};
+  // Type pt1메모리생성
+}
+```
+* 객체는 항상 (정의)를 보고 만들어 진다.
+* 클래스는 객체들의 공통된 개념정의
+**중요!!! 인스턴스**
+* 클래스 --인스턴스-> 객체
+  + 클래스의 인스턴스는 객체이다.
+* 프로그램의 --인스턴스-> 프로세스
+
+**중요!! 객체의 값복사**
+```c++
+Point p = 10;
+```
+
 # 3차시
 ```c++
   int main() {
@@ -30,9 +129,8 @@
     delete p; 
     // 할당된 p메모리 제거 }
 ```
-  인터페이스부에 객체를 참조 받을때는
-  무조건 const 를 붙여야함 ex)void Print(const Point& arg)
-  const와 &를 빼먹고 받아올 경우 값복사가 일어남 효율적이지 않음
+* 인터페이스부에 객체를 참조 받을때는 무조건 const 를 붙여야함 ex)void Print(const Point& arg)
+* const와 &를 빼먹고 받아올 경우 값복사가 일어남 효율적이지 않음
 ```c++
   void Print() const { //const 메소드
     cout << x << y << endl; }
@@ -212,7 +310,57 @@ int main() {
 ```
 * 자료형의 이름이 긴 경우 자료형을 재정의한다.
 
-* Vector와 복사생성자
+* string 사용자 함수 
+```c++
+class String {
+	char* buf;
+public:
+	String(const char* s = "") {
+		buf = new char[strlen(s) + 1];
+		strcpy_s(buf, strlen(s) + 1, s);
+	}
+	const char* c_str()const { 
+		return buf;
+	}
+	void append(const char* s) {
+		size_t sz = strlen(s) + strlen(buf) + 1;
+		char* t = new char[sz];
+		strcpy_s(t, strlen(buf) + 1, buf);
+		strcat_s(t, sz, s);
+		delete[] buf;
+		buf = t;
+	}
+	~String() {
+		delete[] buf;
+	}
+	int compare(const char* s)const { 
+		return strcmp(buf, s);
+	}
+};
+int main() {
+	String s="GEee";
+
+	cout << s.c_str() << endl;
+	s.append("A");
+	cout << s.c_str() << endl;
+	if (s.compare("GEeeA") == 0) { // 0, 1 불린값 반환
+		cout << true << endl;
+	}
+	else {
+		cout << false << endl;
+	}
+}
+```
+* strcpy_s(): 문자열복사 string copy 문자열 끝에는 반드시 NULL
+	- 참조위치랑, 문자열길이값, 넣을 문자열을 받는다.
+* strlen() 문자열길이리턴 문자열 끝 NULL\0값을 제외하고 계산
+	- 반환할 문자열을 받는다. 
+* strcat_s(): 문자열 붙이기 위 특성과 비슷하다.
+	- 넣을 위치, 문자사이즈 , 넣을 문자열을 매개변수로 가진다.
+* strcmp(): 문자열 비교 매개변수로 비교할 문자열을 받고 불린값을 반환한다.
+
+## Vector
+* Vector
 ```c++
 class IntVector {
 	int* buf;
@@ -247,4 +395,95 @@ int main()
 		cout << v.At(i) << endl; }
 }
 ```
-* 
+* Vector로 Point클래스 메모리 할당
+```c++
+class Point {
+	int x, y;
+public:
+	Point(int _x = 0, int _y = 0) :x(_x), y(_y) {}
+	void Print() const{
+		cout << x << ", " << y << endl;
+	}
+};
+class PointVector {
+   Point* buf;
+   int sz;
+   int capacity;
+   const PointVector& operator = (const PointVector&);
+public:
+   PointVector(int cap = 100) :buf(nullptr), sz(0), capacity(cap) {
+       buf = new Point[capacity];
+   }
+   PointVector(const PointVector& arg) :buf(nullptr), sz(arg.sz), capacity(arg.capacity) {
+       buf = new Point[capacity];
+       for (int i = 0; i < sz; ++i)
+           buf[i] = arg.buf[i];
+   }
+   ~PointVector() { delete[] buf; }
+   void Add(const Point& data) {
+       if (sz < capacity)
+           buf[sz++] = data;
+   }
+   int Size() { return sz; }
+   const Point& At(int idx)const { return buf[idx]; }
+};
+int main() {
+   PointVector ptVector; // vector<Point>
+
+   ptVector.Add(Point(1, 2));
+   ptVector.Add(Point(2, 3));
+   for (int i = 0; i < ptVector.Size(); ++i) {
+       const Point& pt = ptVector.At(i);
+       pt.Print();
+  }
+}
+```
+* Vector로 Point주소클래스 메모리 할당
+```c++
+class Point
+{
+    int x, y;
+public:
+    Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
+    void Print()const {
+        cout << x << "," << y << endl;
+    }
+};
+class PointptrVector {
+    typedef Point* PPoint;
+    PPoint* buf;
+    int sz;
+    int capacity;
+    const PointptrVector& operator = (const PointptrVector&);
+public:
+    PointptrVector(int cap = 100) :buf(nullptr), sz(0), capacity(cap) {
+        buf = new PPoint[capacity];
+    }
+    PointptrVector(const PointptrVector& arg) :buf(nullptr), sz(arg.sz), capacity(arg.capacity) {
+        buf = new PPoint[capacity];
+        for (int i = 0; i < sz; ++i)
+            buf[i] = arg.buf[i];
+    }
+    ~PointptrVector() { delete[] buf; }
+    void Add(const PPoint& data) {
+        if (sz < capacity)
+            buf[sz++] = data;
+    }
+    int Size() { return sz; }
+    const PPoint& At(int idx)const { return buf[idx]; }
+};
+int main()
+{
+    PointptrVector ptVector; // vector<Point*>
+
+    ptVector.Add(new Point(2, 3));
+    ptVector.Add(new Point(3, 4));
+    for (unsigned i = 0; i < ptVector.Size(); ++i) {
+        const Point* p = ptVector.At(i);
+        p->Print();
+    }
+    for (unsigned i = 0; i < ptVector.Size(); ++i) {
+        delete ptVector.At(i);  //동일 레벨에서 delete
+    }
+}
+```
