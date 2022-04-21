@@ -670,3 +670,135 @@ int main() {
 	Print(predicate);
 }
 ```
+
+**콜백함수**
+```c++
+void PrintArray(int* pa, int size) {
+	for (int i = 0; i < size; ++i) {
+		printf("%d\n", pa[i]);
+	}
+}
+int Search(int* pa, int size, int (*cmp)(int data)) {
+	for (int i = 0; i < size; ++i) {
+		if (cmp(pa[i])) {
+			return i;
+		}
+	}
+	return -1;
+}
+int cmp(int data) {
+	printf("검색한 값은 %d\n", data);
+	return 50 < data && data%2 == 0;
+}
+int main() {
+	int arr[10] = { 50, 69, 35, 62, 19, 90, 93, 72, 45, 27 };
+	int size = 10;
+
+	PrintArray(arr, size);
+	int idx = Search(arr, size, cmp);
+	if (-1 != idx) {
+		printf("[%d] : %d\n", idx, arr[idx]);
+	}
+}
+server
+void Print(void (*f)()) {
+	printf("1. start Print()\n");
+	f(); //callback(caller)
+	printf("2. End Print()\n");
+}
+//client
+void cb1() { //callback function(callee)
+	printf("client hello\n");
+}
+void cb2() { //callback function(callee)
+	printf("=====\n");
+}
+int main() {
+	Print(cb1);
+	Print(cb2);
+}
+```
+* 콜백함수는 서버코드와 클라이언트코드를 잘 분리해서 사용해야한다.
+* callback함수가 무엇이고 기능을 해주는 함수는 무엇인지 잘 구분 할 것.
+```c++
+void Print(int (*f)(int)) {
+	printf("1. start Print()\n");
+	if (f(100))
+		printf("3.middle Print()\n");
+	printf("2. End Print()\n");
+}
+
+int predicate(int data) {
+	return data%2 == 0;
+}
+int main() {
+	Print(predicate);
+}
+```
+
+**2진배열**
+```c++
+void PrintArray(int* pa, int size) {
+	for (int i = 0; i < size; ++i) {
+		printf("%5d", pa[i]);
+	}
+	printf("\n");
+}
+int Search(int* list, int size, int key) {
+	int left = 0;
+	int right = size - 1;
+	while(left <= right) {
+		int middle = (left + right) / 2;
+		if (key < list[middle]) {
+			left = left;
+			right = middle - 1;
+		}
+		else if (key > list[middle]) {
+			left = middle + 1;
+			right = right;
+		}
+		else { return middle; }
+	}
+	return -1;
+}
+int main() {
+	int arr[10] = { 10, 17, 24, 38, 47, 57, 77, 89, 92, 99 };
+	int size = 10;
+
+	int idx = Search(arr, size, 30);
+	if (idx != -1)
+		printf("[%d] : %d\n", idx, arr[idx]);
+	else
+		printf("원소가 존재하지 않음\n");
+
+	PrintArray(arr, size);
+}
+```
+
+**재귀함수**
+```c++
+// 정수 반환형
+int Fact(int n) {
+	return n == 1 ? 1 : n * Fact(n - 1);
+}
+int main() {
+	int result = Fact(5);
+	printf("result : %d\n", result);
+}
+==========================================
+// 호출형 
+void Fact(int n, int * pr) {
+	if (n == 1)
+		*pr = 1;
+	else {
+		int t = 0;
+		Fact(n - 1, &t);
+		*pr = n * t;
+	}
+}
+int main() {
+	int result = 0;
+	Fact(5, &result);
+	printf("%d\n", result);
+}
+```
