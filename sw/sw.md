@@ -1,5 +1,10 @@
 # 객체지향
-**캡슐화, 다형성, 상속으로 프로그램의 재사용성, 확장성, 수정용이성 3ㅏ지의 유연성을 좋게하고 유지보수를 쉽게하기 위해서 배워야 한다.
+* 캡슐화, 다형성, 상속으로 프로그램의 재사용성, 확장성, 수정용이성 3가지의 유연성을 좋게하고 유지보수를 쉽게하기 위해서 배워야 한다.
+
+* 객체의 구조   
+  + 정적요소 : 속성
+  + 동적요소 : 메서드
+
 
 * 추상화
   + 정적요소 프로퍼티와 동적요소 메서드의 정의한 것들을 추상화라고 한다.
@@ -44,7 +49,8 @@ public:
   void Print(){ cout << name << grade << endl; }
 };
 int main(){
-  Person p; Student s;
+  Person p; 
+  Student s;
   Person& rp = s; 
   Person* pp s&; 
   rp.Print(); // 다형성에 의한 다형적 메서드
@@ -75,7 +81,7 @@ public:
 		Shape(n), x(_x), y(_y), width(w), height(h) {}
 	void Draw() { cout << "R: "<< x << "," << y << "," << width << "," << height << endl; }
 };
-class Circle :public Shape {
+class Circle : public Shape {
 	int x, y;
 	int radius;
 public:
@@ -101,10 +107,12 @@ int main() {
 }
 ```
 * 상속의 3가지 종류
-			      인터페이스	구현부   
-(비virtual) 		O		      O     	
-(virtual)		    O		    △선택        
-(astract)		    O		  X(강제구현)    
+```c++
+//			      인터페이스	 구현부   
+//(비virtual) 		O		      O     	
+//(virtual)		    O		    △선택        
+//(astract)		    O		  X(강제구현)
+```
 * abstract는 virtual void Draw() = 0; 와 같이 선언하며 추상메서드는 반드시 자식 클래스에서 재정의 되어야 한다. 순수가상함수라고도 한다.
 * virtual은 추상메서드로 구현부인 implement를 재정의 할수도 있고 또는 상속 만 받을수있게 선택적으로 사용 할 수 있다.
 
@@ -131,12 +139,24 @@ int main() {
 3. 정적관계를 개선한다.
 4. 위 내용을 바탕으로 기존 동적 다이어그램을 개선한다.
 
+* 정적 다이어그램
+  + 클래스
+  + 객체
+  + 컴포넌트
+  + 배치
+* 동적 다이어그램
+  + 순차
+  + 유스케이스
+  + 통신
+  + 상태
+  + 액티비티
 ## 클래스다이어그램
 ![classDiagram](https://user-images.githubusercontent.com/56966606/161099775-fc161555-3026-4680-93c7-a93d091f5ce6.png)
-박스를 클래스라고한다.     
--->는 연관관계를 맺는다고한다.     
-클래스안에를 나누어 중요한 함수 or 변수를 표현한다.   
-클래스내 함수는 +를 붙인다.   
+* 박스를 클래스라고한다.     
+* -->는 연관관계를 맺는다고한다.     
+* 클래스안에를 나누어 중요한 함수 or 변수를 표현한다.   
+* 클래스내 함수는 +를 붙인다.   
+
 * TreeMap 클래스   
   - 박스안에는 add()클래스와 get()클래스 2개를 담고있다.   
     + add()는 key와value값을 받는다.   
@@ -151,10 +171,11 @@ int main() {
 * itsvalue라는 요소로 Object()클래스에 접근한다.   
 ## 객체다이어그램
 ![objectDiagram](https://user-images.githubusercontent.com/56966606/161100206-96c76913-45d4-4701-91fc-99add21f273b.png)
-시스템 실행중 어느 순간의 객체와의 관계를 포착해 보여준다.   
-박스안에 :와 밑줄을 써서 표현한다. ex. :<U>TreeMap</U>   
--->는 link 연결이라고한다.   
-"-"는 감추어져있는 private멤버 변수이다.   
+**시스템 실행중 어느 순간의 객체와의 관계를 포착해 보여준다.**   
+* 박스안에 :와 밑줄을 써서 표현한다. ex. :<U>TreeMap</U>   
+* -->는 link 연결이라고한다.   
+* "-"는 감추어져있는 private멤버 변수이다.   
+
 * TreeMap 객체   
 * TreeMapNode   
   - TreeMap객체는 참조형식으로써  TreeMapNode객체의 topNode라고한다.   
@@ -162,17 +183,18 @@ int main() {
   - nodes[LESS]배열과 nodes[GREATER]배열 두 배열은 itsKey="Martin"이 참조하고 있다.   
 ## 상태다이어그램
 ![stateDiagram](https://user-images.githubusercontent.com/56966606/161100249-3195415a-f56b-4996-84f7-2155caf428eb.png)
-유한 상태 기계를 나타내기위한 다이어그램이다.   
-상태는 둥근사각형으로 감싼다.   
--->는 transition 전이라고한다.   
+* 유한 상태 기계를 나타내기위한 다이어그램이다.   
+* 상태는 둥근사각형으로 감싼다.   
+* -->는 transition 전이라고한다.   
+
 * 전이의 좌측은 이벤트라고한다.   
 * 전이의 우측은 이벤트 발생시 수행되는 행동이라고한다.   
   - pass하면 Alarm을 울리겠다.   
 ## 시퀀스 다이어그램(절차) == 커뮤니케이션 다이어그램(객체) 
-![comunicateDiagram](https://user-images.githubusercontent.com/56966606/161102339-898e5a45-0228-44e4-ba8e-5d577ce29013.png)
-시간에 따른 변화에 포커스르 두지만 절차에 집중하면 시퀀스이고 
-객체 중점이면 커뮤니케이션 으로 나눈다.   
--->는 메세지를 보낸다.
+![comunicateDiagram](https://user-images.githubusercontent.com/56966606/161102339-898e5a45-0228-44e4-ba8e-5d577ce29013.png)   
+* 시간에 따른 변화에 포커스르 두지만 절차에 집중하면 시퀀스이고 
+* 객체 중점이면 커뮤니케이션 으로 나눈다.   
+* -->는 메세지를 보낸다.
 * 1은 첫번째로 *은 여러개의 digit메세지를 n값으로 보낸다는 뜻이다.
 ![comunicateDiagram2](https://user-images.githubusercontent.com/56966606/161108176-02a50be0-3741-48ed-a8b4-8f1a9037df62.png)
 <U>send:Button</U>이라는 두번째 메세지의 의존도 추가되었다.   
@@ -196,6 +218,15 @@ int main() {
 * 클래스 다이어그램은 클래스이름 / 변수 / 맴버함수로 나뉜다.
 * ( - )는 private ( + )는 public ( # ) protected로 표현한다.
 * ( : )는 정의한 타입을 쓸때 이용한다.
+```c++
+public class Dialler​
+{​
+  private Vector digits;​
+  int nDigits;​
+  public void digit(int n);​
+  protected boolean recordDigit(int n);​
+}​
+```
 **연관**
 ![classDiagram3](https://user-images.githubusercontent.com/56966606/161286143-0e1d97be-aae9-40dd-b108-a1293689202a.png)
 * 연관을 지을때 선언 변수와 변수의 개수를 보여준다.
@@ -206,33 +237,85 @@ int main() {
 * 관계에있어 상속은 세로로 일반 연관관계는 가로로 그려 가시성을 편하게 한다.
 * 인터페이스의 상속 방식도 알고 있을 것.
 * 화살표 방향은 소스코드의 의존방향이다.
+```java
+public class UI implements WithdrawlUI, DepositUI, TransferUI​
+{​
+  private Screen itsScreen;​
+  private MessageLog itsMessageLog;​
+  public void displayMessage(String message)​
+  {​
+    itsMessageLog.logMessage(message);
+    itsScreen.displayMessage(message);​
+  }​
+}​
+```
 
-72
-* 클래스 스테레오타입
-* <<>>sms 길러멧 사이에 적는다
+
+**클래스 스테레오타입**
+* << ? >> 길러멧 사이에 적는다
 * <<interface>> 클래스
 * <<utility>> 클래스
 
-Math객체
-일반적으로 만들어지면 인스턴스
-Math p;
-p.PI();
-static을 붙이면 Math만이 가지는 클래스 속성이다 **암기**!!!!
-Math.PI();
+**Math객체 중요!**
+![Math](https://user-images.githubusercontent.com/56966606/164891148-772c3b2a-07bc-4abf-9ad6-4eafd9e78993.png)
 
+```java
+public class Math​
+{​
+  public sin(); //일반적으로 만들어지면 인스턴스 안 쓴다.
+  public static final double PI =​  // 클래스 메서드
+  3.14159265358979323;​
+  public static double sin(double theta){...}​
+  public static double cos(double theta){...}​
+}​
+```
+* static을 붙이면 Math만이 가지는 클래스 속성이다 **암기**!!!!
+* Math로 만든 객체는 무조건 Math에서 기능을 가져다 쓰기에 주로 public으로 쓴다.
 
-74
-추상 클래스
-인스터스 클래스를 생성하지 않는 클래스
-특징 적어도 하나 이상의 추상 메서드를 가짐 이텔릭체를 씀!!!!!!
+**추상 클래스**
+![Abstract](https://user-images.githubusercontent.com/56966606/164896188-4de42776-97be-4f58-a91c-4dde6d75d0a8.png)
+* 인스터스 클래스를 생성하지 않는 클래스
+* 특징 적어도 하나 이상의 추상 메서드를 가진다.
+* 이텔릭체로 표현하거나 {abstract}를 붙여준다.
+* 추상화된 메서드와 변수에도 동일하게 적용해야 한다.
 
-* association 연관의 3가지 구체화
+**association 연관의 3가지 구체화**
 **암기** 그리는 방법 
-aggreagation집합 A -> B면 B를 선택적 변경가능한다.
-composition구성 A -> B면 A영향이 B에게 그대로 전해진다.
-dependency의존
+![Aggregation](https://user-images.githubusercontent.com/56966606/164896456-dc6ff0af-35cb-45cd-ae71-f3159bbac280.png)
 
-연관클래스
+![Composition](https://user-images.githubusercontent.com/56966606/164896454-94811a2c-d123-4157-bd88-cea42401cca1.png)
+
+**의존은 ------> 그대로 그리면된다.**
+
+* 집합과 구성의 의존은 쓰임새는 같지만 차이점이 있다.
+* aggreagation (집합) A -> B면 B를 선택적 변경가능한다.
+  - A, B가 같이 또는 다르게 등 피드백 방법을 선택적이다.
+  - 자기 자신에 관한 내용에 재집합, 상호집합 등 할 수 없다.
+* composition (구성) A -> B면 A영향이 B에게 그대로 전해진다.
+  - 주인 객체 한개당 하나의 하나의 인스턴스만 가질 수 있다.
+  - 소유관계이다. (A가 B를 소유)
+  - 깊은 복사 상태이다.
+  - A, B둘다 같이 피드백을 받게된다.
+```java
+// 자바
+class A{
+  B b;
+}
+```
+```c++
+// c++
+class Car{
+  Tire* t = new Tire();
+  ~Car() {delete Car;}
+  Car() { 깊은 복사 } // 복사 생성자
+  // c++은 소멸자와 복생이 꼭 필요하다.
+};
+```
+* dependency (의존)
+
+* 연관클래스
+* 템플릿 클래스
+
 ## 객체지향 설계 원칙 SOLID
 * 단일 책임 원칙 Single Responsibility Principle 88 
   - 객체 == 서비스를 제공하는 책임이다.
