@@ -487,3 +487,74 @@ int main()
     }
 }
 ```
+
+* 객체지향 3요소와 추상화
+```c++
+class Person {
+protected:
+	string name;
+	int age;
+public:
+	Person(const string& n = "", int a = 0) : name(n), age(a){ 
+		cout << "Person()" << endl;
+	}
+	~Person(){ cout << "~Person()" << endl; }
+	virtual void Print()const { cout << "name: " << name << " age: " << age << endl; } //별표세개 매우중요!!!!!!!!!!!!!!!!!
+	const string& GetName() const { return name; }
+	int GetAge() const { return age; }
+};
+class Student : public Person {
+	int grade;
+public:
+	Student(const string& n = "", int a = 0, int g = 0) : Person(n, a), grade(g) {
+		cout << "Student()" << endl;
+	}
+	~Student(){ cout << "~Student()" << endl; }
+	virtual void Print()const { cout << "name: " << name << " age: " << age << " grade: " << grade << endl; }
+	int GetGrade() const { return grade; }
+};
+class Professor : public Person {
+	string position;
+public:
+	Professor(const string& n = "", int a = 0, const string& pos = "") : Person(n, a), position(pos) {
+		cout << "Professor()" << endl;
+	}
+	~Professor(){ cout << "~Professor()" << endl; }
+	virtual void Print() const { cout << "name: " << name << " age: " << age << " position: " << position << endl; }
+	const string& GetPostion() const { return position; }
+};
+int main() {
+	모든 학생과 교수는 사람(Person)이다 부모 클래스 형식
+	{
+		Student s1("김수아", 29, 3);
+		Professor pr("아잉이", 30, "교수");
+
+		Person per1 = s1;
+		Person per2 = pr; //x
+
+		Person& r1 = (Person&)s1;
+		Person& r2 = pr; // o
+		(Student&)r1.GetName();
+
+		Person* p1 = (Person*)&s1;
+		Person* p2 = &pr; // o
+		((Student*)p2)->GetGrade();
+	}
+	{
+		Student s1("김수아", 29, 3);
+		Professor pr("아잉이", 30, "교수");
+		Person* r1 = &s1;
+		cout << r1->GetName() << endl;
+		r1->Print(); //*** 동적 바인딩!!!!!!!!!!!!!!!!!!!!!!!!!!
+		r1 = &pr;
+		r1->Print();
+	}
+	{
+		Person* parr[5] = { new Student("홍길동", 24, 2), new Professor("김교수", 40, "조교수"),
+			new Student("장길신", 27, 4), new Professor("성춘향", 48, "조교수"), new Student("루시드", 18, 1) };
+		for (int i = 0; i < 5; ++i) {
+			parr[i]->Print();
+		}
+	}
+}
+```
