@@ -802,3 +802,159 @@ int main() {
 	printf("%d\n", result);
 }
 ```
+* 피보나치 수열
+```c++
+int Fibonacci(int n) {
+	if (n == 1)
+		return 1;
+	if (n == 2)
+		return 2;
+	return Fibonacci(n - 2) + Fibonacci(n - 1);
+}
+int main() {
+	int result = Fibonacci(10);
+	printf("result : %d\n", result);
+}	
+```	
+**루프문을 통한 이진배열 시험**
+```c++
+int _Search(int* list, int left, int right, int key) {
+	if (left > right)
+		return -1;
+	int middle = (left + right) / 2;
+	if (key < list[middle]) {
+		int idx = _Search(list, left, middle - 1, key);
+		return idx;
+	}
+	else if (key > list[middle]) {
+		int idx = _Search(list, middle + 1, right, key);
+		return idx;
+	}
+	else
+		return middle;
+}
+int Search(int* list, int size, int key) {
+	return _Search(list, 0, size - 1, key);
+	//상한과 하한이 존재해야한다.
+}
+int main() 
+{
+	int list[10] = { 12,15,20,25,50,58,60,69,74,85 };
+	// 이진검색은 기본적으로 배열이 순차적이어야 한다.
+	int size = 10;
+	int idx = -1;
+
+	idx = Search(list, size, 58);
+	if (idx != -1)
+		printf("[%d] : %d\n", idx, list[idx]);
+}
+```
+* 재귀함수 그림판 
+```c++
+int map[10][10] = {
+	0,0,0,0,0,0,0,0,0,0,
+	0,1,1,1,1,0,0,0,0,0,
+	0,0,0,0,1,0,0,0,0,0,
+	0,0,1,1,1,0,0,0,0,0,
+	0,0,1,1,1,0,2,2,2,2,
+	0,0,0,1,0,0,2,2,2,0,
+	0,0,0,1,1,0,0,0,2,0,
+	0,0,0,1,1,0,0,0,2,0,
+	0,0,0,0,0,0,0,2,2,0,
+	0,0,0,0,0,0,0,2,2,0
+};
+void PrintMap() {
+	system("cls");
+	for (int i = 0; i < 10;++i) {
+		for (int j = 0; j < 10;++j) {
+			printf("%2d", map[i][j]);
+		}
+		printf("\n");
+	}
+	Sleep(300);
+}
+void _Fill(int row, int col, int newColor, int oldColor) {
+	// 종료조건
+	// 1. 캔버스 밖을 벗어날 때
+	if (0 > row || row > 9 || 0 > col || col > 9)
+		return;
+	// 2. 바꾸고자하는 색상이 oldColor가 아닐 때
+	if (map[row][col] != oldColor)
+		return;
+	map[row][col] = newColor;
+	PrintMap();
+	_Fill(row-1, col, newColor, oldColor);
+	_Fill(row, col+1, newColor, oldColor);
+	_Fill(row+1, col, newColor, oldColor);
+	_Fill(row , col-1, newColor, oldColor);
+}
+void Fill(int row, int col, int newColor) {
+	if (map[row][col] == newColor)
+		return;
+	_Fill(row, col, newColor, map[row][col]);
+}
+int main() {
+	int row, col;
+	printf("행과 열 입력:");
+	scanf_s("%d %d\n", &row, &col);
+	//Fill(3, 3, 7); // s, y, color
+	Fill(row, col, 6);
+	PrintMap();
+}	
+```	
+* 재귀함수 미로
+```c++
+int map[10][10] = {
+	0,0,0,0,0,0,0,0,0,0,
+	1,1,1,0,1,1,1,1,0,1,
+	0,0,1,0,1,0,0,1,0,1,
+	0,0,1,0,1,0,1,0,0,1,
+	1,1,1,0,0,0,0,1,1,1,
+	0,0,0,0,1,1,1,1,1,1,
+	1,1,0,1,0,0,0,0,0,1,
+	1,0,0,0,0,1,1,1,1,1,
+	1,0,1,1,0,0,0,1,9,1,
+	1,1,1,0,1,1,0,0,0,1,
+};
+void PrintMap() {
+	system("cls");
+	for (int i = 0; i < 10;++i) {
+		for (int j = 0; j < 10;++j) {
+			printf("%2d", map[i][j]);
+		}
+		printf("\n");
+	}
+	Sleep(300);
+}
+int Maze(int row, int col, int goal) {
+	if (0 > row || row > 9 || 0 > col || col > 9)
+		return 0;
+	// 순서 잘 이해하기
+	if (map[row][col] == goal) {
+		map[row][col] = 5;
+		return 1;
+	}
+	if (map[row][col] != 0)
+		return 0;
+
+	map[row][col] = 4;
+	PrintMap();
+
+	// 무조건 0 || 1중 한개를 반환해야 한다.
+	// 갈린길에서 갔다온 곳을 돌아가게하지 않게하기 위해서
+	if (Maze(row - 1, col, goal))
+		return 1;
+	if (Maze(row, col + 1, goal))
+		return 1;
+	if (Maze(row + 1, col, goal))
+		return 1;
+	if (Maze(row, col - 1, goal))
+		return 1;
+}
+int main() {
+	PrintMap();
+	Maze(0, 0, 9);
+}	
+```		
+	
+	
