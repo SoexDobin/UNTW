@@ -513,6 +513,7 @@ public:
 	virtual void Print()const { cout << "name: " << name << " age: " << age << " grade: " << grade << endl; }
 	int GetGrade() const { return grade; }
 };
+
 class Professor : public Person {
 	string position;
 public:
@@ -558,3 +559,126 @@ int main() {
 	}
 }
 ```
+
+
+
+
+* binding : 연결하다.
+	- virtual을 통한 실행할때 객체 타입을 파악하여 동적할당
+* compiletime : static
+	- 정적 할당
+* runtime : dynamic
+	- 동적 할당
+* 추상클래스는 구체화를 위해 사용된다.
+	- 인스턴스화가 목적이 아니다. & 사용도 안된다.
+	- 순수가상함수는 무조건 상속, 오버라이딩 되어야 한다.
+
+**중요 연산자 중복**
+* 연산자 중복
+```c++
+class Point {
+	int x, y;
+public:
+	Point(int x = 0, int y = 0) :x(x), y(y) {}
+	void Print()const { cout << x << ", " << y << endl; }
+	void SetX(int x) {
+		this->x = x;
+	}
+	void SetY(int y) {
+		this->y = y;
+	}
+	int GetX()const { return x; }
+	int GetY()const { return y; }
+	const Point operator+(const Point& arg) const {
+	// 참조 붙이면 안된다.
+	// 일시적인 메모리가 아닌 전역으로 쓰이는 객체이기 때문이다.
+		return Point(x+arg.x, y+arg.y);
+	}
+};
+int main() {
+	Point p1(2, 3), p2(4, 5);
+	Point p3 = p1 + p2; //p1.operator+(p2); // p1 + p2
+	p3.Print();
+}
+```
+```c++
+class Point {
+	int x, y;
+public:
+	Point(int x = 0, int y = 0) :x(x), y(y) {}
+	void Print()const { cout << x << ", " << y << endl; }
+	void SetX(int x) {
+		this->x = x;
+	}
+	void SetY(int y) {
+		this->y = y;
+	}
+	int GetX()const { return x; }
+	int GetY()const { return y; }
+	const Point operator+(const Point& arg) const {
+		// 참조 붙이면 안된다.
+		// 일시적인 메모리가 아닌 전역으로 쓰이는 객체이기 때문이다.
+		return Point(x + arg.x, y + arg.y);
+	}
+	bool operator==(const Point& arg)const {
+		return x == arg.x && y == arg.y;
+	}
+	const Point& operator+=(const Point& arg) {
+		x += arg.x;
+		y += arg.y;
+		return *this; // Point(x, y)
+	}
+	const Point operator++() { // ++n 전위
+		++x;
+		++y;
+		return *this;
+	}
+	const Point operator++(int ) { //n++ 후위
+		Point t = *this;
+		++x;
+		++y++;
+		return *this;
+	}
+};
+int main() {
+	Point p1(2, 3), p2(4, 5);
+	p2 = p1++; // p1.operator++(0);후위 // p1.operator++(); 전위
+	p1.Print();
+	p2.Print();
+}
+```
+* 배열 연산자 
+```c++
+class Array {
+	int* buf;
+	int size;
+	int capacity;
+public:
+	Array(int cap = 100):buf(nullptr), size(0), capacity(cap) {
+		buf = new int[capacity];
+	}
+	~Array() { delete[] buf; }
+	void Add(int data) {
+		buf[size++] = data;
+
+	}
+	int Size()const {
+		return size;
+	}
+	int At(int idx) const {
+		return buf[idx];
+	}
+	int& operator[](int idx){ return buf[idx]; }
+};
+int main() {
+	Array arr;
+	arr.Add(10);
+	arr.Add(20);
+	arr.Add(30);
+	arr[2] = 100; // arr.buf[2] = 100;
+	for (int i = 0; i < arr.Size(); ++i) {
+		cout << arr[i] << endl; //arr.operator[](i);
+	}
+}
+```
+* 각 오퍼레이터의 약속을 잘 기억할 것.
