@@ -576,75 +576,50 @@ int main() {
 **중요 연산자 중복**
 * 연산자 중복
 ```c++
-class Point {
+class Point{
 	int x, y;
 public:
-	Point(int x = 0, int y = 0) :x(x), y(y) {}
+	Point(int _x = 0, int _y = 0) :x(_x), y(_y) {}
 	void Print()const { cout << x << ", " << y << endl; }
-	void SetX(int x) {
-		this->x = x;
-	}
-	void SetY(int y) {
-		this->y = y;
-	}
+	void SetX() { this->x = x; }
+	void SetY() { this->y = y; }
 	int GetX()const { return x; }
 	int GetY()const { return y; }
-	const Point operator+(const Point& arg) const {
-	// 참조 붙이면 안된다.
-	// 일시적인 메모리가 아닌 전역으로 쓰이는 객체이기 때문이다.
-		return Point(x+arg.x, y+arg.y);
-	}
-};
-int main() {
-	Point p1(2, 3), p2(4, 5);
-	Point p3 = p1 + p2; //p1.operator+(p2); // p1 + p2
-	p3.Print();
-}
-```
-```c++
-class Point {
-	int x, y;
-public:
-	Point(int x = 0, int y = 0) :x(x), y(y) {}
-	void Print()const { cout << x << ", " << y << endl; }
-	void SetX(int x) {
-		this->x = x;
-	}
-	void SetY(int y) {
-		this->y = y;
-	}
-	int GetX()const { return x; }
-	int GetY()const { return y; }
-	const Point operator+(const Point& arg) const {
-		// 참조 붙이면 안된다.
-		// 일시적인 메모리가 아닌 전역으로 쓰이는 객체이기 때문이다.
+// 연산자 중복
+// 참조 붙이면 안된다.
+// 일시적인 메모리가 아닌 전역으로 쓰이는 객체이기 때문이다.
+	const Point operator+(const Point& arg) const{
 		return Point(x + arg.x, y + arg.y);
 	}
-	bool operator==(const Point& arg)const {
+	const Point operator-(const Point& arg) const{
+		return Point(x - arg.x, y - arg.y);
+	}
+	bool operator==(const Point& arg) const{
 		return x == arg.x && y == arg.y;
 	}
-	const Point& operator+=(const Point& arg) {
+	const Point operator+=(const Point& arg) {
 		x += arg.x;
 		y += arg.y;
-		return *this; // Point(x, y)
+		return *this; //return Point(x, y);
 	}
-	const Point operator++() { // ++n 전위
-		++x;
-		++y;
+	const Point operator++() { //전위
+		++x, ++y;
 		return *this;
 	}
-	const Point operator++(int ) { //n++ 후위
+	const Point operator++(int) { //후위
 		Point t = *this;
-		++x;
-		++y++;
+		x++, y++;
 		return *this;
 	}
 };
 int main() {
-	Point p1(2, 3), p2(4, 5);
-	p2 = p1++; // p1.operator++(0);후위 // p1.operator++(); 전위
-	p1.Print();
-	p2.Print();
+	Point p1(2, 3), p2(1, 2);
+	Point pp = p1 + p2; //p1.operator + p2;
+	Point pm = p1 - p2; //p1.operator - p2;
+	if(p1 == p2) {} //p1.operator == (p2);
+	Point ppe = p1 += p2; //p1.operator += p2;
+	Point ppb = ++p1; //p1.operator++(); //전위
+	Point ppf = p1++; //p1.operator++(0); //후위
 }
 ```
 * 배열 연산자 
@@ -658,23 +633,15 @@ public:
 		buf = new int[capacity];
 	}
 	~Array() { delete[] buf; }
-	void Add(int data) {
-		buf[size++] = data;
-
-	}
-	int Size()const {
-		return size;
-	}
-	int At(int idx) const {
-		return buf[idx];
-	}
+	void Add(int data) { buf[size++] = data; }
+	int Size()const { return size; }
+	int At(int idx) const { return buf[idx]; }
 	int& operator[](int idx){ return buf[idx]; }
 };
 int main() {
 	Array arr;
 	arr.Add(10);
 	arr.Add(20);
-	arr.Add(30);
 	arr[2] = 100; // arr.buf[2] = 100;
 	for (int i = 0; i < arr.Size(); ++i) {
 		cout << arr[i] << endl; //arr.operator[](i);
