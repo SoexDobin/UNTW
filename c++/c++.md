@@ -560,9 +560,7 @@ int main() {
 }
 ```
 
-
-
-
+#기말 1차시
 * binding : 연결하다.
 	- virtual을 통한 실행할때 객체 타입을 파악하여 동적할당
 * compiletime : static
@@ -649,3 +647,151 @@ int main() {
 }
 ```
 * 각 오퍼레이터의 약속을 잘 기억할 것.
+#기말 2차시
+```c++
+a.operator+(n); // 단항 연산자
+operator+(a, b) // 이항 
+```
+```c++
+x.operator()();
+// 첫번쨰는 함수이름의 일부()이다.
+// 두번째가 연사자 함수로써 매개변수 입력칸 연산자 기호가 된다.
+```
+
+**복사 대입 연산자 시험!**
+```c++
+class Array {
+	int* buf;
+	int size;
+	int capacity;
+public:
+	Array(int cap = 100) :buf(nullptr), size(0), capacity(cap) {
+		buf = new int[capacity];
+	}
+	Array(const Array& arg) { _Copy(arg); }
+	const Array& operator=(const Array& arg) {
+		delete[] buf;
+		_Copy(arg);
+		return *this;
+	}
+	int& operator[](int idx) { return buf[idx]; }
+	~Array() { delete[] buf; }
+	void Add(int data) { buf[size++] = data; }
+	int Size() { return size; }
+private:
+	void _Copy(const Array& arg) {
+		this->size = arg.size;
+		this->capacity = arg.capacity;
+		buf = new int[capacity];
+		for (int i = 0; i < size; ++i)
+			buf[i] = arg.buf[i];
+	}
+};
+int main() {
+		Array arr;
+		arr.Add(10);
+		arr.Add(20);
+		arr.Add(30);
+		for (int i = 0; i < arr.Size(); ++i)
+			cout << arr[i] << endl; // arr.operator[](i)
+
+		//복사생성자
+		Array arr2 = arr;
+		for (int i = 0; i < arr2.Size(); ++i)
+			cout << arr2[i] << endl;
+
+		//복사대입연산자
+		Array arr3;
+		arr3 = arr; //arr3.operator=(arr);
+		for (int i = 0; i < arr3.Size(); ++i)
+			cout << arr3[i] << endl;
+}
+```
+* 복사 대입 연산자 operator 표기법 알아둘 것. 
+* 복생과 복연의 차이점 잘 이해해두기.
+
+**이항연산을 통한 연산자중복**
+```c++
+class Point {
+	int x, y;
+public:
+	Point(int _x = 0, int _y = 0) :x(_x), y(_y) {}
+	void Print()const { cout << x << ", " << y << endl; }
+	int GetX()const { return x; } // 정식 출력을 위한 GetX
+	int GetY()const { return y; } // 정식 출력을 위한 GetY
+	friend Point operator+(const Point& a, const Point& b); //꼼수
+};
+Point operator+(const Point& a, const Point& b) {
+	return Point(a.GetX() + b.GetX(), a.GetY() + b.GetY());
+}
+Point operator+(int n, const Point& pt) {
+	return Point(n + pt.GetX(), n + pt.GetY());
+}
+int main() {
+	Point a(2, 3), b(4, 5);
+	Point c = a + b;
+	c.Print();
+
+	int n = 10;
+	Point d = a + n; // operator+(a, n); 이건 주타입 함수가 없어서 안됨
+	Point f = n + a; // operator+(n, a);
+	d.Print();
+	f.Print();
+}
+```
+* 연산자 중복이 가능하다.
+* 함수 만들때 매개변수 주의 할 것.
+
+**메서드 체인으로 이항연산자 cout기능 살리기**
+```c++
+class Point {
+	int x, y;
+public:
+	Point(int _x = 0, int _y = 0) :x(_x), y(_y) {}
+	void Print()const { cout << x << ", " << y << endl; }
+	int GetX()const { return x; } // 정식 출력을 위한 GetX
+	int GetY()const { return y; } // 정식 출력을 위한 GetY
+	void SetX(int x) { this->x = x; }
+	void SetY(int y) { this->y = y; }
+};
+ostream& operator<<(ostream& out, Point& pt) {// out연산자
+	out << "Point: " << pt.GetX() << ", " << pt.GetY();
+	return out;
+}
+istream& operator>>(istream& in, Point& pt) { // input연산자
+	int x, y;
+	in >> x >> y;
+	pt.SetX(x); pt.SetY(y);
+	return in;
+}
+int main() {
+	Point a;
+	cin >> a;
+	cout << a << endl;
+}
+```
+* ostream은 const를 사용하면 안된다.
+* 메서드 체인으로 인해 값변경이 일어남으로 const 제거해야한다.
+**조건자 연산자**
+```c++
+class MyGreater1 {
+public:
+	bool operator()(int a, int b)const {
+		return a > b;
+	}
+};
+class MyGreater2 {
+public:
+	bool operator()(int a, int b)const {
+		return a < b;
+	}
+};
+int main() {
+	int arr[5] = { 5, 8, 3, 9, 6 };
+	MyGreater1 m; //functor
+	cout << m(5, 6) << endl;
+	cout << int() << endl; //임시객체
+	cout << MyGreater1()(1, 2) << endl; //임시객체
+}
+```
+* 조건자는 참과 거짓을 bool or 정수값으로 반화하는 함수를 말한다.
