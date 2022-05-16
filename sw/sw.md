@@ -405,11 +405,17 @@ out의 3가지 종류
 * 옵저버 패턴 구현 고려사항 중요!!
 	- 주제 객체의 통지 기능 실행 주체
 	![image](https://user-images.githubusercontent.com/56966606/168521305-ac28208f-f845-401b-8fae-7f4ed8180f5c.png)
-
 	- 옵저버 인터페이스 분리
+	![image](https://user-images.githubusercontent.com/56966606/168521459-371389a9-6cf4-49fa-a374-385a024df498.png)
+		+ isp처럼 인터페이스를 구현이 안되있더라도 효율적인 운영을 위해 구현해야한다.
 	- 통지 시점에서의 주제 객체 상태
+	![image](https://user-images.githubusercontent.com/56966606/168523520-2dd492d1-db8f-4db1-afe2-dcf3920fe4d2.png)
+		+ 통지시점에 객체의 결함이 없어야한다.
 	- 옵저버 객체의 실행 제약 조건
-
+	![image](https://user-images.githubusercontent.com/56966606/168523852-f74ab7ee-42e3-4c39-bb32-a09242c7682c.png)
+		+ 러닝타임이 길다면 예외나 별도의 방안을 추구해야 한다.
+* 최종 옵저버 패턴 다이어그램
+![image](https://user-images.githubusercontent.com/56966606/168524126-39a68944-063a-4466-8414-75cf73c2fa7a.png)
 ### 미디어 패턴 Mediator pattern
 *
 * 
