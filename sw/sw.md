@@ -414,9 +414,19 @@ out의 3가지 종류
 	- 옵저버 객체의 실행 제약 조건
 	![image](https://user-images.githubusercontent.com/56966606/168523852-f74ab7ee-42e3-4c39-bb32-a09242c7682c.png)
 		+ 러닝타임이 길다면 예외나 별도의 방안을 추구해야 한다.
+	![image](https://user-images.githubusercontent.com/56966606/168524606-465cb901-7bcd-4bac-b2cd-ec83d637f529.png)
+
 * 최종 옵저버 패턴 다이어그램
 ![image](https://user-images.githubusercontent.com/56966606/168524126-39a68944-063a-4466-8414-75cf73c2fa7a.png)
-### 미디어 패턴 Mediator pattern
-*
+### 미디에이터 패턴 Mediator pattern
+* 
 * 
 *
+### 퍼사드 패턴 Fasade pattern 
+* 데이터 베이스 형식에 있어 입출력에 다양한 의존형태로 인해 코드와 관계가 복잡해질때 사용한다.
+* 의존과 중복코드 제거를 위해 뷰어와 데이터베이스 사이 스트림이 퍼사드 역할을 하여 의존 형태를 깔끔하게 맞춰준다.
+* 모든 클라이언트는 퍼사드를 통해 이야기하기 때문에 서버시스템 쪽을 변경해도 클라이언트를 변경할 필요가 없어진다.
+* 유닛을 수정&변경하려면 모의객체(Mock Object)를 만들어 시험하고 유용한 코드로 변경해야 한다.
+![image](https://user-images.githubusercontent.com/56966606/168535191-2ab63028-0d9b-4f81-9889-ac4dd745fe7f.png)
+**중요! FlleStream(빨간색) 부분만 소켓으로 바꿔 용도 변경가능하다.**
+
