@@ -956,6 +956,8 @@ int main() {
 	Maze(0, 0, 9);
 }	
 ```		
-	
-	
+
 ![재귀함수](https://user-images.githubusercontent.com/56966606/169396994-ccf9bca4-9d5e-454c-a411-dcbf6a81c01e.png)
+	
+![일반 2진 트리](https://user-images.githubusercontent.com/56966606/169471439-6c74a113-5364-4180-a8af-b70e4ea61029.png)
+![2진 트리](https://user-images.githubusercontent.com/56966606/169471446-36fb581a-d8b4-48ec-b2f9-0333f8d3869f.png)
