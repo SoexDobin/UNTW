@@ -1229,7 +1229,223 @@ int main() {
 	root->rChild->rChild = AllocNode(100);
 }				 
 ```
+**Inorder 탐색**
+struct Node {
+	int data;
+	Node* lChild;
+	Node* rChild;
+};
+Node* AllocNode(int data) {
+	Node* n = (Node*)malloc(sizeof(Node));
+	n->data = data;
+	n->lChild = n->rChild = NULL;
+	return n;
+}
+void _Inorder(Node* p) {
+	if (p) { //NULL이면 return;
+		_Inorder(p->lChild);
+		printf("%d ", p->data);
+		_Inorder(p->rChild);
+	}
+}
+void Inorder(Node* root) {
+	printf("order: ");
+	_Inorder(root);
+	printf("\n");
+}
+int main() {
+	Node* root = NULL;
+	root = AllocNode(50);
+
+	root->lChild = AllocNode(40);
+	root->rChild = AllocNode(70);
+
+	root->lChild->lChild = AllocNode(30);
+	root->lChild->rChild = AllocNode(45);
+	root->rChild->lChild = AllocNode(60);
+	root->rChild->rChild = AllocNode(100);
+
+	Inorder(root); // 30 40 45 50 60 70 100
+}	
 ```c++
+```
+**Preorder 탐색**
+```c++
+struct Node {
+	int data;
+	Node* lChild;
+	Node* rChild;
+};
+Node* AllocNode(int data) {
+	Node* n = (Node*)malloc(sizeof(Node));
+	n->data = data;
+	n->lChild = n->rChild = NULL;
+	return n;
+}
+void _Preorder(Node* p) {
+	if (p) {
+		printf("%d ", p->data);
+		_Preorder(p->lChild);
+		_Preorder(p->rChild);
+	}
+}
+void Preorder(Node* root) {
+	printf("Preorder: ");
+	_Preorder(root);
+	printf("\n");
+}
+int main() {
+	Node* root = NULL;
+	root = AllocNode(50);
+
+	root->lChild = AllocNode(40);
+	root->rChild = AllocNode(70);
+
+	root->lChild->lChild = AllocNode(30);
+	root->lChild->rChild = AllocNode(45);
+	root->rChild->lChild = AllocNode(60);
+	root->rChild->rChild = AllocNode(100);
+
+	Preorder(root); // 50 40 30 45 70 60 100
+}	
+```
+**Postorder 탐색**		
+```c++
+struct Node {
+	int data;
+	Node* lChild;
+	Node* rChild;
+};
+Node* AllocNode(int data) {
+	Node* n = (Node*)malloc(sizeof(Node));
+	n->data = data;
+	n->lChild = n->rChild = NULL;
+	return n;
+}
+void _Postorder(Node* p) {
+	if (p) {		
+		_Postorder(p->lChild);
+		_Postorder(p->rChild);
+		printf("%d ", p->data);
+	}
+}
+void Postorder(Node* root) {
+	printf("Postorder: ");
+	_Postorder(root);
+	printf("\n");
+}
+int main() {
+	Node* root = NULL;
+	root = AllocNode(50);
+
+	root->lChild = AllocNode(40);
+	root->rChild = AllocNode(70);
+
+	root->lChild->lChild = AllocNode(30);
+	root->lChild->rChild = AllocNode(45);
+	root->rChild->lChild = AllocNode(60);
+	root->rChild->rChild = AllocNode(100);
+
+	Postorder(root); // 30 45 40 60 100 70 50
+}	
+```
+
+**Levelorder를 위한 큐 자료구조**
+```c++
+struct Queue {
+	Node** queue;
+	int front;
+	int rear;
+	int capacity;
+};
+void InitQueue(Queue* q, int cap = 1000) {
+	q->capacity = cap;
+	q->queue = (Node**)malloc(sizeof(Node*) * q->capacity);
+	q->front = q->rear = 0;
+}
+void UnIntitQueue(Queue* q) {
+	free(q->queue);
+}
+void EnQueue(Queue* q, Node* data) {
+	if ((q->rear + 1) % q->capacity == q->front)
+		return;
+	q->queue[q->rear = (q->rear + 1) % q->capacity] = data;
+}
+Node* DeQueue(Queue* q) {
+	if (q->front == q->rear)
+		return NULL;
+	return q->queue[q->front = (q->front + 1) % q->capacity];
+}	
 ```	
+**c언어 Levelorder**	
 ```c++
-```	](url)
+struct Node {
+	int data;
+	Node* lChild;
+	Node* rChild;
+};
+struct Queue {
+	Node** queue;
+	int front;
+	int rear;
+	int capacity;
+};
+void InitQueue(Queue* q, int cap = 1000) {
+	q->capacity = cap;
+	q->queue = (Node**)malloc(sizeof(Node*) * q->capacity);
+	q->front = q->rear = 0;
+}
+void UnInitQueue(Queue* q) {
+	free(q->queue);
+}
+void EnQueue(Queue* q, Node* data) {
+	if ((q->rear + 1) % q->capacity == q->front)
+		return;
+	q->queue[q->rear = (q->rear + 1) % q->capacity] = data;
+}
+Node* DeQueue(Queue* q) {
+	if (q->front == q->rear)
+		return NULL;
+	return q->queue[q->front = (q->front + 1) % q->capacity];
+}
+Node* AllocNode(int data) {
+	Node* n = (Node*)malloc(sizeof(Node));
+	n->data = data;
+	n->lChild = n->rChild = NULL;
+	return n;
+}
+void Levelorder(Node* root) {
+	if (root == NULL) { return; } // root값 없으면 정지
+	//root 초기화
+	Queue q;
+	InitQueue(&q);
+	EnQueue(&q, root);
+	//2진 검색 시작
+	printf("Levelorder: ");
+	while (1) {
+		Node* cur = DeQueue(&q);
+		if (cur == NULL)
+			break;
+		printf("%d ", cur->data);
+		if (cur->lChild)
+			EnQueue(&q, cur->lChild);
+		if (cur->rChild)
+			EnQueue(&q, cur->rChild);
+	}
+	UnInitQueue(&q);
+}
+int main() {
+	Node* root = NULL;
+	root = AllocNode(50);
+
+	root->lChild = AllocNode(40);
+	root->rChild = AllocNode(70);
+
+	root->lChild->lChild = AllocNode(30);
+	root->lChild->rChild = AllocNode(45);
+	root->rChild->lChild = AllocNode(60);
+	root->rChild->rChild = AllocNode(100);
+
+	Levelorder(root); // 50 40 70 30 45 60 100
+}	
+```	
