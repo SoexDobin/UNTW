@@ -1159,5 +1159,12 @@ int main() {
     PrintList(list, 10);
 }	
 ```
+
+# 기말 3차시 
+### 2진트리 구조
 ![일반 2진 트리](https://user-images.githubusercontent.com/56966606/169471439-6c74a113-5364-4180-a8af-b70e4ea61029.png)
+* root는 무조건 1개이다.
+* 부모 노드와 자식 노드로 나뉘며 부모이자 자식 노드도 가능하다.
+* 부모 노드는 자식노드를 여러개 가질 수 있다.
+* 
 ![2진 트리](https://user-images.githubusercontent.com/56966606/169471446-36fb581a-d8b4-48ec-b2f9-0333f8d3869f.png)
