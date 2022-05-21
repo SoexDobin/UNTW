@@ -1113,8 +1113,51 @@ int main() {
 	PrintList(list, 10);
 }				
 ```
-### 퀵정렬	
+### 중요!! 퀵정렬	
+**중강 값을 기점으로 양쪽 정렬을 순회하며 정리한다.또한 재귀함수로 구성한다!**	
+![image](https://user-images.githubusercontent.com/56966606/169650420-87c79a75-db0e-4421-8564-5b63d560295d.png)	
 ```c++
+void PrintList(int list[], int size) {
+   for (int i = 0; i < size; ++i)
+      printf("%d ", list[i]);
+   printf("\n");
+}
+void Swap(int& a, int& b) {
+   int t = a;
+   a = b;
+   b = t;
+}
+void _QuickSort(int list[], int low, int high) {
+    if (low <= high) {
+        int pivot = low; //list[pivot]
+        int i = pivot + 1; //low + 1 시작값 초기화
+        int j = high;
+        while (i <= j) {
+            while (list[pivot] > list[i]) //pivot보다 작은값 찾기
+                ++i;
+            while (list[pivot] < list[j]) //pivot보다 큰값 찾기
+                --j;
+            if (i <= j)//pivot을 중심으로 두개의 계산이 끝나는 지점
+                Swap(list[i++], list[j--]);
+            PrintList(list, 10);
+        }
+        printf("\n");
+        Swap(list[pivot], list[j]);
+        PrintList(list, 10);
+
+        _QuickSort(list, low, j - 1);
+        _QuickSort(list, j + 1, high);
+    }
+}
+void QuickSort(int list[], int size) {
+    _QuickSort(list, 0, size - 1);
+}
+int main() {
+    int list[10] = { 46, 65, 25, 94, 68, 75, 35, 59, 84, 15 };
+
+    QuickSort(list, 10);
+    PrintList(list, 10);
+}	
 ```
 ![일반 2진 트리](https://user-images.githubusercontent.com/56966606/169471439-6c74a113-5364-4180-a8af-b70e4ea61029.png)
 ![2진 트리](https://user-images.githubusercontent.com/56966606/169471446-36fb581a-d8b4-48ec-b2f9-0333f8d3869f.png)
