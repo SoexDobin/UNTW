@@ -1,4 +1,4 @@
-# 알고리즘
+[# 알고리즘
 ## 문법
 #### 참조방법
 ``` c++
@@ -1173,3 +1173,63 @@ int main() {
 * 완전 2진트리는 leaf와 branch 모두를 가지고 있어야 한다.
 + 2진 포화 트리는 2의 자식을 가지는 것은 동일하지만 branch만 있고 leaf가 없는 경우에 포화 트리라고 한다.
 + 가지가 꽉 차있고 잎이 듬성 등성 나는경우가 2진 포화 트리이다.
+### 자료구조 힙이되기위한 조건 2가지
+* 1. 완전 2진 트리구조여야 한다. : heap은 완전 2진트리를 전제로 작동한다.
+* 2. 힙 순서 속성 을 가져야한다.
+	- 최소 루트: root가 최소값으로 점점 큰값으로 2진트리가 뻗어간다.
+	- 최대 루트: root가 최대값으로 점점 작은값으로 2진트리가 뻗어간다.
+### 2진트리 탐색 방법
+* 2진 탐색트리: 검색에 강력하다.& key값을 기반으로 나머지를 검새가능하다.
+* 2진 탐색트리 기반 탐색 방법 4가지 (A부모, B왼쪽 자식, C우측 자식)
+* 순차적으로 - inoreder : B -> A -> C
+* 부모먼저 - preorder : A -> B -> C
+* 하위 레벨 자식먼저 - postorder : B -> C -> A
+* 최상위 왼쪽부터 형제끼리 - levelorder : A -> B -> C
+
+**알고리즘 자료구조를 통한 배열**
+```c++
+void PrintArray(int arr[], int size) {
+	for (int i = 0; i < size; ++i)
+		printf("%d ", arr[i]);
+	printf("\n");
+}
+int main() {
+	int arr[8] = {20, 38, 40, 25, 50, 19, 80, 78};
+	int size = 8;
+	PrintArray(arr, size);
+	make_heap(arr, arr + size);
+	PrintArray(arr, size); // 80 78 40 38 50 19 20 25
+	sort_heap(arr, arr + size);
+	PrintArray(arr, size); // 19 20 25 38 40 50 78 80
+}
+```
+**기본 2진 트리** 	
+```c++
+struct Node {
+	int data;
+	Node* lChild;
+	Node* rChild;
+};
+Node* AllocNode(int data) {
+	Node* n = (Node*)malloc(sizeof(Node));
+	n->data = data;
+	n->lChild = n->rChild = NULL;
+	return n;
+}
+int main() {
+	Node* root = NULL;
+	root = AllocNode(50);
+
+	root->lChild = AllocNode(40);
+	root->rChild = AllocNode(70);
+
+	root->lChild->lChild = AllocNode(30);
+	root->lChild->rChild = AllocNode(45);
+	root->rChild->lChild = AllocNode(60);
+	root->rChild->rChild = AllocNode(100);
+}				 
+```
+```c++
+```	
+```c++
+```	](url)
