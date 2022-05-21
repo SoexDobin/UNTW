@@ -956,8 +956,165 @@ int main() {
 	Maze(0, 0, 9);
 }	
 ```		
+# 기말 2차시
+### 시험!!! 배열에서 제일 큰 값을 찾아내는 출력
+```c++
+void PrintList(int list[], int size) {
+   for (int i = 0; i < size; ++i)
+      printf("%d ", list[i]);
+   printf("\n");
+}
+int Max(int list[], int size) {
+   int maxIdx = 0;
+   for (int i = 1; i < size; ++i) {
+       if (list[maxIdx] < list[i])
+           maxIdx = i;
+   }
+   return maxIdx;
+}
+int main() {
+   int list[10] = { 35, 65, 25, 92, 68, 75, 46, 59, 84, 15 };
 
-![재귀함수](https://user-images.githubusercontent.com/56966606/169396994-ccf9bca4-9d5e-454c-a411-dcbf6a81c01e.png)
-	
+   int maxidx = Max(list, 10);
+   printf("list[%d]: %d\n", maxidx, list[maxidx]);
+   //초기화
+   list[maxidx] = 0;
+   PrintList(list, 10);
+}
+```
+* 배열의 값이 아닌 위치를 찾아내 출력하는것을 이해해야 한다.
+
+##정렬의 종류
+* 선택정렬
+* 삽입정렬
+* 버블정렬
+* 퀵정렬
+				  		  
+### 선택정렬
+**배열을 순회하면서 최고값을 찾아 현재인텍스와 자리를 바꾼다.**				  
+```c++
+void PrintList(int list[], int size) {
+    for (int i = 0; i < size; ++i)
+        printf("%d ", list[i]);
+    printf("\n");
+}
+void Swap(int& a, int& b) {
+    int t = a;
+    a = b;
+    b = t;
+}
+void SelectionSort(int list[], int size) {
+    for (int i = 0; i < size; ++i) {
+        int maxidx = i;
+        for (int j = i + 1; j < size; ++j) //초기값 설정 Max함수
+            if (list[maxidx] > list[j])
+            	maxidx = j;
+        Swap(list[i], list[maxidx]);
+    }
+}
+int main() {
+    int list[10] = { 35, 65, 25, 92, 68, 75, 46, 59, 84, 15 };
+    SelectionSort(list, 10);
+    PrintList(list, 10);
+}				  
+```
+### 삽입정렬				  				  
+**첫배열부터 한개씩 다른 배열과 비교하면서 자신보다 값이 크면 자신의 다음배열에 위치하도록 한다.**	
+```c++
+void PrintList(int list[], int size) {
+	for (int i = 0; i < size; ++i)
+		printf("%d ", list[i]);
+	printf("\n");
+}
+void Swap(int& a, int& b) {
+	int t = a;
+	a = b;
+	b = t;
+}
+void InsertionSort(int list[], int size) {
+	for (int i = 1; i < size; ++i) {
+		int curValue = list[i];
+		int j = 0;
+		for (j = i - 1; j >= 0; --j)
+			if (list[j] > curValue)
+				list[j + 1] = list[j];
+			else
+				break;
+		list[j + 1] = curValue;
+	}
+}
+int main() {
+	int list[10] = { 15, 25, 35, 65, 27, 68, 75, 46, 59, 84 };
+
+	InsertionSort(list, 10);
+	PrintList(list, 10);
+}	
+```
+### 랜덤 배열에서의 삽입정렬 활용
+```c++
+void PrintList(int list[], int size) {
+	for (int i = 0; i < size; ++i)
+		printf("%d ", list[i]);
+	printf("\n");
+}
+void Swap(int& a, int& b) {
+	int t = a;
+	a = b;
+	b = t;
+}
+void InsertionSort(int list[], int size) {
+	for (int i = 1; i < size; ++i) {
+		int curValue = list[i];
+		int j = 0;
+		for (j = i - 1; j >= 0; --j)
+			if (list[j] > curValue)
+				list[j + 1] = list[j];
+			else
+				break;
+		list[j + 1] = curValue;
+	}
+}
+int main() {
+	int list[100] = { 0 };
+	srand((unsigned)time(NULL));
+	for (int i = 0; i < 100; ++i)
+		list[i] = rand() % 100;
+	PrintList(list, 100);
+	InsertionSort(list, 100);
+
+	PrintList(list, 100);
+}	
+```
+				
+### 버블정렬
+**정렬의 맨 뒤에 배열부터 모든 배열을 순회하면서 비교값보다 크면 뒤로 위치를 옮긴다.**				
+```c++
+void PrintList(int list[], int size) {
+	for (int i = 0; i < size; ++i)
+		printf("%d ", list[i]);
+	printf("\n");
+}
+void Swap(int& a, int& b) {
+	int t = a;
+	a = b;
+	b = t;
+}
+void BubbleSort(int list[], int size) {
+	for (int i = size - 1; i <= size; --i) {
+		for (int j = 0; j < i; ++j)
+			if (list[j] > list[j + 1])
+				Swap(list[j], list[j + 1]);
+	}
+}
+int main() {
+	int list[10] = { 35, 65, 25, 94, 68, 75, 46, 59, 84, 15 };
+
+	BubbleSort(list, 10);
+	PrintList(list, 10);
+}				
+```
+### 퀵정렬	
+```c++
+```
 ![일반 2진 트리](https://user-images.githubusercontent.com/56966606/169471439-6c74a113-5364-4180-a8af-b70e4ea61029.png)
 ![2진 트리](https://user-images.githubusercontent.com/56966606/169471446-36fb581a-d8b4-48ec-b2f9-0333f8d3869f.png)
