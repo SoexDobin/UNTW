@@ -936,3 +936,135 @@ int main() {
 		delete* iter;
 }
 ```
+### 객체의 형식 변환
+**객체의 형식변환**
+1. 생성자 이용
+2. 형식 변환자 이용
+
+**생성자를 이용한 객체의 형식 변한**
+```c++
+class Point {
+	int x, y;
+public:
+	Point(const char* s) :x(1), y(1) {}	// 4
+	Point(int _x, int _y = 0) :x(_x), y(_y) {}
+	void Print()const { cout << x << ", " << y << endl; }
+	int GetX()const { return x; }
+	int GetY()const { return y; }
+	bool operator==(const Point& arg) {
+		return x == arg.x && y == arg.y;
+	}
+};
+int main(){
+	Point p1 = Point(2, 3);	//초기화 c
+	Point p2(2, 3);	// 초기화 c++
+	Point p3 = 10;	//Point p3 = Point(10); 생성자 확인 해두기.
+	Point p4 = "point";	//Point p4 = Point("point");
+
+	p1.Print();
+	p2.Print();
+	p3.Print(); // 10. 0
+	p4.Print(); // 1, 1
+}
+```
+**형식 변환 연산자와 explicit로 명시적 형변환**
+```c++
+class Point {
+	int x, y;
+public:
+	explicit Point(int _x, int _y = 0) :x(_x), y(_y) {}
+	void Print()const { cout << x << ", " << y << endl; }
+	int GetX()const { return x; }
+	int GetY()const { return y; }
+	bool operator==(const Point& arg) {
+		return x == arg.x && y == arg.y;
+	}
+	operator int()const { // Point 형식을 int형식으로 변환 & 형식 안붙인다.
+		return  x + y;
+	}
+	operator const char* () {
+		static char buf[1000]; //함수 종료시 않없어지게 static
+		sprintf_s(buf, "%d, %d", x, y);
+		return buf;
+	}
+};
+int main() {
+	Point p1(2, 3);
+	int n = p1; //p1.operator int();
+	cout << n << endl;
+
+	const char* str = p1;
+	cout << str << endl;
+}
+```
+* explicit 키워드는 자신이 원하지 않은 형변환이 일어나지 않도록 제한하는 키워드이다.
+* explicit는 인수가 하나만 받을때 사용해야한다.
+### 함수 템플릿
+* Template : 클라이언트가 필요할 때마다 타입 변경을 가능하게 해준다.
+* class의 Template : 자료구조에 사용
+* function의 Template : 알고리즘에서 사용
+* 함수 템플릿은 함수가 아니라 함수 트리라고한다.
+
+**함수 템플릿 사용하기**
+``c++
+template <typename T> //진짜 함수를 만들어 낼 수 있는 함수를 함수 템플릿 이라고한다.
+int Find(T lt[], int size, T key) {
+	for (int i = 0; i < size; ++i)
+		if (key == lt[i])
+			return i;
+}
+class Point {
+	int x, y;
+public:
+	explicit Point(int _x = 0, int _y = 0) :x(_x), y(_y) {}
+	void Print()const { cout << x << ", " << y << endl; }
+	int GetX()const { return x; }
+	int GetY()const { return y; }
+};
+int main() {
+	int arr[5] = { 5, 8, 2, 6, 3 };
+	int idx = Find(arr, 5, 6); // (위치, 개수, 찾을 값)
+	if (idx != -1)
+		cout << idx << " : " << arr[idx] << endl;
+
+	double darr[5] = { 5.1, 8.2, 2.3 , 6.4, 3.5 };
+	idx = Find(darr, 5, 6.4);
+	if (idx != -1)
+		cout << idx << " : " << darr[idx] << endl;
+}
+```
+**클래스 템플릿 사용하기**
+```c++
+template <typename T>
+class Stack {
+	T* buf;
+	int top;
+	int capacity;
+	const Stack& operator=(const Stack& arg) { }
+public:
+	Stack(int cap = 100) :buf(nullptr), top(0), capacity(cap) {
+		buf = new T[capacity];
+	}
+	Stack(const Stack& arg) :buf(nullptr), top(arg.top), capacity(arg.capacity) {
+		buf = new T[capacity];
+	}
+	~Stack() { delete[] buf; }
+	void Push(const T data) { buf[top++] = data; }
+	const T& Top()const { return buf[top - 1]; } // 반환 타입에 주의하자
+	void Pop() { --top; }
+};
+int main() {
+	Stack<double> s1;
+
+	s1.Push(10.34);
+	s1.Push(20.42);
+	s1.Push(30.87);
+
+	cout << s1.Top() << endl;
+	s1.Pop();
+	cout << s1.Top() << endl;
+	s1.Pop();
+	cout << s1.Top() << endl;
+	s1.Pop();
+}
+```
