@@ -369,27 +369,35 @@ class Car{
 2. 국지화를 통해 변경 될때 파급효과가 가장 작을 수있게 수정해야 한다.
 3. 명령을 추상화해서 객체로 만드는 것이 커맨드패턴의 핵심이다.
 * 반복적인 수정이 이루어지는 코드는 재사용이 용의하게 만들어야 할 필요가 있는지 생각해봐야 한다.	
-* OCP를 통해 수정에 닫혀있고 확장에 열려 있어야한다.
 * invoke작업으로 선언하고 Excute로 불러온다.
 ![image](https://user-images.githubusercontent.com/56966606/169700754-82542f32-3580-4c29-a3d0-a681828c34d8.png)
+![image](https://user-images.githubusercontent.com/56966606/169701044-428bf5cc-6433-40aa-af22-7061732e1952.png)
 
 ### 프로토타입  prototype pattern
-* 객체 복사를 이하여 사용한다.
+* 객체의 깊은 복사를 이하여 사용한다.
 * 복사를 통해 불필요한 if, case를 줄이고 추상메서드를 기반으로 메서드가 파생될수 있게 된다.
 * 단 내부적으로 추상메서드만의 자료구조가 필요며 부모 메서드에 is_a 관계여야 한다.
-* 같은 계층 집합객체 상속에 있어 분명해야 한다.
-**week=ptr(reference) **
+* 같은 계층 집합객체 상속에 있어 분명해야 한다.(형제 끼리의 추상화가 확실해야 한다.) 
+![image](https://user-images.githubusercontent.com/56966606/169701743-da703d07-07dc-4bef-89df-716371c1a629.png)
+* 주소 참조 주의 해야 한다.
+	
 #기말 2차시
 ### 상태 패턴
-* 
-* 
+* 상태에 따라 기능 요청이 다르다.
+* 각 상태는 서로를 알고있으며 각각 요소가 서로 반응한다.
+![image](https://user-images.githubusercontent.com/56966606/169703090-8877453f-1fe7-416e-976d-f549921fe416.png)
+![image](https://user-images.githubusercontent.com/56966606/169703102-9297957f-959b-4cfa-a8b8-c756f8222d60.png)
+![image](https://user-images.githubusercontent.com/56966606/169703117-7e79b197-4a72-4c60-9b3e-b3f3cd345f61.png)
+**상태 변경에 잘 주의 할 것**
+
 ### 데코레이터 패턴 Decorator pattern
 * 조립구조를 개선하여 
 * 데코레이터는 자신조차도 자신을 재상속 한다.
 * 데코레이터는 operator를 가져야한다.
-* operator는 부모의 operato기능을 상속 받아 호출된다.
+* operator는 부모의 operator기능을 상속 받아 호출된다.
 * ex)게임속 로그라이크 아이템처럼 먹으면 충첩되게 만드는 게임에 적용하기 쉽다. 	
 out의 3가지 종류
+	
 ### 옵저버 패턴 Observer pattern(중요!)
 * 사용자에게 쉽게 보여주기위한 이벤트를 말한다.(화면상에 보이기위한 데이터)
 * view 클래스들이 객체데이터를 계속해서 보면서 특정 조건이나 변화에대해 view에게 신호를 주면 (pull방식)데이터를 받아간다.
@@ -402,10 +410,10 @@ out의 3가지 종류
 **옵저버의 상태 전달 방법**
 * 기본 subject에 상태가 주어지면 호출되는 방식.
 * subject 객체의존주입으로 많은 내용을 다른 상태를 내보내 호출 할때.
-* GUI 구현 중요!! 여러 옵저버가 다양한 subject에 의존 될 수 있다.
+**GUI 구현 중요!! 여러 옵저버가 다양한 subject에 의존 될 수 있다.**
 	- 한 개의 옵저버 객체를 여러 주제 객체에 등록할 수 있다. ex.)회원 로그인, 비회원 로그인
 	- 주제를 구분 할 수 있는 밥법을 강구하고 객체참조를통해 여러 객체에 등록 가능하다. 
-* 옵저버 패턴 구현 고려사항 중요!!
+**옵저버 패턴 구현 고려사항 중요!!**
 	- 주제 객체의 통지 기능 실행 주체
 	![image](https://user-images.githubusercontent.com/56966606/168521305-ac28208f-f845-401b-8fae-7f4ed8180f5c.png)
 	- 옵저버 인터페이스 분리
@@ -419,7 +427,7 @@ out의 3가지 종류
 		+ 러닝타임이 길다면 예외나 별도의 방안을 추구해야 한다.
 	![image](https://user-images.githubusercontent.com/56966606/168524606-465cb901-7bcd-4bac-b2cd-ec83d637f529.png)
 
-* 최종 옵저버 패턴 다이어그램
+**최종 옵저버 패턴 다이어그램**
 ![image](https://user-images.githubusercontent.com/56966606/168524126-39a68944-063a-4466-8414-75cf73c2fa7a.png)
 ### 미디에이터 패턴 Mediator pattern
 * 
