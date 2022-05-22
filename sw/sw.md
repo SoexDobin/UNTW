@@ -433,9 +433,12 @@ class Car{
 **최종 옵저버 패턴 다이어그램**
 ![image](https://user-images.githubusercontent.com/56966606/168524126-39a68944-063a-4466-8414-75cf73c2fa7a.png)
 ### 미디에이터 패턴 Mediator pattern
-* 
+* 다른 요소끼리 소통하지 못하고 미디에이터 하나를 통해 다를 요소들과 간접 통신하는 방식이다. 
 * 
 *
+![image](https://user-images.githubusercontent.com/56966606/169704110-881a76be-0cca-4c81-954b-c9f73dff6e81.png)
+![image](https://user-images.githubusercontent.com/56966606/169704253-cdf546d6-0015-4bf1-a1f2-0167a5212d2e.png)
+
 ### 퍼사드 패턴 Fasade pattern 
 * 데이터 베이스 형식에 있어 입출력에 다양한 의존형태로 인해 코드와 관계가 복잡해질때 사용한다.
 * 의존과 중복코드 제거를 위해 뷰어와 데이터베이스 사이 스트림이 퍼사드 역할을 하여 의존 형태를 깔끔하게 맞춰준다.
