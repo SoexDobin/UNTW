@@ -363,7 +363,7 @@ class Car{
 * 유사한 서브 클래스를 묶어 공통된 내용을 상위 클래스에 정의한다.
 * 코드 양이 줄고 유지보수를 용이하게 해준다.
 * 일반적으로 템플릿이 적용된 메서드 이외에는 protected로 메서드가 정의 된다.
-#기말 1차시
+# 기말 1차시
 ### 커맨드 패턴 command pattern
 1. 변경될것 같은 코드와 아닐 것 같은 코드를 분리한다.
 2. 국지화를 통해 변경 될때 파급효과가 가장 작을 수있게 수정해야 한다.
@@ -381,7 +381,7 @@ class Car{
 ![image](https://user-images.githubusercontent.com/56966606/169701743-da703d07-07dc-4bef-89df-716371c1a629.png)
 * 주소 참조 주의 해야 한다.
 	
-#기말 2차시
+# 기말 2차시
 ### 상태 패턴
 * 상태에 따라 기능 요청이 다르다.
 * 각 상태는 서로를 알고있으며 각각 요소가 서로 반응한다.
@@ -396,8 +396,11 @@ class Car{
 * 데코레이터는 operator를 가져야한다.
 * operator는 부모의 operator기능을 상속 받아 호출된다.
 * ex)게임속 로그라이크 아이템처럼 먹으면 충첩되게 만드는 게임에 적용하기 쉽다. 	
-out의 3가지 종류
-	
+**중요!! out의 3가지 종류**
+![image](https://user-images.githubusercontent.com/56966606/169703435-07a97c44-199c-4219-9570-7bbf957dd5aa.png)
+![image](https://user-images.githubusercontent.com/56966606/169703445-9a357d9a-b71a-49aa-9b2f-f3ecf2cc4984.png)
+![image](https://user-images.githubusercontent.com/56966606/169703453-b32d07e3-63f7-480d-8081-836aeaf37275.png)
+
 ### 옵저버 패턴 Observer pattern(중요!)
 * 사용자에게 쉽게 보여주기위한 이벤트를 말한다.(화면상에 보이기위한 데이터)
 * view 클래스들이 객체데이터를 계속해서 보면서 특정 조건이나 변화에대해 view에게 신호를 주면 (pull방식)데이터를 받아간다.
