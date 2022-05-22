@@ -560,7 +560,7 @@ int main() {
 }
 ```
 
-#기말 1차시
+# 기말 1차시
 * binding : 연결하다.
 	- virtual을 통한 실행할때 객체 타입을 파악하여 동적할당
 * compiletime : static
@@ -795,3 +795,144 @@ int main() {
 }
 ```
 * 조건자는 참과 거짓을 bool or 정수값으로 반화하는 함수를 말한다.
+# 기말 2차시
+### iterator 반복자(배열 요소를 가르키는 포인터)
+- 컨테이너와 컨테이너 안의 있는 요소를 구별
+- 요소의 값을 확인
+- 컨테이너 안에 있는 요소들 간에 이동할수 있는 연산 제공
+- 컨테이너가 효과적으로 처리할 수 있는 방식으로 가용한 연산들을 한정
+	+ begin() vecctor의 첫번째 요소를 가르키는 반복자 변환 
+	+ end() vector의 마지막요소의 바로뒤를(빈 vector)가르키는 반복자 변환
+
+### vector
+**vector 포인터형으로 만들어 써보기**
+```c++
+class Point {
+	int x, y;
+public:
+	Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
+	void Print()const { cout << x << ", " << y << endl; }
+	int GetX()const { return x; }
+	int GetY()const { return y; }
+	bool operator==(const Point& arg) {
+		return x == arg.x && y == arg.y;
+	}
+
+};
+int main() {
+	vector<Point> v;
+	vector<int> n;
+	v.push_back(10);
+	v.push_back(20);
+	v.push_back(30);
+
+	vector<Point>::iterator iter = find(v.begin(), v.end(), Point(3, 4));
+	(*iter).Print();
+}
+```
+* find()는 인자로 탐색할 범위와 탐색할 원소를 받는다.
+
+**vector cmp로 불린을 통해 특정 값 찾아내기**
+```c++
+class Point {
+	int x, y;
+public:
+	Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
+	void Print()const { cout << x << ", " << y << endl; }
+	int GetX()const { return x; }
+	int GetY()const { return y; }
+	bool operator==(const Point& arg) {
+		return x == arg.x && y == arg.y;
+	}
+
+};
+bool cmp(const Point& arg){
+	return arg.GetX() + arg.GetY() >= 100;
+}
+int main() {
+	vector<Point> v;
+
+	v.push_back(Point(2, 3));
+	v.push_back(Point(3, 4));
+	v.push_back(Point(555, 55));
+	v.push_back(Point(5, 6));
+
+	vector<Point>::iterator iter = find_if(v.begin(), v.end(), cmp);
+	if (iter != v.end())
+		(*iter).Print();
+	else
+		cout << "없다!" << endl;
+}
+```
+* find_if는 특정 조건에 일치하는 원소를 탐색한다.
+**state로 특정값을 검색 해보게 만들자**
+```c++
+class Point {
+	int x, y;
+public:
+	Point(int _x = 0, int _y = 0) :x(_x), y(_y) {}
+	void Print()const { cout << x << ", " << y << endl; }
+	int GetX()const { return x; }
+	int GetY()const { return y; }
+	bool operator==(const Point& arg) {
+		return x == arg.x && y == arg.y;
+	}
+};
+struct Compare {
+	int state;
+	Compare(int s = 0) :state(s) { }
+	bool operator()(const Point& arg) {
+		return arg.GetX() + arg.GetY() >= state; //찾은값이 state랑 같거나 큰값
+	}
+};
+int main() {
+	vector<Point>v;
+
+	v.push_back(Point(2, 3));
+	v.push_back(Point(3, 4));
+	v.push_back(Point(4, 5));
+
+	vector<Point>::iterator iter = find_if(v.begin(), v.end(), Compare(9));
+	if (iter != v.end())
+		(*iter).Print();
+	else
+		cout << "없다" << endl;
+}
+```
+**predicate가 없으면 안되는 시스템 heap할당 vector**
+```c++
+class Point {
+	int x, y;
+public:
+	Point(int _x = 0, int _y = 0) :x(_x), y(_y) {}
+	void Print()const { cout << x << ", " << y << endl; }
+	int GetX()const { return x; }
+	int GetY()const { return y; }
+	bool operator==(const Point& arg) {
+		return x == arg.x && y == arg.y;
+	}
+};
+struct Compare {
+	int state;
+	Compare(int s = 0) :state(s) { }
+	bool operator()(const Point* arg) { //조건자 함수
+		return arg->GetX() + arg->GetY() >= state; //찾은값이 state랑 같거나 큰값
+	}
+};
+int main() {
+	vector<Point*>v;
+
+	v.push_back(new Point(2, 3));
+	v.push_back(new Point(3, 4));
+	v.push_back(new Point(4, 5));
+	v.push_back(new Point(55, 50));
+
+	vector<Point*>::iterator iter = find_if(v.begin(), v.end(), Compare(100));
+	if (iter != v.end())
+		(*iter)->Print();
+	else
+		cout << "없다" << endl;
+	for (vector<Point*>::iterator iter = v.begin(); iter != v.end(); ++iter)
+		delete* iter;
+}
+```
