@@ -434,8 +434,7 @@ class Car{
 ![image](https://user-images.githubusercontent.com/56966606/168524126-39a68944-063a-4466-8414-75cf73c2fa7a.png)
 ### 미디에이터 패턴 Mediator pattern
 * 다른 요소끼리 소통하지 못하고 미디에이터 하나를 통해 다를 요소들과 간접 통신하는 방식이다. 
-* 
-*
+* 옵저버와 다르게 상호 작용이 아니 중재자 자기 자신을 중심으로 프로그램화 된다.
 ![image](https://user-images.githubusercontent.com/56966606/169704110-881a76be-0cca-4c81-954b-c9f73dff6e81.png)
 ![image](https://user-images.githubusercontent.com/56966606/169704253-cdf546d6-0015-4bf1-a1f2-0167a5212d2e.png)
 
@@ -447,3 +446,36 @@ class Car{
 ![image](https://user-images.githubusercontent.com/56966606/168535191-2ab63028-0d9b-4f81-9889-ac4dd745fe7f.png)
 **중요! FlleStream(빨간색) 부분만 소켓으로 바꿔 용도 변경가능하다.**
 
+### 추상 팩토리 패턴 Abstract Factory pattern 중요!!!!
+* 특정 객체 호출시 관련된 객체 군 통체로 구현한다.
+* 게임을 예시로 팩토리 메서드는 필요로 하는 객체들 모두를 선언 해준다. (Enemy가 필요하면 필요한 enemy객체를 호출해준다.)
+	* 객체 생성에 있어 OCP를 정확히 구현해야하는  패턴이다.
+![image](https://user-images.githubusercontent.com/56966606/169742879-6357d9ad-a245-4112-805f-fae63eaaee65.png)
+* getFactory()메서드는 자식 팩토리를 호출해주는 역할을 한다.
+	
+### 프록시 패턴 Proxy pattern 요즘 안쓴다.
+* 모든 객체를 한번에 가져와 클라이언트에 보여주면 성능이 저하된다.
+* 목록 중에 일부를 타임라인을 만들어 정해진 것들을 일부만 보여주게 만든다.
+* 프록시의 기본 3가지
+	- 가상 프록시
+	- 보호 프록시	
+	- 원격 프록시
+* 중간에 놓여져서 실제 실행되는 메서드 대신에 위에 3개가 돌아가며 성능 저하를 막는다.
+![image](https://user-images.githubusercontent.com/56966606/169749107-03e65542-827f-4e05-b910-72851a590aa8.png)	
+
+### 어뎁터 패턴 Adapter pattern
+* 서로 다른 인터페이스를 클라이언트가 요구하는 방식으로 두개다 사용하기 위해서 어뎁터 패턴이 존재한다.
+![image](https://user-images.githubusercontent.com/56966606/169752856-a44f5145-0a54-452c-9f9d-8b27eb8754f4.png)
+* 주로 사용하는 조립방식의 어뎁트 패턴
+![image](https://user-images.githubusercontent.com/56966606/169752144-494186fa-621c-463a-b141-bcfbdcb15d36.png)
+```c++
+	private SearchResult convertToResult(QueryResponse response)로 Serch형식으로 반환을 맞춰준다.
+```
+![image](https://user-images.githubusercontent.com/56966606/169752946-82601ee2-92a7-40e0-a84b-4c5206b8fa31.png)
+* 상속 방식의 어뎁트 패턴 (c++ 관련이라는 것을 참조만 할 것)
+![image](https://user-images.githubusercontent.com/56966606/169752979-c3bca282-d605-403e-b2db-5d60a3a5eb22.png)
+* 시험때 private에 유의하여 상속 코드 구현할 것. query는 오직 adapter 구현을 위한 인터페이스이다.
+* 상속과 조립은 둘다 같은 인터페이스를 가진다. 그러나 다른점은 노출되는 인터페이스가 다르다.
+* 조립을 통해서 모든 인터페이스를 안가져도 된다.
+
+	
