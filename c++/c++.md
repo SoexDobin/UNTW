@@ -1068,3 +1068,180 @@ int main() {
 	s1.Pop();
 }
 ```
+# 기말 4차시
+**iterator은 모든 stl컨테이너 타입이 가지고있는 반복자이다.**
+```c++
+int main() {
+	vector<int> v;
+
+	v.push_back(10);
+	v.push_back(20);
+	v.push_back(30);
+	
+	// 모든 컨테이너는 iterator 클래스를 보유하고 있다.
+	for (vector<int>::iterator iter = v.begin(); iter != v.end(); ++iter)
+		cout << *iter << " ";
+	cout << endl;
+	// 연속 기반 컨테이너에서만 제공한다.
+	for (vector<int>::size_type i = 0; i < v.size(); ++i)
+		cout << v[i] << " ";
+	cout << endl;
+}
+```
+**내부 클래스(iterator)는 외부 클래스(Array)만의 클래스가 된다.**
+```c++
+class Array { //외부 클래스
+public:
+	class Iterator { // 내부 클래스
+	public:
+		void Print()const { cout << "iterator" << endl; }
+	};
+	typedef Iterator Iterator2; // 내부클래스(내부 정의 형식)
+};
+int main() {
+	Array arr;
+	Array::Iterator iter1;
+	Array::Iterator2 iter2;
+
+	iter1.Print();
+	iter2.Print();
+}
+```
+* iterator는 지역 클래스로써 사용 가능하다.
+**살짝 중요! vector에 Person 주소타입 넣어보기**
+```c++
+class Person {
+public:
+	void Print()const { cout << "Person" << endl; }
+};
+int main() {
+	vector<Person*> v;
+
+	v.push_back(new Person());
+	v.push_back(new Person());
+	v.push_back(new Person());
+
+	for (vector<Person*>::iterator iter = v.begin(); iter != v.end(); ++iter)
+		(*iter)->Print();
+	for (vector<Person*>::iterator iter = v.begin(); iter != v.end(); ++iter)
+		delete* iter;
+}
+```
+* 주의점은 리턴 값에 지역객체 반환은 함수 실해시 없어지기에 쓰면 안된다.
+* 중요!! 주소 타입일 경우 new 선언을 통해 접근해야한다.
+* new가 사용되면 delete는 필수!
+**Array배열과 연산자중복으로 At()메서드 간단히 만들기**
+```c++
+class Array {
+	int* buf;
+	int size;
+	int capacity;
+	Array(const Array& arg);
+	const Array& operator=(const Array& arg);
+public:
+	Array(int cap = 100) :buf(nullptr), size(0), capacity(cap) {
+		buf = new int[capacity];
+	}
+	~Array() { delete[] buf; }
+	void Add(int data) { buf[size++] = data; }
+	int Size()const { return size; }
+	int At(int idx)const { return buf[idx]; } 
+	int operator[](int idx)const { return At(idx); } // At()연산자 중복
+};
+int main() {
+	Array arr;
+	arr.Add(10);
+	arr.Add(20);
+	arr.Add(30);
+	for (int i = 0; i < arr.Size(); ++i)
+		cout << arr[i] << endl;
+}
+```
+**template로 사용자 지정 템플릿클래스로 만들기**
+* template로 Array객체에 Person 형식으로 출력하는것이 핵심이다.
+```c++
+template <typename T> 
+class Array {
+	T* buf;
+	int size;
+	int capacity;
+	Array(const Array& arg);
+	const Array& operator=(const Array& arg);
+public:
+	Array(int cap = 100) :buf(nullptr), size(0), capacity(cap) {
+		buf = new T[capacity];
+	}
+	~Array() { delete[] buf; }
+	void Add(const T& data) { buf[size++] = data; }
+	int Size()const { return size; }
+	const T& At(int idx)const { return buf[idx]; }
+	const T& operator[](int idx)const { return At(idx); }
+};
+class Person {
+	string name;
+	string phone;
+public:
+	Person(const string& n = "", const string& ph = "") :name(n), phone(ph) {}
+	const string& GetName()const { return name; }
+	const string& GetPhone()const { return phone; }
+	void Print()const {
+		cout << "name: " << name <<
+			", " << "phone: " << phone << endl; }
+};
+int main() {
+	Array<Person*> arr;
+	arr.Add(new Person("Lee", "010-1234-1234"));
+	arr.Add(new Person("kim", "010-4566-6968"));
+	arr.Add(new Person("Bak", "010-8984-5485"));
+	for (int i = 0; i < arr.Size(); ++i)
+		arr[i]->Print();
+	cout << endl;
+	for (int i = 0; i < arr.Size(); ++i)
+		delete arr[i];
+}
+```
+**typeinfo를 통한 객체타입 비교**
+* 부모 타입 객체들 중에서 타입검사와 다운 캐스팅을 통해
+* 필요한 자식 객체를 걸러내어 사용한다.
+* ex.) 광전사와 고위기사가 있으면 고위기사의 Ui에 스톰이 아이콘이 뜨는 경우 
+```c++
+// typeinfo를 통한 객체타입 비교
+int main() {
+	int n = 10;
+	if (typeid(int) == typeid(n))
+		cout << "true" << endl;
+
+	const type_info& ti = typeid(int);
+	const type_info& ti2 = typeid(n);
+	cout << ti.name() << endl;
+	cout << ti.name() << endl;
+
+	if (ti == ti2)
+		cout << "true" << endl;
+}
+```
+**부모 자식의 타입검사 후 다운 캐스팅을 통한 호출**
+```c++
+class Parent {
+public:
+	virtual void Print()const = 0;
+};
+class Child1 : public Parent {
+public:
+	void Print()const { cout << "Child1" << endl; }
+};
+class Child2 : public Parent {
+public:
+	void Print()const { cout << "Child2" << endl; }
+	void PrintChild2()const { cout << "PrintChild2()" << endl; }
+};
+int main() {
+	Parent* arr[4] = { new Child1, new Child2,  new Child1,  new Child2 };
+	for (int i = 0; i < 4; ++i) {
+		if (typeid(*arr[i]) == typeid(Child2)) {
+			((Child2*)arr[i])->PrintChild2();// 매우 중요 코드!!
+		}
+	}
+}
+```
+* 타입 비교후 호출 코드를 잘 이해해 둘 것.
