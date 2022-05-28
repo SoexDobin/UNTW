@@ -1230,6 +1230,7 @@ int main() {
 }				 
 ```
 **Inorder 탐색**
+```c++
 struct Node {
 	int data;
 	Node* lChild;
@@ -1267,7 +1268,6 @@ int main() {
 
 	Inorder(root); // 30 40 45 50 60 70 100
 }	
-```c++
 ```
 **Preorder 탐색**
 ```c++
