@@ -1245,3 +1245,5 @@ int main() {
 }
 ```
 * 타입 비교후 호출 코드를 잘 이해해 둘 것.
+![image](https://user-images.githubusercontent.com/56966606/170908057-7f6fc87f-899d-40c6-8638-50deb47fe52a.png)
+
