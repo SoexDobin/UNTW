@@ -1247,3 +1247,133 @@ int main() {
 * 타입 비교후 호출 코드를 잘 이해해 둘 것.
 ![image](https://user-images.githubusercontent.com/56966606/170908057-7f6fc87f-899d-40c6-8638-50deb47fe52a.png)
 
+# 기말 5차시
+6월 20일 시험
+**c++언어의 타입케스트**
+1. static_cast : 정적 형식변환
+	* 수치
+	* 계층구조 형식변환
+2. const_cast : const형식 타입의 const를 제거똔느 주입하는 형변환 하기위해사용한다.
+	* 포인트 형식끼리만 가능하다. 참조는 되지만 안한다.
+3. reinterpret_cast : 임의 포인터 타입끼리 형변환을 해준다.
+	* 전혀 상관없는 타입끼리 가능하다.
+4. dynamic_cast : 동적인 형식변환
+	* 포인터 또는 참조 타입을 컴파일 하면서 타입 케스팅을 시켜준다.
+
+* 자식이 구체화된 타입을 가지고있을떄 형변환을 & 다운케스팅 반대는 업케스팅
+
+**정적 형식변환 static_cast**
+```c++
+int main() {
+	int n = 10;
+ 	double d = 3.3;
+
+ 	n = (int)d;
+ 	n = static_cast<int>(d);
+ 	cout << n << ", " << d << endl;
+}
+```
+
+**말도 안되는 형식변환에는 reinterpret_cast**
+```c++
+class Parent {};
+class Child : public Parent {};
+int main() {
+	int n = 0x41424344;
+	//char* pc = (char*)&n; //c의 형변환
+
+	char* pc = reinterpret_cast<char*>(&n);
+	cout << pc[0] << endl;
+	cout << pc[1] << endl;
+	cout << pc[2] << endl;
+	cout << pc[3] << endl;
+}
+```
+
+**상수 케스팅 const_cast**
+```c++
+class Parent {};
+class Child : public Parent {};
+int main() {
+	int n = 100;
+	const int* cp = &n;
+	// int* p = (int*)cp; // c언어 케스팅
+	int* p = const_cast<int*>(cp);
+	cout << *cp << endl;
+}
+```
+
+**주로 자식 객체로 다운케스팅 되는지 확인할때 사용하는 dynamic_cast**
+```c++
+class Parent {
+public:
+	virtual void Print()const = 0;
+};
+class Child1 : public Parent {
+public:
+	virtual void Print()const {
+		cout << "Child1" << endl;
+	}
+};
+class Child2 : public Parent {
+public:
+	virtual void Print()const {
+		cout << "Child2" << endl;
+	}
+	void PrintChild2()const {
+		cout << "PrintChild2" << endl;
+	}
+};
+int main() {
+	Parent* p = new Child2;
+	Child2* c2 = dynamic_cast<Child2*>(p);
+	if (c2 != nullptr)
+		c2->PrintChild2();
+	else
+		cout << "null" << endl;
+}
+```
+## STL(Standard Template Library)
+1. 컨테이너 : 객체를 담는 객체
+	* 연관(association) 컨테이너 : 자동 정렬 규칙
+		- map_multi : 노드기반
+		- set_multi : 노드기반
+	* 순차(sequence) 컨테이너 : 원소 상대 순서
+		- vector : 배열기반
+		- deque : 배열기반
+		- list : 노드기반
+2. 반복자 : 컨테이너 원소를 순회하는 객체
+3. 알고리즘 : stl템플릿 함수
+4. 함수객체
+**위에 4개는 c++ 필수요소**
+5. 어뎁터
+6. 할당기
+ 
+****
+```c++
+struct IntPrinter {
+	string mark;
+	IntPrinter(const string& s = ""): mark(s) { }
+	void operator(int data)const {
+		cout << data << mark;
+	}
+};
+int main() {
+	vector<int> v; // 1. 컨테이너
+	v.push_back(40);
+	v.push_back(10);
+	v.push_back(20);
+	v.push_back(70);
+	v.push_back(90);
+
+	// 2. 알고리즘
+	for_each(v.begin(), v.end(), IntPrinter("")); cout << endl; // 4. 함수객체
+	sort(v.begin(), v.end(), greater<int>()); // 4. 함수 객체이면서 (2항 predicate)
+	for_each(v.begin(), v.end(), IntPrinter("")); cout << endl; // 4. 함수객체
+
+	// 3. 반복자
+	for (vector<int>::const_iterator iter = v.begin();
+		iter != v.end(); ++iter)
+		cout << endl;
+}
+```
