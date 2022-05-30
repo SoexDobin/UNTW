@@ -1349,7 +1349,7 @@ int main() {
 5. 어뎁터
 6. 할당기
  
-****
+**03기준 STL 기본 컨테이너타입 4가지**
 ```c++
 struct IntPrinter {
 	string mark;
@@ -1377,3 +1377,113 @@ int main() {
 		cout << endl;
 }
 ```
+
+**vector 기본**
+```c++
+int main() {
+	vector<int> v;
+	v.push_back(10);
+	v.push_back(20);
+	v.push_back(30);
+	v.push_back(40);
+	v.push_back(50);
+
+	// vector만 가능한 순회 코드
+	// vector가 배열구조에 순차기반이라 그렇다.
+	for (vector<int>::size_type i = 0; i < v.size(); ++i)
+		cout << v[i] << " ";
+	cout << endl;
+
+	if (!v.empty()) {
+		int* p = &v[0];
+		cout << p[0] << endl;
+		cout << p[1] << endl;
+		cout << p[2] << endl;
+		cout << p[3] << endl;
+		cout << p[4] << endl;
+	}
+}
+```
+
+**vector의 메모리 1.5배 정책**
+```c++
+// 1.5배 정책으로 메모리가 늘어나는 vector
+int main() {
+	vector<int> v;
+	v.push_back(10);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(20);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(30);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(40);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(50);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(60);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(70);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(80);
+	cout << v.size() << " : " << v.capacity() << endl;
+
+	for (vector<int>::size_type i = 0; i < v.size(); ++i)
+		cout << v[i] << " ";
+	cout << endl;
+}
+```
+* 벡터의 메모리는 원소를 받고 다 채워 질때 마다 1.5배씩 증가한다.
+
+
+**메모리 용량을 할당해서 효율적인 vector의 reserve()메서드**
+```c++
+int main() {
+	vector<int> v;
+
+	v.reserve(10); // 메모리 생성
+
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(10);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(20);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(30);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(40);
+	cout << v.size() << " : " << v.capacity() << endl;
+	v.push_back(50);
+	cout << v.size() << " : " << v.capacity() << endl;
+}
+
+**중요!!! vector에 내제된 iterator 반복자**
+```c++
+// 컨테이너 타입은 무조건 참조로 따와야한다.
+// 아니면 자원이 너무 소비된다.
+void PrintVector(const vector<int>& av) {
+	for (vector<int>::const_iterator iter = av.begin();
+		iter != av.end(); ++iter)
+		cout << *iter << " ";
+	cout << endl;
+}
+int main() {
+	vector<int> v;
+
+	v.push_back(10);
+	v.push_back(20);
+	v.push_back(30);
+	v.push_back(40);
+	v.push_back(50);
+
+	vector<int>::iterator iter = v.begin();
+	cout << *iter << endl; // iterator에서 *붙이면 참조를 한다.
+	iter += 2; //3번째 벡터 가르키기
+	v.insert(iter, 100);// 3번쨰에 나머지메모리를 밀고 만들어진다. 중요!!
+	PrintVector(v);
+}
+```
+* STL에서 일정 순서를 가지는것을 Sequence 순차열이라 한다.
+* 일관된 원소(일관된 인터페이스)를 참조하기위해 반복자(iterator)를 제공한다.
+* 일반적으로 컨테이너에는 당연히 보관된 요소를 가져다 쓰려고 하기 때문이다.
+* STL은 순차열으로 Input으로 받는다. 또한 반복자는 이와 동일한 순차열을 Input으로 받는다.
+* 결국 STL객체에는 자신이 순차열을 받고 객체안에 iterator에서도 순차열을 쌍으로 받는다.
+* 그래서 알고리즘은 (컨테이너객체 + iterator) 쌍으로 순차열을 가진다.
