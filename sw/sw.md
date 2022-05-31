@@ -490,6 +490,7 @@ class Car{
 * **컴포넌트 패턴 구현 고려 사항 중요!!!**
 	- 컴포지트 패턴에서! 컴포넌트 객체는 메모리에 자신을 root로 트리구조를 가진다. ex.) 메뉴속에 > 메뉴, 2진 트리
 	- 인터페이스를 꼭 컴포넌트에 선언할 필요는 없다.
+![image](https://user-images.githubusercontent.com/56966606/171122209-8fe1e964-6bc9-4226-91c1-8ade055dc69f.png)
 
 ### 이터레이터 패턴 Iterator pattern
 * 집합객체를 순차적으로 접근 할 수 있다.
