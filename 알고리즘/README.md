@@ -1450,4 +1450,92 @@ int main() {
 }	
 ```	
 # 기말 4차시 
-* 
+**STL 힙 사용해보기**
+```c++
+void PrintList(int list[], int size, int heapSize) {
+	printf("size : %d\n", size);
+	if (heapSize != 0)
+		printf("[");
+	for (int i = 0; i < size; ++i) {
+		printf("%5d", list[i]);
+		if (heapSize != 0 && i == (heapSize - 1))
+			printf(" ]");
+	}
+	printf("\n");
+}
+int main() {
+	int list[10] = { 50, 57, 39, 20, 79, 94, 25, 16, 90, 54 };
+	int heapSize = 10;
+
+	make_heap(list, list + heapSize); // 힙에 할당
+	PrintList(list, 10, heapSize);
+	sort_heap(list, list + heapSize); // 힙 재정렬
+	PrintList(list, 10, heapSize);
+}
+```
+**힙 알고리즘 구조**
+```c++
+void PrintList(int list[], int size) {
+	int heapSize = list[0];
+	printf("size : %d\n", size);
+	if (heapSize != 0)
+		printf("[");
+
+	for (int i = 1; i <= size; ++i) {
+		printf("%5d", list[i]);
+		if (heapSize != 0 && i == heapSize)
+			printf(" ]");
+	}
+	printf("\n");
+}
+void Swap(int& a, int& b) {
+	int t = a; a = b; b = t;
+}
+void Push_heap(int list[]) {
+	int size = ++list[0];
+	int child = size;
+	while (child > 1) {
+		int parent = child / 2;
+		if (list[parent] < list[child])
+			Swap(list[parent], list[child]);
+		else
+			break;
+		child = parent;
+	}
+}
+void Pop_heap(int list[]) {
+	Swap(list[1], list[list[0]]); // root값과 끝 배열 스왑
+	--list[0];  //원소 갯수 감소
+	int size = list[0];
+
+	int parent = 1;
+	int child = parent * 2;
+	while (parent * 2 <= size) {
+		if (child < size && list[child] < list[child + 1])
+			// size가 root바로아래 홀수 자식이 heap에 안들어가서 비교 안할 경우가 생긴다.
+			// if문은 난 자식이 2개다 있는 상태라는 공식이 성립된 채로 코드가 컴파일 된다. 없을때를 생각해야한다.
+			child = child + 1;
+		if (list[parent] < list[child])
+			Swap(list[parent], list[child]);
+		else
+			break;
+		parent = child;
+	}
+}
+void Make_heap(int list[], int size) {
+	for (int i = 0; i < size; ++i)
+		Push_heap(list);
+}
+void Sort_heap(int list[]) {
+	int size = list[0];
+	for (int i = 0; i < size; ++i)
+		Pop_heap(list);
+}
+int main() {
+	int list[100] = { 0, 50, 57, 39, 20, 79, 94, 25, 16, 90, 54 };
+	Make_heap(list, 10);
+	PrintList(list, 10);
+	Sort_heap(list);
+	PrintList(list, 10);
+}				
+```				 
