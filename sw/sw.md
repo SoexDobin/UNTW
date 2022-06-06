@@ -696,7 +696,30 @@ class VideoPlayerMediator : PlayerMediator {
 * 유닛을 수정&변경하려면 모의객체(Mock Object)를 만들어 시험하고 유용한 코드로 변경해야 한다.
 ![image](https://user-images.githubusercontent.com/56966606/168535191-2ab63028-0d9b-4f81-9889-ac4dd745fe7f.png)
 **중요! FlleStream(빨간색) 부분만 소켓으로 바꿔 용도 변경가능하다.**
-```
+```java
+class Program {
+  static void Main(string[] args) {
+    Console.WriteLine("***** Fun with Object Serialization *****\n");
+
+    // Make a JamesBondCar and set state.
+    JamesBondCar jbc = new JamesBondCar();
+    jbc.canFly = true;
+    jbc.canFly = true;
+    jbc.canSunmerge = false;
+    jbc.theRadio.stationPresets = new double[] { 89.3, 105.1, 97.1 };
+    jbc.theRadio.hasTweeters = true;
+
+    IFormatter format = new BinaryFormatter();
+
+    using (Stream fStream = new FileStream("CarData.dat", 
+    FileMode.Create, FileAccess.Write, FileShare.Node)) {
+      format.Seriallize(fStream, jbc);
+    }
+    Console.WriteLine("All done");
+
+    Console.ReadLine();
+  }
+}	
 ```	
 	
 ### 추상 팩토리 패턴 Abstract Factory pattern 중요!!!!
