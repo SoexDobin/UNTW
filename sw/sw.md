@@ -437,18 +437,97 @@ void Main() {
 * 단 내부적으로 추상메서드만의 자료구조가 필요하며 부모 메서드에 is_a 상속관계여야 한다.
 * 같은 계층 집합객체 상속에 있어 분명해야 한다.(형제끼리의 추상화가 확실해야 한다.) 
 ![image](https://user-images.githubusercontent.com/56966606/169701743-da703d07-07dc-4bef-89df-716371c1a629.png)
-* 주소 참조 주의 해야 한다.
-	
+* 주소 참조에 주의 해야 한다.
+```java
+abstract class Graphic {
+  public abstract void Draw(Position pos);
+  public abstract Graphic Clone();
+};
+class Triangle : Graphic {
+  public override void Draw(Position pos) { }
+  public override Graphic Clone() {
+    return new Triangle(this);
+  }
+};
+class Rectangle : Graphic {
+  public override void Draw(Position pos) { }
+  public override Graphic Clone() {
+    return new Rectangle(this);
+  }
+};
+class GraphicComposite : Graphic { // 프로토타입 메서드
+  public override void Draw(Position pos) { }
+  public override Graphic Clone() {
+    GraphicComposite pGraphicComposite = 
+      new GraphicComposite(this);
+      foreach(var iter in components_) {
+        Graphic pNewGraphic = iter.Clone();
+        pGraphicComposite.components_.Add(pNewGraphic);
+      }
+      return pGraphicComposite;
+  }
+  List<Graphic> components_;
+};
+class GraphicEditor { // 선택한 프로토 타입 메서드 생성
+  public void AddNewGraphics(Graphic pSelected) {​
+    Graphic pObj = pSelected.Clone();​
+      while (_mouse.IsLeftButtonPushed()) {​
+          Position pos = _mouse.GetPosition();​
+          pObj.Draw(pos);​
+      }​
+    curDoc_.Add(pObj);​
+  }​
+  private Document curDoc_;​
+};​	
+```
 # 기말 2차시
 ### 상태 패턴
 * 일련의 규칙에따라 객체의 상태를 변화시켜, 객체가 할 수 있는 행위르 바꾼다.
 * 각상태를 분리하여 보기쉽게 유지보수가 이롭도록한다.
 * 각 상태는 서로를 알고있으며 각각 요소가 서로 반응한다.
+* State(상태) 메서드를 가진다.
 ![image](https://user-images.githubusercontent.com/56966606/169703090-8877453f-1fe7-416e-976d-f549921fe416.png)
 ![image](https://user-images.githubusercontent.com/56966606/169703102-9297957f-959b-4cfa-a8b8-c756f8222d60.png)
 ![image](https://user-images.githubusercontent.com/56966606/169703117-7e79b197-4a72-4c60-9b3e-b3f3cd345f61.png)
 **상태 변경에 잘 주의 할 것**
+```c++
+class VendingMachine {
+  private State state;
+  public VendingMachine() {
+    state = new NoCoinState();
+  }
+  public void insertCoin(int coin) { // 상태 추가, 변경
+    state.increaseCoin(coin, this);
+  }
+  public void select(int productId) { // 상태 추가, 변경
+    state.select(productId, this);
+  }
+  public void changeState(State newState) { // 상태 추가, 변경
+    this.state = new State;
+  }
+}
+class NoCoinState : State {
+  public override void increaseCoin(int coin, VendingMachine vm) {
+    vm.increaseCoin(coin);
+    vm.changeState(new SelectableState());
+  }
+  public override void select(int productId, VendingMachine vm) {
+    SoundUtil.beep();
+  }
+}
+class SelectableState : State {
+  public override void increaseCoin(int coin, VendingMachine vm) {
+    vm.increaseCoin(coin);
+  }
+  public override void select(int productId, VendingMachine vm) {
+    vm.provideProduct(productId);
+    vm.decreaseCoin();
 
+    if(vm.hasNoCoin())
+     vm.changeState(new NoCoinState());
+  }
+}	
+```
 ### 데코레이터 패턴 Decorator pattern
 * 객체위에 기능들을 입혀서 사용 목적에 걸맞는 객체로 만드는 것을 데코레이터 패턴이라 한다.
 * 조립구조를 개선하고 데코레이터는 자신조차도 자신을 재상속 한다.
@@ -518,7 +597,60 @@ class EncryptionOut : Decorator {
 * 옵저버와 다르게 상호 작용이 아니 중재자 자기 자신을 중심으로 프로그램화 된다.
 ![image](https://user-images.githubusercontent.com/56966606/169704110-881a76be-0cca-4c81-954b-c9f73dff6e81.png)
 ![image](https://user-images.githubusercontent.com/56966606/169704253-cdf546d6-0015-4bf1-a1f2-0167a5212d2e.png)
+```java
+abstract class StatusSubject { // 주제 클래스
+  private List<StatusObserver> observers = new List<StatusObserver>();
+  public void add(StatusObserver observer) {
+    observers.add(observer);
+  }
+  public void remove(StatusObserver observer) {
+    observers.remove(observer);
+  }
+  public void notifyStatus(Status status) {
+    for (StatusObserver observer : observers)
+      observers.onAbnormalStatus(status); // 옵저버에게 상태변화 알림
+  }
+}
+class StatusChecker : StatusSubject {
+  public void check() {
+    Status status = loadStatus();
 
+    if(status.isNotNormal()) { // 비정상 상태면 옵저버에게 변화를 알린다.
+      nase.notifyStatus(status);
+    }
+  }
+  private Status loadStatus() {
+    //...
+  }
+}
+interface StatusObserver {
+  void onAbnormalStatus(Status status);
+}
+class StatusEmailSender : StatusObserver {
+  public override onAbnormalStatus(Status status) {
+    sendEmail(status);
+  }
+  private void sendEmail(Status status){
+    //... 이메일 전송 코드
+  }
+}
+class Special StatusObserver : StatusObserver {
+  private StatusChecker statusChecker;
+  private Siren siren;
+  // 생성시 주제 객체 전달
+  public SpecialStatusObserver(StatusChecker statusChecker) {
+    this.statusChecker = statusChecker;
+  }
+  public override onAbnormalStatus(Status status) {
+    if(status.isFault() && statusChecker.isContinuousFault())
+    siren.begin();
+  }
+}	
+```	
+### 미디에이터 패턴 Mediator pattern	
+* 매티에이터 객체를 통해 다른 현업 객체와 소통하게 한다.
+* 협업 객체들이 미디에이터 객체에 의존 형태가 이루어지면 안된다.	
+	
 ### 퍼사드 패턴 Fasade pattern 
 * 클라이언트와 주체 클래스사이 퍼사드를 둠으로써 필터마냥 퍼사드로 쓸것만 사용 할 수 있도록한다.
 * 이로 인해 클라이언트는 사용하려는 메서드를 모두 알 필요가 없다.
@@ -528,7 +660,9 @@ class EncryptionOut : Decorator {
 * 유닛을 수정&변경하려면 모의객체(Mock Object)를 만들어 시험하고 유용한 코드로 변경해야 한다.
 ![image](https://user-images.githubusercontent.com/56966606/168535191-2ab63028-0d9b-4f81-9889-ac4dd745fe7f.png)
 **중요! FlleStream(빨간색) 부분만 소켓으로 바꿔 용도 변경가능하다.**
-
+```
+```	
+	
 ### 추상 팩토리 패턴 Abstract Factory pattern 중요!!!!
 * 객체 호출시 관련된 객체 군을 통체로 팩토리 클래스로 만들어 조건에따라 객체를 생성한다.
 * 게임을 예시로 팩토리 메서드는 필요로 하는 객체들 모두를 선언 해준다. (Enemy가 필요하면 모든 Enemy에서 필요한 enemy객체를 호출해준다.)
