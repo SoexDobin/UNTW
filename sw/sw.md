@@ -469,16 +469,16 @@ class GraphicComposite : Graphic { // 프로토타입 메서드
   List<Graphic> components_;
 };
 class GraphicEditor { // 선택한 프로토 타입 메서드 생성
-  public void AddNewGraphics(Graphic pSelected) {​
-    Graphic pObj = pSelected.Clone();​
-      while (_mouse.IsLeftButtonPushed()) {​
-          Position pos = _mouse.GetPosition();​
-          pObj.Draw(pos);​
-      }​
-    curDoc_.Add(pObj);​
-  }​
-  private Document curDoc_;​
-};​	
+  public void AddNewGraphics(Graphic pSelected) {
+    Graphic pObj = pSelected.Clone();
+      while (_mouse.IsLeftButtonPushed()) {
+          Position pos = _mouse.GetPosition();
+          pObj.Draw(pos);
+      }
+    curDoc_.Add(pObj);
+  }
+  private Document curDoc_;
+};
 ```
 # 기말 2차시
 ### 상태 패턴
@@ -526,7 +526,7 @@ class SelectableState : State {
     if(vm.hasNoCoin())
      vm.changeState(new NoCoinState());
   }
-}	
+}
 ```
 ### 데코레이터 패턴 Decorator pattern
 * 객체위에 기능들을 입혀서 사용 목적에 걸맞는 객체로 만드는 것을 데코레이터 패턴이라 한다.
@@ -559,7 +559,7 @@ class EncryptionOut : Decorator {
   private byte[] encrypt(byte[] data) {
     // ...
   }
-}	
+}
 ```
 ### 옵저버 패턴 Observer pattern(중요!)
 *  옵저버들의 목록을 객체에 등록하여 상태 변화가 있을 때마다 메서드 등을 통해 객체가 직접 목록의 각 옵저버에게 통지하도록 한다.
@@ -645,11 +645,47 @@ class Special StatusObserver : StatusObserver {
     if(status.isFault() && statusChecker.isContinuousFault())
     siren.begin();
   }
-}	
+}
 ```	
 ### 미디에이터 패턴 Mediator pattern	
 * 매티에이터 객체를 통해 다른 현업 객체와 소통하게 한다.
 * 협업 객체들이 미디에이터 객체에 의존 형태가 이루어지면 안된다.	
+![image](https://user-images.githubusercontent.com/56966606/172140274-19cce7b4-2082-4630-a563-c6fcb4164323.png)
+```java
+abstract class PlayerMediator : ControllerObserver {
+  private MediaController mediacontroller;
+  private TitleUI titleUI;
+
+  public PlayerMediator() {
+    this.mediacontroller = new MediaController();
+      this.mediacontroller.addObserver(this);
+      this.titleUI = new TitleUI();
+      //...​
+  }
+  public void select(File file) {//하위 클래스에서 재사요이나 확장
+    titleUI.setTitle(file); 
+  }
+  // 하위클래스에서 기능 구현
+  // volumeChanged
+  // MediaController
+  // ...
+}
+class VideoPlayerMediator : PlayerMediator {
+  private VideoPlayer videoPlayer;
+
+  public VideoPlayerMediator() {
+    this.videoPlayer = new VideoPlayer();
+  }
+  public override void select(File file) {
+    videoPlayer.play(file); // 메세지 재사용 및 기능 추가
+    base.select(file); //상위 미디에이터에 정의된 협업 기능 재사용​
+  }
+  // 하위 미디에이터에서 새로운 협업 기능 구현​
+  public void volumeChanged(int volume) {
+    videoPalyer.changeVolume(volume);​
+  }
+}	
+```
 	
 ### 퍼사드 패턴 Fasade pattern 
 * 클라이언트와 주체 클래스사이 퍼사드를 둠으로써 필터마냥 퍼사드로 쓸것만 사용 할 수 있도록한다.
