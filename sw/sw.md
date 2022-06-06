@@ -728,6 +728,58 @@ class Program {
 	* 객체 생성에 있어 OCP를 정확히 구현해야하는  패턴이다.
 ![image](https://user-images.githubusercontent.com/56966606/169742879-6357d9ad-a245-4112-805f-fae63eaaee65.png)
 * getFactory()메서드는 자식 팩토리를 호출해주는 역할을 한다.
+```c++
+abstract class EnemyFactory { //추상 팩토리
+  public static EnemyFactory getFactory(int level) {
+    if (level == 1) 
+      return EasyStageEnemyFactory();
+    else
+      return HardEnemyFactory();
+  }
+
+  public abstract Boss createBoss();
+  public abstract SmallFlight createSmallFlight();
+  public abstract Obstacle createObstacle();
+}
+
+// 추상팩토리로 만든 적 객체1
+class EasyStageEnemyFactory : Enemyfactory {
+  public override Boss createBoss() {
+    return new StrongAttackBoss();
+  }
+  public override SmallFlight createSmallFlight() {
+    return new DashSmallFlight();
+  }
+  public override Obstacle createObstacle() {
+    return new RockObstacle();
+  }
+}
+// 추상팩토리로 만든 적 객체2
+class HardStageEnemyFactory : EnemyFactory {
+  public override Boss createBoss() {
+    return new CloningAttackBoss();
+  }
+  public override SmallFlight createSmallFlight() {
+    return new MissleSmallFlight();
+  }
+  public override Obstacle createObstacle() {
+    return new BombObstacle();
+  }
+}
+// 메인
+private EnemyFactory enemyFactory;
+public Stage(int level) {
+  // 각 단계별 EnemyFactory 객체를 얻는다.
+  enemyFactory = EnemyFactory.getFactory(level);
+}
+
+private void createEnemies() {
+  for (int i = 0; i <= ENEMY_COUNT; ++i) {
+    enemies[i] = enemyFactory.createSmallFlight();
+  }
+  boss = enemyFactory.createBoss();
+}	
+```	
 	
 ### 프록시 패턴 Proxy pattern 요즘 안쓴다.
 * 모든 객체를 한번에 가져와 클라이언트에 보여주면 성능이 저하된다.
@@ -739,7 +791,37 @@ class Program {
 	- 원격 프록시 : 프록시객체와 실제 로컬 객체두개가 마치 같은 주소 공간에 있는 것처럼 동작하게 한다.	
 * 중간에 놓여져서 실제 실행되는 메서드 대신에 위에 3개가 돌아가며 성능 저하를 막는다.
 ![image](https://user-images.githubusercontent.com/56966606/169749107-03e65542-827f-4e05-b910-72851a590aa8.png)	
+```java
+class ProxyImage : Image {
+  private string path;
+  private RealImage image;
 
+  public ProxyImage(string path) {
+    this.path = path;
+  }
+  public void draw() {
+    if (image == null)
+     image = new RealImage(path); //최초 접근 시 객체 생성
+
+    image.draw(); // RealImage 객체에 위임
+  }
+}
+class ListUI {
+  private List<Image> image;
+
+  public ListUI(List<Image> image) {
+    this.image = images;
+  }
+
+  public void onScroll(int start, int end) {
+    for(int i = start; i < end; ++i) {
+      Image image = images.get(i);
+      image.draw();
+    }
+  }
+}				  
+```				  
+				  
 ### 어뎁터 패턴 Adapter pattern
 * 서로 호환되지 않는 다른 인터페이스를 클라이언트가 그대로 사용가능 하게한다.
 * 필요로 인해서 수정할 필요가 없으니 인터페이스의 정체성을 지키고 인터페이스를 분리시킬수 있다.
