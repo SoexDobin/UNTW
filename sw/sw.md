@@ -373,7 +373,63 @@ class Car{
 * invoke작업으로 선언하고 Excute로 불러온다.
 ![image](https://user-images.githubusercontent.com/56966606/169700754-82542f32-3580-4c29-a3d0-a681828c34d8.png)
 ![image](https://user-images.githubusercontent.com/56966606/169701044-428bf5cc-6433-40aa-af22-7061732e1952.png)
+```java
+abstract class Command {
+  puvlic abstract void Excute(Request req);
+};
+class LoginCommand : Command {
+  public LoginCommand(UserManager pUserMan) {
+    pUserMan_ = pUserMan;
+  }
+  public override void excute(Request req) {
+    pUserMan_.Checkpasswd(req);
+  }
+  private UserManager pUserMan_;
+};
+class ListCommand : Command {
+  public ListCommand(BBS pBbs) {
+    pBbs_ = pBbs;
+  }
+  public override void Excute(Request req) {
+    pBbs_.DisplayList(req);
+  }
+  private BBS pBbs_;
+};
+class ReadCommand : Command {
+  public ReadCommand(BBS pBbs) {
+    pBbs_ = pBbs;
+  }
+  public override void Excute(Request req) {
+    pBbs_.DisplayItem(req);
+  }
+  private BBS pBbs_;
+}
+void RegisterCommand(){
+  _req2cmd[LOGIN_VAL] = new LoginCommand(_userMan);
+  _req2cmd[BBSLIST_VAL] = new ListCommand(_bbs);
+  _req2cmd[BBSREAD_VAL] = new ReadCommand(_bbs);
+}
+void Main() {
+  string input;
+  RequestParser parser = new RequestParser();
 
+  RegisterCommand();
+
+  while (true) {
+    input = Console.ReadLine();
+
+    Request req;
+    parser.GetRequest(input, req);
+
+    string cmd = req.GetValue(CMD_NAME);
+    Command pCmd = _req2cmd[cmd];
+    if(pCmd != null)
+      pCmd.Excute(req);
+    else 
+      Console.WriteLine("Not Available Command : ");
+  }
+}
+```
 ### 프로토타입  prototype pattern
 * 객체생성에 시간과 비용이 많이들고 유사객체가 있는 경우 사용한다.
 * 주로 객체의 깊은 복사를 이하여 사용한다. 상황에 따라 shallow도 가능은 하다.
@@ -403,7 +459,29 @@ class Car{
 ![image](https://user-images.githubusercontent.com/56966606/169703435-07a97c44-199c-4219-9570-7bbf957dd5aa.png)
 ![image](https://user-images.githubusercontent.com/56966606/169703445-9a357d9a-b71a-49aa-9b2f-f3ecf2cc4984.png)
 ![image](https://user-images.githubusercontent.com/56966606/169703453-b32d07e3-63f7-480d-8081-836aeaf37275.png)
-
+```java
+abstract class Decorator : FileOut {
+  private FileOut delegate;
+  public Decorator(FileOut delegate) {
+    this.delegate = delegate;
+  }
+  protected void doDelegate(byte[] data) {
+    delegate.write(data); // delegate에 쓰기 위임
+  }
+}
+class EncryptionOut : Decorator {
+  public EncryptionOut(FileOut delegate) {
+    base(delegate);
+  }
+  public void Write(byte[] data) {
+    byte[] encryptedData = encrypt(data); // 1. 자신의 기능 수행
+    base.doDelegate(encryptedData); // 2. 부모 이용 파일 쓰기 위임
+  }
+  private byte[] encrypt(byte[] data) {
+    // ...
+  }
+}	
+```
 ### 옵저버 패턴 Observer pattern(중요!)
 *  옵저버들의 목록을 객체에 등록하여 상태 변화가 있을 때마다 메서드 등을 통해 객체가 직접 목록의 각 옵저버에게 통지하도록 한다.
 * view 클래스들이 객체데이터를 계속해서 보면서 특정 조건이나 변화에대해 view에게 신호를 주면 (pull방식으로)데이터를 받아간다.
