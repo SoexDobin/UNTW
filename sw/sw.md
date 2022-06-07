@@ -432,13 +432,12 @@ void Main() {
 ```
 ### 프로토타입  prototype pattern
 * 객체생성에 시간과 비용이 많이들고 유사객체가 있는 경우 사용한다.
-* 주로 객체의 깊은 복사를 이하여 사용한다. 상황에 따라 shallow도 가능은 하다.
+* 주로 객체의 얕은 복사를 이하여 사용한다. 상황에 따라 deep도 가능은 하다.
 * 복사를 통해 클라이언트 필요에 따라 불필요한 if, case를 줄이고 추상메서드를 기반으로 메서드가 파생될수 있게 된다.
-* 단 내부적으로 추상메서드만의 자료구조가 필요하며 부모 메서드에 is_a 상속관계여야 한다.
 * 같은 계층 집합객체 상속에 있어 분명해야 한다.(형제끼리의 추상화가 확실해야 한다.) 
 ![image](https://user-images.githubusercontent.com/56966606/169701743-da703d07-07dc-4bef-89df-716371c1a629.png)
 * 주소 참조에 주의 해야 한다.
-```java
+```c#
 abstract class Graphic {
   public abstract void Draw(Position pos);
   public abstract Graphic Clone();
