@@ -851,12 +851,80 @@ class ListUI {
 	- 컴포지트 패턴에서! 컴포넌트 객체는 메모리에 자신을 root로 트리구조를 가진다. ex.) 메뉴속에 > 메뉴, 2진 트리
 	- 인터페이스를 꼭 컴포넌트에 선언할 필요는 없다.
 ![image](https://user-images.githubusercontent.com/56966606/171122209-8fe1e964-6bc9-4226-91c1-8ade055dc69f.png)
-
+```java
+class Devicegroup : Device {
+  private List<Device> devices = new List<Device>();
+  //컴포넌트 관리
+  public void addDevice(Device d) {
+    devices.add(d);
+  }
+  public void removeDevice(Device d) {
+    device.remove(d);
+  }
+  // 컴포넌트에 실행 위임
+  public void turnOn() {
+    for(Device device : devices)
+      device.turnOn();
+  }
+  public void turnOff() {
+    for(Device device : devices)
+      device.turnOff();
+  }
+}
+class PowerController { // 컴포넌트와 컴포지트 구분없이 인터페이스 사용가능
+  public void turnOn(Long deviceId) {
+    Device device = findDeviceById(deviceId);
+    device.turnOn();
+  }
+}	
+```	
 ### 이터레이터 패턴 Iterator pattern
 * 배열과 리스트 같이 순회를 목적으로 하는 객체에 유용하게 사용된다.
 * 집합객체를 순차적으로 접근 할 수 있다.
 * 인터페이스를 일괄적으로 제공한다.
+```c#
+abstract class Iterator {
+  protected int curPos;
+  public abstract void First();
+  public abstract void Next();
+  public abstract bool IsDone();
+  public abstract Item GetCurItem();
+}
+class ArrayIterator : Iterator {
+  List<Item> items;
 
+  public ArrayIterator(List<Item> items) { 
+    this.items = items;
+  }
+  public override void First() { 
+    curPos = 0; 
+  }
+  public override void Next() {
+    ++curPos; 
+  }
+  public override bool IsDone() {
+    return curPos == items.Count; 
+  }
+  public override Item GetCurItem() {
+    return items[curPos];
+  }
+}
+static void Main(string[] args) {
+  ArrayList al = new ArrayList();
+  al.Add(new Item { Data = 10 });
+  al.Add(new Item { Data = 20 });
+  al.Add(new Item { Data = 30 });
+  al.Add(new Item { Data = 40 });
+  al.Add(new Item { Data = 50 });
+
+  // 이터레이터의 사용
+  Iterator iter = al.CreateIterator();
+  for (iter.First(); !iter.IsDone(); iter.Next()
+    Console.Write("{0} ", iter.GetCurItem().Data);
+  Console.WriteLine( );
+}
+```	
+	
 ### 싱글톤 패턴 Singleton pattern
 * 프로그램 내 제한한 1개의 객체를 구성한다. ex.) 스타의 유닛 제한 
 * 전역 변수를 사용하지 않고 객체를 하나만 생성 하도록하며, 생성된 객체를 어디에서든지 참조할 수 있도록 하는 패턴이다.
@@ -864,6 +932,40 @@ class ListUI {
 * 클라이언트에 제한을 가진 **생성자와 복사 생성자가 매우중요하다.** (public요소를 없는걸 확인 할 것)
 * 인스턴스를 만들지않고 기능을 제공하기 위해 변수와 메서드를 static으로 만들어야 한다.
 * c#과 java에 경우 enum이있고 유니티의 코루틴도 동일하겠지 뭐...
+```C#
+abstract class GameUnit {
+  public abstract void Display(int x, int y);
+  public abstract void DoAction();
+};
+class AttackUnit : GameUnit {
+  public override void Display(int x, int y);
+  public abstract void DoAction() { }
+}
+class ProtectUnit : GameUnit {
+  public override void Display(int x, int y);
+  public abstract void DoAction() { }
+}
+
+static int N_UNIT = 100; // 유닛 용량 100으로 지정
+static int ATTACK_UNIT = 1; // 용량 1 차지
+static int PROTECT_UNIT = 2; // 용량 2 차지
+
+static void Main() {
+  InitUnitArray();
+  //클라이언트에서 최대 N개의 객체가​ 생성되었는지 신경써야 한다.​
+  GameUnit pUnit1 = CreateNewUnit(ATTACK_UNIT); 
+  if (pUnit1 == null)
+    System.Console.WriteLine("더 못 만들어");
+  //클라이언트에서 최대 N개의 객체가​ 생성되었는지 신경써야 한다.​
+  GameUnit pUnit2 = CreateNewUnit(PROTECT_UNIT);
+  if (pUnit2 == null)
+    System.Console.WriteLine("더 못 만들어");
+
+   DestroyUnit(pUnit1);
+   DestroyUnit(pUnit2);
+  /*생성자를 직접 호출하는 경우 N개 이상의 유닛이 존재할 수 있다.​*/
+}	
+```	
 	
 13일 시험문제는 개념과, 의도를 파악하고 괄호넣기, 문구작성
 
