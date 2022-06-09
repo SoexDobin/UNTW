@@ -1434,19 +1434,79 @@ void Levelorder(Node* root) {
 	}
 	UnInitQueue(&q);
 }
+Node* AddNode(Node* root, int key) {
+	if (root == NULL)
+		return AllocNode(key);
+
+	if (key < root->data)
+		root->lChild = AddNode(root->lChild, key);
+	else
+		root->rChild = AddNode(root->rChild, key);
+	return root;
+}
+Node* SearchNode(Node* root, int key) {
+	if (root == NULL)
+		return NULL;
+	if (key < root->data)
+		return SearchNode(root->lChild, key);
+	else if (key > root->data)
+		return SearchNode(root->rChild, key);
+	else
+		return root;
+}
+Node* RemoveNode(Node* root, int key) {
+	if (root == NULL)
+		return NULL;
+	if (key < root->data)
+		root->lChild = RemoveNode(root->lChild, key);
+	else if (key > root->data)
+		root->rChild = RemoveNode(root->rChild, key);
+	else {
+		if (root->lChild == NULL && root->rChild == NULL) {
+			free(root);
+			return NULL;
+		}
+		else if (root->lChild != NULL && root->rChild == NULL) {
+			Node* child = root->lChild;
+			free(root);
+			return child;
+		}
+		else if (root->lChild == NULL && root->rChild != NULL) {
+			Node* child = root->rChild;
+			free(root);
+			return child;
+		}
+		else {
+			Node* p = root->rChild;
+			Node* pp = root;
+			while (1) {
+				pp = p;
+				p = p->lChild;
+			}
+			int deleteKey = root->data;
+			root = RemoveNode(root, deleteKey);
+			root->data = deleteKey;
+			return root;
+		}
+	}
+	return root;
+}
 int main() {
 	Node* root = NULL;
-	root = AllocNode(50);
-
-	root->lChild = AllocNode(40);
-	root->rChild = AllocNode(70);
-
-	root->lChild->lChild = AllocNode(30);
-	root->lChild->rChild = AllocNode(45);
-	root->rChild->lChild = AllocNode(60);
-	root->rChild->rChild = AllocNode(100);
+	root = AddNode(root, 50);
+	AddNode(root, 40);
+	AddNode(root, 70);
+	AddNode(root, 30);
+	AddNode(root, 45);
+	AddNode(root, 60);
+	AddNode(root, 100);
 
 	Levelorder(root); // 50 40 70 30 45 60 100
+	RemoveNode(root, 70);
+	
+	Node* p = SearchNode(root, 60);
+	if (p != NULL)
+		printf("찾은 원소: %d\n", p->data);
 }	
 ```	
 # 기말 4차시 
