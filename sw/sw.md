@@ -375,13 +375,13 @@ class Car{
 ![image](https://user-images.githubusercontent.com/56966606/169701044-428bf5cc-6433-40aa-af22-7061732e1952.png)
 ```java
 abstract class Command {
-  puvlic abstract void Excute(Request req);
+  public abstract void Excute(Request req);
 };
 class LoginCommand : Command {
   public LoginCommand(UserManager pUserMan) {
     pUserMan_ = pUserMan;
   }
-  public override void excute(Request req) {
+  public override void Excute(Request req) {
     pUserMan_.Checkpasswd(req);
   }
   private UserManager pUserMan_;
@@ -461,7 +461,7 @@ class GraphicComposite : Graphic { // 프로토타입 메서드
       new GraphicComposite(this);
       foreach(var iter in components_) {
         Graphic pNewGraphic = iter.Clone();
-        pGraphicComposite.components_.Add(pNewGraphic);
+        pGraphicComposite.components_.Add(pNewGraphic); // 중요 문장
       }
       return pGraphicComposite;
   }
