@@ -539,61 +539,71 @@ class SelectableState : State {
 ![image](https://user-images.githubusercontent.com/56966606/169703453-b32d07e3-63f7-480d-8081-836aeaf37275.png)
 ```java
 abstract class Decorator : FileOut {
-  private FileOut delegate;
+  private FileOut delegate; // 위임 대상
   public Decorator(FileOut delegate) {
     this.delegate = delegate;
   }
   protected void doDelegate(byte[] data) {
-    delegate.write(data); // delegate에 쓰기 위임
+    delegate.write(data); // delegat에 쓰기 위임
   }
-}
+};
 class EncryptionOut : Decorator {
-  public EncryptionOut(FileOut delegate) {
-    base(delegate);
+  public Encryption(FileOut delegat) {
+    base(delegat);
   }
   public void Write(byte[] data) {
-    byte[] encryptedData = encrypt(data); // 1. 자신의 기능 수행
-    base.doDelegate(encryptedData); // 2. 부모 이용 파일 쓰기 위임
+    byte[] encryptedData = encrypt(data);
+    base.doDelegate(encryptedData); // 1. 자신의 기능 수행 2. 부모 이용 파일 쓰기 위임
   }
-  private byte[] encrypt(byte[] data) {
+  private byte[] encrypt (bytge[] data) {
     // ...
   }
 }
+// 데코레이터 조합방식으로 기능 확장
+FileOut delegate = new FileOutImpl();
+FileOut fileOut = new EncryptionOut(new ZipOut(delegate));
+fileOut.write(data);
+
+// .ex) 버퍼 -> 암호회 -> 압축 -> 파일쓰기
+FileOut fileOut = new BufferedOut(newEncryptionOut(new ZipOut(delegate)));
 ```
 ### 옵저버 패턴 Observer pattern(중요!)
 *  옵저버들의 목록을 객체에 등록하여 상태 변화가 있을 때마다 메서드 등을 통해 객체가 직접 목록의 각 옵저버에게 통지하도록 한다.
-* view 클래스들이 객체데이터를 계속해서 보면서 특정 조건이나 변화에대해 view에게 신호를 주면 (pull방식으로)데이터를 받아간다.
+* view 클래스들이 객체데이터를 계속해서 보면서 특정 조건이나 변화에대해 view에게 신호를 주면 (pull방식으로)데이터를 받아간다. ex.)유튜브 구독 시스템
 * 필요한 사람들 한테만 주어야하기 때문에 객체는 자신만의 view리스트를 가진다.
 * 옵저버를 등록하고 제거하는 메서드와 상태 체크를 하는 메서드가 꼭 필요하다.
 * 코드에서 옵저버의 이벤트 메서드는 다른 옵저버들에게 알림을 주어야하기 때문에 public으로 구성된다.
 * onAbnormalStatus(Status status);라는 알림을 받는 코드가 필요하다.
 * 콘크리트는 기본적인 메서드에 상속을 받아와 구체화하는 클래스를 말한다.
-* ex.)유튜브 구독 시스템
+	
 **옵저버의 상태 전달 방법**
 * 기본 subject에 상태가 주어지면 호출되는 방식.
 * subject 객체의존주입으로 많은 내용을 다른 상태를 내보내 호출 할때.
+	
 **GUI 구현 중요!! 여러 옵저버가 다양한 subject에 의존 될 수 있다.**
 	- 한 개의 옵저버 객체를 여러 주제 객체에 등록할 수 있다. ex.)회원 로그인, 비회원 로그인
 	- 주제를 구분 할 수 있는 밥법을 강구하고 객체참조를통해 여러 객체에 등록 가능하다. 
+	
 **옵저버 패턴 구현 고려사항 중요!!**
 	- 주제 객체의 통지 기능 실행 주체
-	![image](https://user-images.githubusercontent.com/56966606/168521305-ac28208f-f845-401b-8fae-7f4ed8180f5c.png)
+		+ 주제(StatusChecker: 객체의 상태가 변경될 때 마다 통지할 때 유리하다.)
+		+ 클라이언트(각각의 상태별 통지 시점을 관리하기 좋다.)
 	- 옵저버 인터페이스 분리
-	![image](https://user-images.githubusercontent.com/56966606/168521459-371389a9-6cf4-49fa-a374-385a024df498.png)
+		+ 필요없는 인터체이스도 구현해야 향후 운영에 차질이 없다.
 		+ isp처럼 인터페이스를 구현이 안되있더라도 효율적인 운영을 위해 구현해야한다.
 	- 통지 시점에서의 주제 객체 상태
-	![image](https://user-images.githubusercontent.com/56966606/168523520-2dd492d1-db8f-4db1-afe2-dcf3920fe4d2.png)
 		+ 통지시점에 객체의 결함이 없어야한다.
+		+ 템플릿 메서드로 검증을 하고 호출 할 수 있다.
 	- 옵저버 객체의 실행 제약 조건
-	![image](https://user-images.githubusercontent.com/56966606/168523852-f74ab7ee-42e3-4c39-bb32-a09242c7682c.png)
-		+ 러닝타임이 길다면 예외나 별도의 방안을 추구해야 한다.
-	![image](https://user-images.githubusercontent.com/56966606/168524606-465cb901-7bcd-4bac-b2cd-ec83d637f529.png)
-
+		+ 러닝타임이 길다면 별도의 방안을 추구해야 한다.
+		+ 타임아웃이나 별도 스레드 생성으로 마무리해야 한다.
+	
 **최종 옵저버 패턴 다이어그램**
-![image](https://user-images.githubusercontent.com/56966606/168524126-39a68944-063a-4466-8414-75cf73c2fa7a.png)
+![image](https://user-images.githubusercontent.com/56966606/173223067-f69e0033-55ae-4803-bc72-3d56a2a7bcff.png)![image](https://user-images.githubusercontent.com/56966606/173223068-00292601-4e0e-4265-8c95-cd77468a2def.png)
+
 ### 미디에이터 패턴 Mediator pattern
 * 다른 요소끼리 소통하지 못하고 미디에이터 하나를 통해 다를 요소들과 간접 통신하는 방식이다. 
-* 옵저버와 다르게 상호 작용이 아니 중재자 자기 자신을 중심으로 프로그램화 된다.
+* 옵저버와 다르게 상호 작용이 아닌 중재자 자기 자신을 중심으로 프로그램화 된다.
 ![image](https://user-images.githubusercontent.com/56966606/169704110-881a76be-0cca-4c81-954b-c9f73dff6e81.png)
 ![image](https://user-images.githubusercontent.com/56966606/169704253-cdf546d6-0015-4bf1-a1f2-0167a5212d2e.png)
 ```java
@@ -633,7 +643,7 @@ class StatusEmailSender : StatusObserver {
     //... 이메일 전송 코드
   }
 }
-class Special StatusObserver : StatusObserver {
+class SpecialStatusObserver : StatusObserver {
   private StatusChecker statusChecker;
   private Siren siren;
   // 생성시 주제 객체 전달
@@ -659,9 +669,9 @@ abstract class PlayerMediator : ControllerObserver {
     this.mediacontroller = new MediaController();
       this.mediacontroller.addObserver(this);
       this.titleUI = new TitleUI();
-      //...​
+      //...
   }
-  public void select(File file) {//하위 클래스에서 재사요이나 확장
+  public void select(File file) {//하위 클래스에서 재사용이나 확장
     titleUI.setTitle(file); 
   }
   // 하위클래스에서 기능 구현
@@ -677,11 +687,11 @@ class VideoPlayerMediator : PlayerMediator {
   }
   public override void select(File file) {
     videoPlayer.play(file); // 메세지 재사용 및 기능 추가
-    base.select(file); //상위 미디에이터에 정의된 협업 기능 재사용​
+    base.select(file); //상위 미디에이터에 정의된 협업 기능 재사용
   }
-  // 하위 미디에이터에서 새로운 협업 기능 구현​
+  // 하위 미디에이터에서 새로운 협업 기능 구현
   public void volumeChanged(int volume) {
-    videoPalyer.changeVolume(volume);​
+    videoPalyer.changeVolume(volume);
   }
 }	
 ```
@@ -712,7 +722,7 @@ class Program {
 
     using (Stream fStream = new FileStream("CarData.dat", 
     FileMode.Create, FileAccess.Write, FileShare.Node)) {
-      format.Seriallize(fStream, jbc);
+      format.Seriallize(fStream, jbc); // 수정으로 용도 변경이 가능한 부분
     }
     Console.WriteLine("All done");
 
@@ -722,14 +732,14 @@ class Program {
 ```	
 	
 ### 추상 팩토리 패턴 Abstract Factory pattern 중요!!!!
-* 객체 호출시 관련된 객체 군을 통체로 팩토리 클래스로 만들어 조건에따라 객체를 생성한다.
+* 객체 호출시 관련된 객체 군을 통체로 static 팩토리 클래스로 만들어 조건에따라 객체를 생성한다.
 * 게임을 예시로 팩토리 메서드는 필요로 하는 객체들 모두를 선언 해준다. (Enemy가 필요하면 모든 Enemy에서 필요한 enemy객체를 호출해준다.)
-	* 객체 생성에 있어 OCP를 정확히 구현해야하는  패턴이다.
+* 객체 생성에 있어 OCP를 정확히 구현해야하는  패턴이다.
 ![image](https://user-images.githubusercontent.com/56966606/169742879-6357d9ad-a245-4112-805f-fae63eaaee65.png)
 * getFactory()메서드는 자식 팩토리를 호출해주는 역할을 한다.
 ```c++
 abstract class EnemyFactory { //추상 팩토리
-  public static EnemyFactory getFactory(int level) {
+  public static EnemyFactory getFactory(int level) { // 정적메서드로 EnermyFactory 객체를 리턴 중요!
     if (level == 1) 
       return EasyStageEnemyFactory();
     else
@@ -1148,15 +1158,80 @@ static void Main() {
     - 주체 클래스에 대한 접근을 제어하기 위한 경우에 객체에 대한 접근 권한을 제어하거나 객체마다 접근 권한을 달리하고 싶을 경우 사용한다.
     - 프록시 클래스에서 클라이언트가 주체 클래스에 대한 접근을 허용할지 말지 결정하도록 할 수 있다.	
 
+* 구현 방법
+	1. image 인터페이스를 만든다.
+	2. ProxyImage 클래스와 RealImage 클래스를 만든 뒤 image 인터페이스를 구현한다.
+	3. ProxyImage 클래스에서 RealImage 클래스의 인ㅌ스턴스를 가진다.
+	4. 클라이언트에서 ProxyImage를 호출하면 직접 Real
 
+# 어뎀터 패턴
+* 한 클래스의 인터페이스를 클라이언트에서 사용하고자 하는 다른 인터페이스로 변환한다.
+	- 어댑터를 이용하면 인터페이스 호환성 문제 때문에 같이 쓸 수 없는 클래스들을 연결해서 쓸 수 있다.
+	- 필요로 인해서 수정할 필요가 없으니 인터페이스의 정체성을 지키고 인터페이스를 분리시킬수 있다.
+	- 쉽게 말해서 기존 클래스를 재사용할 수 있도록 중간에서 맞춰주는 역할을 한다.
+	- 예를 들어 클라이언트에서 2차원 배열을 요구했고 연결해야 할 객체가 1차원 배열이면 이를 중간에서 해결해주는 것이 어댑터 객체이다.
+	
+* 어뎁터 패턴의 종류
+	- 클래스 어뎁터패턴 : 상속 이용
+	- 인스턴스 어뎁터 패턴 : 위임을 이용
+	
+* 어댑터 패턴은 상속과 조합 방식을 선택할 수 있는데 특수한 경우가 아니라면 조합 방식을 사용한다. 자바 같은 경우는 단일 상속을 지원하기 때문에 상속 방식은 사용하기가 매우 어렵다.
 
+* 참고로 C++은 private 상속을 지원하므로 private 상속으로 어댑터를 구현할 수 있다.
+    - private 상속은 구현을 물려받고 인터페이스는 물려받지 않는다.
+    - 이러한 특성 때문에 비공개(protected) 멤버를 접근하거나 가상 함수를 재정의하는 등의 상황에서 사용한다.
+    - 위의 경우가 아니라면 조립 방식을 사용하는 것이 좋다.
 
+# 컴포지트 패턴
+* 전체 - 부분을 구성하는 클래스가 동일 인터페이스를 구현하며 개별 요소(Compnent)와 집합 요소(Composite)를 같은 타입으로 추상화하는 패턴이다.
+	- 단일화된 요소(단말)를 컴포넌트라고 하고 그룹화된 요소를 컴포지트라고 한다.
+	- Composite는 많은 요소를 가지고 있으므로 목록을 제어할 Add와 Remove 인터페이스가 필요하다.
+	- Composite 기능은 2가지로 나뉜다.
+    		+ Component를 관리한다.
+    		+ Component의 기능과 인터페이스를 Composite에 위임하여 중복코드를 방지해야 한다.
 
+- **전체 부분을 구성하는 클래스가 동일 인터페이스를 구현**하며 개별, 집합 요소를 같은 타입으로 추상화 한다.
 	
+* 컴포지트패턴  구현 고려 사항
+	- Composite 패턴에서 Component 객체는 메모리에 자신을 root로 트리구조를 가진다.
+	- Composite를 관리할 인터페이스는 Component에서 구현하는 것이 좋다.
+	- Component 클래스가 Add(), Remove() 등의 기능을 가지는 것은 객체지향적 설계를 위반하는 것이지만 이 패턴은 클라이언트가 단말 객체와 Composite 객체를 구분하지 않고 사용하도록 하는 것이 더 중요하므로 Component 클래스에 정의한다.
+	- Composite 객체의 Component 객체를 담는 자료구조는 인터페이스가 아닌 상태이고 Composite 객체만 자료구조가 필요하므로 Composite 클래스에 정의한다.
 	
+
+# 이터레이터 패턴
+* 컬렉션 구현 방법을 노출시키지 않으면서도 그 집합체 안에 들어있는 모든 항목에 접근할 수 있게 해 주는 방법을 제공해 주는 패턴이다.
+* 이 패턴을 사용하면 집합체 내에서 어떤 식으로 일이 처리되는지 몰라도 들어있는 항목들에 대해서 반복작업을 수행할 수 있다.
+* 모든 항목에 일일이 접근하는 작업을 컬렉션 객체가 아닌 반복자 객체가 맡아서 처리한다.
+	+ 이 덕분에 집합체의 인터페이스 및 구현이 간단해질 뿐 아니라, 집합체에서는 반복작업에서 손을 떼고 원래 자신이 할 일(객체 컬렉션 관리)에만 전념할 수 있다.
+ * 배열과 리스트 같이 순회를 목적으로 하는 집합객체에 유용하게 사용된다.
 	
+* 이터레이터패턴 구현 주의 사항
+	- ArrayList는 ArrayIterator로 자신의 타입(item)을 넘기고 LinkedList는 ListIterator한테 넘기므로 각각의 타입에 맞게 List를 선언 후 생성자로 받아야 한다.
+	- terator 인터페이스는 순차 접근을 위한 기능만을 만든다.
+		+ First()  :  현재 위치를 나타내는 curPos를 0으로 지정
+		+ Next()  :  필드값 curPos에 1을 더한다. (이동)
+		+ IsDone  :  리스트의 순회가 끝났는지 아닌지의 여부를 bool 형식으로 리턴해주는 메소드
+		+ GetCurItem  :  리스트의 현재 위치의 원소를 리턴해주는 메소드
+	- AbstractList에는 Iterator 객체를 반환하는 CreateIterator 메소드를 구현한다.
+		+ 상속받은 ArrayList와 LinkedList에서 오버라이딩하여 ConcreteIterator 객체들을 인스턴스로 받고 리스트 item을 인수로 전달하여 ConcreteIterator 객체에 반환한다.
+		+ 이후 ConcreteIterator 객체에서 생성자로 item을 받은 후 순차 접근을 실행한다.
 	
+# 싱글톤 패턴
+* 어플리케이션이 시작될 때 어떤 클래스가 최초 한번만 메모리를 할당하고 그 메모리에 인스턴스를 만들어 사용하는 패턴이다.
+* 생성자가 여러 차례 호출되더라도 실제로 생성되는 객체는 한 개고 최초 생성 이후에 호출된 생성자는 최초에 생성한 객체를 반환한다.
+* 인스턴스가 절대적으로 한 개만 존재하는 것을 보증하고 싶을 경우 사용한다.
+* 생성된 객체를 어디에서든지 참조할 수 있도록 하는 패턴이다.
+* 객체가 1개라는 것을 염두하며 new 키워드가 한번만 생성되어야 한다.
+* 클라이언트에 제한을 가진 **생성자와 복사 생성자가 매우 중요하다.**
+* 인스턴스를 만들지않고 기능을 제공하기 위해 변수와 메서드를 static으로 만들어야 한다.
 	
-	
-	
+* 싱글톤 패턴의 장점	
+	- new 키워드를 한 번만 쓰므로 메모리 낭비를 막을 수 있다.
+	- 만들어진 클래스의 인스턴스는 전역이므로 다른 클래스 인스턴스들이 데이터를 공유하기 쉽다.
+	- 두 번째 이용부터는 객체 로딩 시간이 줄어 성능이 좋아진다.
+* 싱글톤 패턴의 단점
+	- 싱글톤 인스턴스가 너무 많은 일을 하게 되면 다른 클래스의 인스턴스들 간에 결합도가 높아지기 때문에 **개방 - 폐쇄 원칙**을 위배하게 된다.
+	- 이로 인해 유지 보수 비용이 증가할 수가 있다.
+	- 멀티 쓰레드 환경에서 동기화 처리를 하지 않을 경우 인스턴스가 2개가 생성될 수 있는 위험이 있다.
 	
