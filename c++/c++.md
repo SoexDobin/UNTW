@@ -1487,3 +1487,363 @@ int main() {
 * STL은 순차열으로 Input으로 받는다. 또한 반복자는 이와 동일한 순차열을 Input으로 받는다.
 * 결국 STL객체에는 자신이 순차열을 받고 객체안에 iterator에서도 순차열을 쌍으로 받는다.
 * 그래서 알고리즘은 (컨테이너객체 + iterator) 쌍으로 순차열을 가진다.
+
+# 기말 5차시
+* vector에서 값 삽입하기
+```c++
+void PrintVector(vector<int> v) {
+	for (vector<int>::const_iterator iter = v.begin(); iter != v.end(); ++iter)
+	cout << *iter << " ";
+	cout << endl;
+}
+int main() {
+	vector<int> v;
+
+	v.push_back(10);
+	v.push_back(20);
+	v.push_back(30);
+	v.push_back(40);
+	v.push_back(50);
+
+	PrintVector(v);
+	vector<int>::iterator iter = v.begin();
+	cout << *iter << endl;
+	iter += 2;
+	v.insert(iter, 100);
+	PrintVector(v);
+}
+```
+
+* find 메서드로 list값 삭제하기
+```c++
+int main() {
+	list<int> lt;
+
+	lt.push_back(10);
+	lt.push_back(20);
+	lt.push_back(30);
+
+	lt.push_back(100);
+	lt.push_back(200);
+
+	for (list<int>::iterator iter = lt.begin(); iter != lt.end(); ++iter)
+		cout << *iter << " ";
+	cout << endl;
+
+	list<int>::iterator iter = find(lt.begin(), lt.end(), 100);
+	if (iter != lt.end())
+		lt.erase(iter);
+
+	for (list<int>::iterator iter = lt.begin(); iter != lt.end(); ++iter)
+		cout << *iter << " ";
+	cout << endl;
+}
+```
+
+* deque 기본
+```c++
+int main() {
+	deque<int> dq;
+
+	dq.push_back(10);
+	dq.push_back(20);
+	dq.push_back(30);
+	dq.push_back(100);
+	dq.push_back(200);
+
+	for (deque<int>::iterator iter = dq.begin(); iter != dq.end(); ++iter)
+		cout << *iter << " ";
+	cout << endl;
+}
+```
+
+* set 기본
+```c++
+int main() {
+	set<int> s;
+
+	//set은 자동정렬이다.
+	s.insert(10);
+	s.insert(20);
+	s.insert(30);
+	s.insert(40);
+	s.insert(50);
+
+	for (set<int>::iterator iter = s.begin(); iter != s.end(); ++iter)
+		cout << *iter << " ";
+	cout << endl;
+}
+```
+
+* set의 컨테이너 타입과 2진 검색 s.find()
+```c++
+int main() {
+	set<int, greater<int>> s;
+
+	s.insert(10);
+	s.insert(20);
+	s.insert(30);
+	s.insert(40);
+	s.insert(50);
+
+	for (set<int>::iterator iter = s.begin(); iter != s.end(); ++iter)
+		cout << *iter << " ";
+	cout << endl;
+	// 시퀀스 컨테이너에서 선형검색 find는 일일히 다 넣어보면서 비교한다.
+	// set과 map은 2진트리라서 그렇게하면 자원 낭비
+	// 고로 s.find() 활용
+	set<int, less<int>>::iterator iter = s.find(20);
+	if (iter != s.end())
+		cout << *iter << endl;
+	// find는 log(n)개 속도
+	// s.find는 log(n)의 2승 개 속도 더빠름
+}
+```
+
+* 이진 기반 탐색 방법
+```c++
+// lower_bound() // [
+// upper_bound() // (
+// [b, e) -> b, c, d까지 표현한다 & end()가 e에 존재하는 것이다.
+int main() {
+	set<int> s;
+	s.insert(10);
+	s.insert(20);
+	s.insert(30);
+	s.insert(40);
+	s.insert(50);
+
+	set<int>::iterator iter = s.find(20);
+	if(iter != s.end())
+		cout << *iter << endl;
+
+	set<int>::iterator liter = s.lower_bound(20);
+	set<int>::iterator uiter = s.upper_bound(20);
+
+	if (liter != uiter) {
+		cout << endl;
+		cout << *liter << endl;
+		cout << *uiter << endl;
+	}
+}
+```
+
+* multiset에서 이진 검색
+```c++
+int main() {
+	multiset<int> s;
+	s.insert(10);
+	s.insert(20);
+	s.insert(30);
+	s.insert(40);
+	s.insert(50);
+	s.insert(20);
+	s.insert(20);
+
+	set<int>::iterator liter = s.lower_bound(20);
+	set<int>::iterator uiter = s.upper_bound(20);
+	// 10, 20(lower), 20, 20, 30(upper), 40, 50
+	// multi는 중복 키 값중맨 처음만 찾아준다.
+
+	if (liter != uiter) {
+		cout << endl;
+		for (multiset<int>::iterator iter = liter; iter != uiter; ++iter)
+			cout << *iter << " ";
+		cout << endl;
+	}
+}
+```
+
+* pair 조회
+```c++
+int main() {
+	pair<int, string> p1(3, "three");
+	pair<int, int> p2(10, 20);
+
+	cout << p1.first << ", " << p1.second << endl;
+	cout << p2.first << ", " << p2.second << endl;
+
+	vector<int> v;
+	v.push_back(13);
+	v.push_back(23);
+	v.push_back(33);
+	pair<vector<int>::iterator, vector<int>::iterator> p3(v.begin(), v.begin() + 2);
+	cout << *p3.first << ", " << *p3.second << endl;
+}
+```
+
+* equal_range로 pair객체 범위 찾기
+```c++
+int main() {
+	multiset<int> s;
+
+	s.insert(40);
+	s.insert(10);
+	s.insert(30);
+	s.insert(20);
+	s.insert(50);
+	s.insert(20);
+	s.insert(20);
+
+	pair<set<int>::iterator, set<int>::iterator> pi = s.equal_range(20);
+	if (pi.first != pi.second) {
+		cout << endl;
+		for (multiset<int>::iterator iter = pi.first; iter != pi.second; ++iter)
+			cout << *iter << " ";
+		cout << endl;
+	}
+}
+```
+
+* map 사용
+```c++
+int main() {
+	map<int, string> m;
+	m.insert(pair<int, string>(30, "ABC")); // 익명의 pair객체
+	m.insert(pair<int, string>(30, "ABC"));
+	m.insert(pair<int, string>(10, "BBB"));
+	m.insert(pair<int, string>(50, "aaa"));
+	m.insert(pair<int, string>(40, "abc"));
+	m.insert(pair<int, string>(20, "ABC"));
+	for (map<int, string>::iterator iter = m.begin(); iter != m.end(); ++iter) {
+		const pair<int, string>& pi = *iter;
+		cout << pi.first << ", " << pi.second << endl;
+	}
+}
+```
+
+* map의 대괄호 연산자와 기능 3가지
+ 	- Insert
+ 	- Update
+ 	- Read
+```c++
+ 
+int main() {
+	map<int, string> m;
+	m[30] = "ABC"; //insert
+	m[10] = "BBC";
+	m[50] = "aaa";
+	m[40] = "abc";
+	m[20] = "ABC";
+
+	map<int, string>::iterator iter = m.find(30);
+	if (iter != m.end()) { //updata
+		cout << "데이터 수정" << endl;
+		m[30] = "Hello";
+	}
+	else { //update
+		cout << "데이터 삽입" << endl;
+		m[30] = "Hello";
+	}
+	cout << m[30] << endl; //read
+	cout << m[50] << endl;
+}
+
+```
+
+* map과 pair
+```c++
+int main() {
+	map<int, string> m;
+	m[30] = "ABC"; //insert
+	m[10] = "BBC";
+	m[50] = "aaa";
+	m[40] = "abc";
+	m[20] = "ABC";
+
+	cout << endl;
+	pair < map<int, string>::iterator, map<int, string>::iterator> pi =
+		m.equal_range(20);
+	// 찾은 값 출력
+	cout << "찾은값 : ";
+	for (map<int, string>::iterator iter = pi.first; iter != pi.second; ++iter) {
+		pair<int, string> pv = *iter;
+		cout << pv.first << ", " << pv.second << endl;
+	}	
+	cout << "전체값" << endl;
+	// 전체 출력
+	for (map<int, string>::iterator iter = m.begin(); iter != m.end(); ++iter) {
+		pair<int, string> pv = *iter;
+		cout << pv.first << " , " << pv.second << endl;
+	}
+}
+```
+
+* mulitmap
+```c++
+ multi는 대괄호 연산자 사용이 불가하다.
+int main() {
+	multimap<int, string> m;
+	m.insert(pair<int, string>(30, "ABC"));
+	m.insert(pair<int, string>(10, "aaa"));
+	m.insert(pair<int, string>(50, "BBB"));
+	m.insert(pair<int, string>(40, "ABC"));
+	m.insert(pair<int, string>(20, "abcd"));
+	m.insert(pair<int, string>(20, "Hello!"));
+	m.insert(pair<int, string>(20, "1234"));
+
+	cout << endl;
+	pair<multimap<int, string>::iterator, multimap<int, string>::iterator> pi = m.equal_range(20);
+	for (multimap<int, string>::iterator iter = pi.first; iter != pi.second; ++iter) {
+		pair<int, string> pv = *iter;
+		cout << pv.first << ", " << pv.second << endl;
+	}
+}
+```
+
+* 단항& 2항 predicate
+```c++
+// 단항 prediacte
+template <typename T>
+struct Compare {
+	bool operator()(const T& a)const {
+		return a == "Hello!";
+	}
+};
+// 2항 prediacte
+template <typename T>
+struct Less {
+	bool operator()(const T& a, const T& b)const {
+		return a < b;
+	}
+};
+int main() {
+	{
+		set<int, Less<int>> s;
+		s.insert(60);
+		s.insert(40);
+		s.insert(20);
+		s.insert(90);
+		s.insert(10);
+
+		for (set<int, Less<int>>::iterator iter = s.begin(); iter != s.end(); ++iter) {
+			cout << *iter << " ";
+			cout << endl;
+		}
+	}
+	{
+		Less<int> l;
+		cout << l(2, 5) << endl;
+		cout << l(10, 5) << endl;
+		cout << Less<int>()(2, 5) << endl;
+		cout << endl;
+		Compare<string> c;
+		cout << c("ABC") << endl;
+		cout << c("Hello!") << endl;
+		cout << Compare<string>()("ABC") << endl;
+	}
+}
+```
+// deque는 vector랑 다르게 앞뒤 삽입이 가능하다 그래서 삭제 삽입이 vector보다 빠르다
+// set, map은 균형 2진 트리를 사용한다
+// set의 컨테이너 타입과 2진 검색 s.find()
+// set, map과 같은 2진에서는 주로 검색을 위해 생성한다
+// iterator는 컨테이너와 알고리즘사이 인터페이스 역할을 한다.
+Lower_Bound는 '원하는 값 k 이상이 처음 나오는 위치를 찾는 과정' 
+Upper_Bound는 '원하는 값 k를 초과한 값이 처음 나오는 위치를 찾는 과정'
+Equal_Range는 '원하는 값 k사이 범위를 pair객체로 반환'
+// map :: 항상 key와 value 쌍으로 이루어진다.
+// map은 키값을 서치하여 벨류를 찾기쉽다.
+
+
+
