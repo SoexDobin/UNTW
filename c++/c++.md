@@ -999,14 +999,15 @@ int main() {
 ```
 * explicit 키워드는 자신이 원하지 않은 형변환이 일어나지 않도록 제한하는 키워드이다.
 * explicit는 인수가 하나만 받을때 사용해야한다.
-### 함수 템플릿
-* Template : 클라이언트가 필요할 때마다 타입 변경을 가능하게 해준다.
-* class의 Template : 자료구조에 사용
-* function의 Template : 알고리즘에서 사용
-* 함수 템플릿은 함수가 아니라 함수 트리라고한다.
 
+### 함수 템플릿   
+* Template : 클라이언트가 필요할 때마다 타입 변경을 가능하게 해준다.   
+* class의 Template : 자료구조에 사용   
+* function의 Template : 알고리즘에서 사용   
+* 함수 템플릿은 함수가 아니라 함수 트리라고한다.   
+   
 **함수 템플릿 사용하기**
-``c++
+```c++
 template <typename T> //진짜 함수를 만들어 낼 수 있는 함수를 함수 템플릿 이라고한다.
 int Find(T lt[], int size, T key) {
 	for (int i = 0; i < size; ++i)
@@ -1033,6 +1034,7 @@ int main() {
 		cout << idx << " : " << darr[idx] << endl;
 }
 ```
+
 **클래스 템플릿 사용하기**
 ```c++
 template <typename T>
