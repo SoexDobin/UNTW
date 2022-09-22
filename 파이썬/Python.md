@@ -173,3 +173,95 @@ if num in "02468":
 else:
     print("홀수입니다!")
 ```
+
+**datetime모듈 불러오가**
+```python
+import datetime # 모듈 불러오기
+
+now = datetime.datetime.now()
+
+## datetime 프로퍼티
+print(now.year, "년")
+print(now.month, "월")
+print(now.day, "일")
+print(now.hour, "시")
+print(now.minute, "분")
+print(now.second, "초")
+
+## 오전, 오후 계산기
+if now.hour < 12:
+    print(f"현재 시간은 {now.hour}시이며, 오전입니다.")
+else:
+    print(f"현재 시간은 {now.hour}시이며, 오후입니다.")
+
+## 사계절 계산기
+if now.month==12 or 1<=now.month<=2:
+    print(f"현재 {now.month}월이며, 겨울입니다!")
+elif now.month<=5:
+    print(f"현재 {now.month}월이며,  봄입니다!")
+elif now.month<=8:
+    print(f"현재 {now.month}월이며, 여름입니다!")
+else:
+    print(f"현재 {now.month}월이며, 가을입니다!")
+```
+
+**if문 활용**
+```python
+## 정수 사칙연산 계산기
+n1 = int(input("정수1를 입력하세요> "))
+n2 = int(input("정수2를 입력하세요> "))
+
+print("1. 덧셈")
+print("2. 뺄셈")
+print("3. 곱셈")
+print("4. 나눗셈")
+select = int(input("선택하세요> "))
+if select==1:
+    print("{}+{}={}".format(n1, n2, n1+n2))
+elif select==2:
+    print("{}-{}={}".format(n1, n2, n1-n2))
+elif select==3:
+    print("{}x{}={}".format(n1, n2, n1*n2))
+elif select==4:
+    print("{}//{}={}".format(n1, n2, n1//n2))
+else:
+    #print("1~4사이 정수만 입력 가능합니다.")
+    pass
+```
+
+**list 배열 활용**
+```python
+list_a = [10, 20, 30, "hello", True]
+print(list_a[0:2])
+print(list_a[-2])
+list_a[1] = "world"
+print(list_a[1])
+print(list_a[3][1])
+
+## 배열 삽입
+print("배열 삽입")
+list_a.append([40, 50])
+print(list_a)
+list_a.insert(5, "bye")
+print(list_a)
+list_a.extend([9, 8])
+print(list_a)
+
+## 배열 제거
+print("배열 제거")
+del list_a[0]
+print(list_a)
+a = list_a.pop(0)
+print(list_a)
+print(a)
+list_a.remove(30)
+print(list_a)
+
+## 2차원 배열
+print("2차원 배열")
+list_b = [[10, 20, 30], ['a', 'b', 'c'], [True, False]]
+print(list_b[2][0])
+print(len(list_b[2]))
+list_b.clear
+
+```
