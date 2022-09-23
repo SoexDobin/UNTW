@@ -192,7 +192,7 @@ public class Test6 {
 		} else { //보
 			if(com == user) {
 				System.out.printf("컴퓨터랑 %s(%d)로 비겼습니다.\n",hand ,com);
-			} else if(user == 1) {
+			} else if(user == 1) { 
 				System.out.printf("컴퓨터 %s(%d)에 이겼습니다.\n",hand ,com);
 			} else {
 				System.out.printf("컴퓨터 %s(%d)에 졌습니다.\n",hand ,com);
@@ -201,5 +201,95 @@ public class Test6 {
 	}
 }
 ```
+# 3차시
 
+## 배열 
+* 배열(array): 연속된 공간에 값을 저장하여 사용한다.
+* 첨자(index): 배열 속 index는 0부터 시작
+```java
+/*
+arr 배열에서 상자 입력으로 배열 원소 초기화하기!
+배열명.length는 배열의 사이즈를 구해준다!
 
+>>결과화면<<
+정수1 입력: 10
+정수2 입력: 20
+정수3 입력: 30
+정수4 입력: 40
+
+4개 숫자의 총합: xxx
+4개 숫자의 평균: xx.x
+*/
+import java.util.*;
+
+public class Test1 {
+
+	public static void main(String[] args) {
+		int arr[] = new int[4]; // 1차원 배열을 다루는 변수 arr를 선언
+		int arr2[] = new int[] {10, 20, 30, 40}; // 1차원 초기화 방법 int[]괄호 안에 숫자사용불가
+		int arr3[] = {101, 202, 303}; // {1차원 초기화방법}을 사용할경우 new int[] 생략가능
+		Scanner sc = new Scanner(System.in);
+		int i;
+		// 사용자 입력 부분
+//		for(i = 0; i<arr.length; i++) {
+//			System.out.print("정수 입력: ");
+//			arr[i] = sc.nextInt();
+//		}
+//		// 출력 부분
+//		for(i = 0; i<arr.length; i++) {
+//			System.out.print(arr[i] + " ");
+//		}
+		
+		int total = 0;
+		System.out.println(">>결과화면<<");
+		for(i = 0; i < arr.length; i++) {
+			System.out.printf("정수%d 입력: ", i+1);
+			arr[i] = sc.nextInt();
+			total += arr[i];
+		}
+		System.out.printf("4개 숫자의 총합: %d\n", total);
+		System.out.printf("4개 숫자의 평균: %.1f", (float)total/arr.length);
+	}
+}
+``` 
+
+# 알고리즘을 통한 로또 프로그램
+* 
+```java
+public class Test2 {
+	static void Swap(int arr, int a, int b) {
+		int temp;
+		temp = arr[a];
+		arr[a] = arr[b];
+		arr[b] = temp;
+	}
+
+	public static void main(String[] args) {
+		int i, lotto[] = new int[6];
+		Random r = new Random();
+
+		System.out.println("로또 원본 출력");
+		for(i=0;i<lotto.length;i++){
+			lotto[i] = r.nextInt(45)+1 // 1~45 사이
+			System.out.printf("%d ", lotto[i];)
+		}
+
+		System.out.println("로또 정렬 부분 출력");
+		int temp, j;
+		for(i=0;i<lotto.length-1;i++){
+			for(j=1;j<lotto.length-1;j++){
+				if(lotto[i]>lotto[j]) {
+					// Swap(arr, i, j);
+					temp = lotto[i];
+					lotto[i] = lotto[j];
+					lotto[j] = temp;
+				}
+			}
+		}
+		System.out.println("\n정렬된 원본 출력");
+		for(i=0;i<lotto.length;i++) {
+			System.out.printf("%d ", lotto[i]);
+		}
+	}
+}
+```
