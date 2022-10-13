@@ -251,7 +251,7 @@ print(list_a)
 print("배열 제거")
 del list_a[0]
 print(list_a)
-a = list_a.pop(0)
+a = list_a.pop(0)                                                                                                            
 print(list_a)
 print(a)
 list_a.remove(30)
@@ -263,5 +263,114 @@ list_b = [[10, 20, 30], ['a', 'b', 'c'], [True, False]]
 print(list_b[2][0])
 print(len(list_b[2]))
 list_b.clear
+```
+
+# 3차시
+**dictionary**
+```python
+# for i in dict
+dic_a=["name":"정창식", "grade":1, "score":100]
+for i in dict_a :
+    print(i,":", dict_a[i])
+```
+
+**range함수**                                                                                                                                 
+```python
+ # 초기값이 2일때 i += 3
+for i in range(2,10,3):
+    print(i)  
+```
+
+**별 짓기**
+```python
+star = ""
+floor = int(input("층수를 입력하세요> "))
+for i in range(0, floor, 1):
+    star = star + "*"
+    print(star)
+print("줄바꾸고")
+for i in range(floor):
+    for j in range(i+1):
+        star+="*"
+    star+="\n"
+```
+
+# 4차시
+
+**while문**
+```python
+# 기본 while
+i=0
+while i<10:
+    print(i ," 번째 반복")
+    i = i + 1
+
+# list를 활용한 while
+list_a = [1,2,3,4,2,1,3,2,1,2,3,2,2,4,1]
+value = 2
+while value in list_a:
+    list_a.remove(value)
+print(list_a)
+
+# while 활용
+i=0
+while True:
+    print(f"{i}번째 반복")
+    i+=1
+    input_a = input("종료?(y/n)> ")
+    if input_a in ['y', 'Y']:
+        print("종료합니다.")
+        break
+```
+
+**continue**
+```python
+list_a = [10,15,20,25,30,5]
+for i in list_a:
+    if i<20:
+        continue
+    print(i)
+```
+* 현재 반복을 생략하고 다음 반복으로 넘어간다.
+
+
+**while로 10000이 넘어갈때 변수 값 추출하기**
+```python
+i = 1
+total = 0
+while total < 10000:
+    print(f"{i}")
+    total = total + i
+    i = i + 1
+print(f"{i-1}을 더할 때 10000을 넘는다.")
+```
+
+
+**사용자가 입력한 정수 두개 사이 값의 합을 구하기**
+```python
+total = 0
+total2 = 1
+temp = 0
+num1 = int(input("사용자 정수1 입력> "))
+num2 = int(input("사용자 정수2 입력> "))
+
+if num2 < num1:
+    temp = num1
+    num1 = num2
+    num2 = temp
+
+while num1 <= num2:
+    total += num1
+    num1 += 1
+print(f"총합은 {total}입니다.")
+
+while num1 <= num2:
+    total2 *= num1
+    num1 += 1
+print(f"총 곱한 값은 {total2}입니다.")
+```
+
+**파이썬 기본함수**
+```python
 
 ```
