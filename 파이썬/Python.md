@@ -372,5 +372,100 @@ print(f"총 곱한 값은 {total2}입니다.")
 
 **파이썬 기본함수**
 ```python
+# list에 적용 가능한 함수
+list_a = [10,20,30,40,50]
+print(min(list_a)) # 10
+print(max(list_a)) # 50
+print(sum(list_a)) # 150
+for i in reversed(list_a):
+    print(i)
+# 50 40 30 20 10
 
+# 리스트 요소를 반환할때 인텍스 번호를 가져옴
+list_a = [10,20,30]
+for i, value in enumerate(list_a):
+    print(i, value)
+
+# 반복문을 활용한 리스트
+array = [10,20,30,40,50]
+list_a = [i for i in array if i!=30]
+print(list_a)
 ```
+
+**함수의 유형 4가지를 사용한 정수 더하기 프로그램**
+```python
+# 매개변수 X, 리턴 값 X
+def print_title():
+    print("덧셈 계산 프로그램 입니다.")
+    print()
+# 매개변수 X, 리턴 값 O
+def input_num():
+    num = int(input("정수 입력:> "))
+    return num
+# 매개변수 O, 리턴 값 O
+def add_num(num_a, num_b):
+    return num_a + num_b
+# 매개변수 O, 리턴 값 X
+def print_result(a, b, c):
+    print(f"\"{a}+{b}={c}\"")
+
+print_title()
+num_a = input_num()
+num_b = input_num()
+result = add_num(num_a, num_b)
+print_result(num_a, num_b, result)
+```
+
+**가변매개변수**
+* 복수의 매개변수를 받아 올 수 있다.
+```python
+def print_ntimes(n, *values):
+    for i in range(n):
+        for j in values:
+            print(j)
+print_ntimes(3, "hello", "world", "python")
+```
+**기본매개변수**
+* 매개변수에 초기화를 진행 할 수 있다.
+```python
+def print_ntimes(value, n=5):
+    for i in range(n):
+        print(value)
+        
+print_ntimes("hello")
+```
+
+**매개변수 차이점**
+* 가변매개변수가 기본 매개변수 앞에오면 뭘 주든 가변으로 간다
+* print_ntimes("hello", "world", n=10) 가변 매개변수와 혼합 사용시 n = 10으로 기본 매개변수로 직접 매겨줘야 한다.
+```python
+def print_ntimes(*values, n=3):
+    for i in range(n):
+        for j in values:
+            print(j)
+
+print_ntimes("hello", "world", n = 2)
+```
+
+**return에 대해서 알아보기**
+* return은 모든 것의 마지막에 실행
+```python
+def test1():
+    print("hello")
+    return 100 
+    print("world")
+def test2():
+    print("hello")
+    return 
+    print("world")
+    
+a = test1()
+b = test2()
+print(a) # hello 100
+print(b) # hello none
+# hello hello 100 none
+```
+
+* 10 27일에 시험
+* 시험범위 4차시 27페이지까지
+* 10문제 소스코드 작성
