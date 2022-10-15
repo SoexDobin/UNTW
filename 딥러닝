@@ -1,0 +1,107 @@
+# Linear Regression
+1. 선형회귀
+2. 손실함수 Loss
+3. 경사하강법
+---
+
+### - 학습방법
+1. Supervised learing (지도학습)
+  * Regression
+  * Classification
+2. Unsupervised learning (비지도 학습)
+  * Clustering
+  * Density estimation
+  * Visualization 
+3. Reinforcement learning (강화학습)
+  * Credit assignment problem
+---
+
+### **지도학습 / Supervised learning 이란?**
+* 입력 데이터로부터 출력 값을 예측
+* 출력 값이 수치형이면 Regression (회귀)
+* 출력 값이 범주형이면 Classification (분류)
+
+### **지도학습 / Supervised learning 종류**
+* Regression (회귀)
+  - .ex) 공부시간에 대한 성적 데이터로 부터 예상 점수 예측(수치형)
+* Classification (분류)
+  - Binary classification .ex) 점수(수치형)가 아닌 Pass/Fail(범주형) 일 때
+  - Multi-class classification 성적이 다수의 번주 학점 (A, B, C)등으로 나올 때
+---
+
+### **1차 선형 함수를 그리기 위한 변수**
+* Feature: ML 모델의 입력 변수 / x
+* Label: 예측하고자 하는 변수 / y
+* Model: feature와 label의 관계, 예측label / y'
+![image](https://user-images.githubusercontent.com/56966606/195992943-ec3d8406-8ca8-46d8-8739-a327923d244f.png)
+* Weight: 가중치라 하며 함수의 기울기 / w
+* Bias: 절편이라 하며 편향 값을 보여줌 / b
+![image](https://user-images.githubusercontent.com/56966606/195993129-0235c5b5-67e5-4fde-8efc-f5a58c65b26b.png)
+---
+
+### **손실 Loss**
+- 모델 파라미터 w, b를 구하기 위한 평가의 척도
+- 모델 예측이 맞으면 작아지고, 틀리면 커지는 penalty값
+- 타겟 값 y와 예측 값 y'의 오차
+  * Mean Absolute Error (MAE) : 평균절대오차
+  * Mean Squared Error (MSE) : 평균제곱오차
+![image](https://user-images.githubusercontent.com/56966606/195994138-d4167ab6-1d39-4e48-b8d1-1641b4e057c4.png)
+
+### **손실 함수 Loss Function**
+* 선형회귀에서는 평균제곱오차(MSE)를 손실함수로 많이 사용
+* Model Training : 입력 데이터로 부터손실을 최소화하는 w, b 파라미터를
+구하는(학습하는) 것
+---
+
+* 최적화
+  - 수학, 경제학, 컴퓨터과학 등 여러 분야에서 사용
+  - 선형계획법, 비선형계획법, 동적계획법, 확률계획법, 경사하강법 등
+
+## **최적화 이론에서의 손실함수 4가지 명칭**
+* Loss function (손실 함수) 
+* Error function (오차 함수) 
+* Cost function (비용 함수) 
+* Objective function (목적 함수) 
+
+### **경사하강법 알고리즘 : 대표적인 최적화 알고리즘**
+* Iteration 방법으로 최적값(손실함수를 최소화 하는 값) 계산
+* 데이터 양이 큰 경우 매우 효율적
+* 손실함수가 최소가 되는 지점(미분계수가 0) 기울기가 최소여야 최적화가 잘된 것
+![image](https://user-images.githubusercontent.com/56966606/195994846-33a7c19c-d212-4eba-ba2a-3b6a8e338f90.png)
+* 기울기가 양수이면 왼쪽으로 이동, 기울기가 음수이면 오른쪽으로 이동
+* 손실을 줄이는 방향으로 가중치를 업데이트
+---
+
+### **성적 모델**
+```python
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt # 지표를 시각적으로 보기위해
+from tensorflow import keras 
+from keras import Sequential # 모델 정의에 사용
+from keras.layers import Dense # 신경망 모델 구성을 위한 layer
+
+
+# 성적 데이터와 시간 값
+xTime = np.array([2.0, 3.0, 9.0, 10.0], dtype=float)
+yScore = np.array([30.0, 50.0, 80.0, 90.0], dtype=float)
+
+# 모델 정의
+model = Sequential([Dense(1, input_shape=(1, ), activation='linear')])
+
+# 모델 컴파일
+model.compile(optimizer='sgd', loss='mean_squared_error')
+
+# 모델 트레이닝
+model.fit(xTime, yScore, epochs=500, verbose=1)
+
+#모델 검증 / 훈련결과
+model.evaluate(xTime, yScore)
+# Evaluation 모델 훈련을 마친 상태의 weight를 적용하여 평가지표 계산
+# 검증을 위해서는 별도의 검증 데이터 셋 필요
+w, b = model.weights
+print(w.numpy(), b.numpy())
+
+#모델 예측
+print(model.predict([6]))
+```
