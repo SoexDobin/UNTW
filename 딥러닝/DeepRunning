@@ -105,3 +105,63 @@ print(w.numpy(), b.numpy())
 #모델 예측
 print(model.predict([6]))
 ```
+---
+
+### **Binary classification**
+* Logistic function = Sigmoid function
+![image](https://user-images.githubusercontent.com/56966606/196001386-371ee397-2124-4628-8f25-c6aa38f6fa6a.png)
+* Probability : x가 C1, C2 일 확률
+* Odds(승산) : 실패 비율 대비 성공 비율
+* Logit : Odds의 자연로그
+```python
+# 활성화 함수 sigmoid 사용
+model = Sequential([Dense(1, input_shape=(1,), activation='sigmoid')])
+```
+
+### Logistic Regression
+* Logistic Regression → Binary Classification
+* 예측 값이 0.5보다 크면 C1 작으면 C2로 분류
+```python
+# 손실함수 : loss='binary_crossentropy'
+# 매트릭스 : metrics=['accuracy']
+model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])
+```
+
+### 분류 문제 평가 지표 matrics
+* Accuracy (정확도) 
+  - 클래스가 불균형 분포이면 왜곡될 수 있음
+* Precision (정밀도) 
+  - Positive로 예측한 경우 실제 positive인 비율 (예측값이 얼마나 정확한가)
+  - 예) 스팸메일 여부 판단할 때는 정밀도가 중요
+* Recall (재현율) 
+  - 실제 positive 인 것 중 올바르게 positive를 맞춘 비율(실제 정답을 얼마나 맞췄는가)
+  - 예) 암검사에서 실제 암인데 아니라고 판단하면 위험하므로 재현율이 중요
+* F1-Score
+  - Precision과 recall의 조화 평균
+  - 주로 분류 클래스 간의 데이터가 불균형이 심각할 때 사용
+
+
+### Logistic Function
+* 가중치 값에 따른 그래프 변화
+![image](https://user-images.githubusercontent.com/56966606/196001527-fc79ba19-0e68-4fda-8540-7376237adf81.png)
+---
+
+### **Multi-Class classification**
+* 이진 분류를 n번 수행하여 예측 값 벡터 y 계산
+
+### 확률 값으로 변환하기 위해 Softmax 함수
+* 지수함수는 단조 증가함수로 대소 관계가 변하지 않는다
+* 지수함수를 적용하면 작은 값의 차이가 커져서 구분이 용이해 진다
+* 지수함수의 미분은 원래 값과 동일하기 때문에 미분하기 좋다
+```python
+model = Sequential([
+Dense(10, activation='relu', input_shape=(4,)),
+Dense(10, activation='relu'),
+Dense(3, activation='softmax'),
+])
+
+model.compile(optimizer='adam', loss='categorical_crossentropy’,metrics=['acc'])
+model.fit(x_train, y_train, validation_data=(x_test, y_test),epochs=400, verbose=0)
+model.evaluate(x_test, y_test, verbose=2)
+```
+
