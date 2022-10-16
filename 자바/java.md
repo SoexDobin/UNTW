@@ -407,7 +407,7 @@ public class Test2 {
 * 메소드 오버로딩
 	1. 메소드 명이 같으면서 
 	2. 매개변수의 객수가 다르거나,
-	3. 매개변수의 타입이 다르면서 오버로딩이라고 함
+	3. 매개변수의 타입이 다르면 오버로딩이라고 함
 ```java
 class Data{
 	int value;
@@ -425,117 +425,12 @@ pulbic class Test3 {
 		
 		System.out.println("Swap()함수 호출 후: (" + d1.value + ", "+ d2.value +")");		
 	}
-	//오버로딩은 하나의 객체에서 이름이 같은 메소드를 여러개 정의하여 사용하는 것이다.
+	// 오버로딩은 하나의 객체에서 이름이 같은 메소드를 여러개 정의하여 사용하는 것이다.
 	static void Swap(Data a, Data b) {
-		int temp;
+		int temp
 		temp = a.value;
 		a.value = b.value;
 		b.value = temp;
-	}
-	static void Swap(int a, int b) {
-		int temp;
-		temp = a;
-		a = b;
-		b = temp;
-	}
-}
-```
-
-## 상속과 캡슐화
-* 자바 상속의 특징
-	1. 자바는 단일 상속 구조이다.
-	2. 클래스 정의시 클래스명 뒤에 extends 가 없으면 컴파일러는 자동으로 최고 조상 클래스 extends Object를 해준다.
-	3. 자식 클래스는 생성자 없이 생성하면 super()를 컴파일러가 자동으로 추가해 준다.
-* 자바 생성자 함수 특징
-	1. 모든 클래스에는 1개 이상의 생성자가 존재한다.
-	2. 생성자는 메서드가 아니며 반환타입이 없다.
-	3. 멤버 초기화를 위해서 사용되며 생성자가 없으면 컴파일러가 자동으로 추가해 준다.
-* .this vs this() 차이점
-	1. this.는 객체 자신의 주소
-	2. this()는 같은 클래스 내의 다른 생성자 호출
-* this() 특징 
-	1. this()는 같은 클래스의 다른 생성자를 호출한다. Car(String, int)와 같은 의미이지만 이렇게 쓰면 error!
-	2. this()는 꼭!! 첫 문장으로 작성 되어야한다.
-	3. this()를 작성할 경우에는 super()가 추가되지 않음!
-* .super vs super() 차이점
-	1. super.은 조상 멤버 접근시에 사용한다.
-	2. super()은 조상의 생성자를 호출한다.
-* super() 특징
-	1. super()는 생성자 첫 문장에 추가해야한다.
-	2. 최상위 부모 Object()를 불러온다. 	
-```python
-public class Car {
-	string color;
-	int door;
-
-	Car() { // 기본 생성자 초기화
-		color = "black";
-		door = 4;
-	}
-	Car() { // this() 기본생성자 초기화
-		this("blue", 3);
-	}
-	Car(String c, int d) {
-		// 생성자 첫 문장에 super();를 추가, Object() 호출함!
-		super();
-		color = c;
-		door = d;
-	}
-	// 멤버 메서드
-	void start() {
-		System.out.println("출발~");
-	}
-	void stop() {
-		System.out.println("멈춤~");
-	}
-}
-public class Bus extends Car {
-	int window;
-
-	Bus(){ // 기본 생성자
-		super(); // 조상(부모)의 생성자를 호출함 Car()로 쓰면 안된다.
-		window = 10;
-	}
-	public Bus(String color, int door, int window) { 
-		// 매개변수 있는 생성자
-		super(color, door);
-		this.window = window; 
-		// this. 은 현재 자신 객체의 주소 (시험!!!!)
-	}
-	@Override
-	// 오버라이딩(상속관계에서 조상클래스에 정의된 메소드를 자식클래스에서 재정의 하는 것)
-	void start() {  
-		System.out.println("버스가 출발~");
-		super.start(); // "출발"
-		// 조상의 메서드를 가져와서 활용
-	}
-}
-```
-
-## 상속을 사용한 함수 호출 예제
-```java
-/*>>결과화면<<
- * 버스색상 입력:
- * 버스 문의 갯수:
- * 버스 창문수 입력:
- * 
- * 버스 (yellow, 문 2개 , 창문 10개)
- */
-import java.util.Scanner;
-public class Test2 {
-	public static void main(String[] args) {
-		Bus b1 = new Bus();
-		System.out.println(">> 결과화면 <<");
-		Scanner sc = new Scanner(System.in);
-		
-		System.out.print("버스 색상 입력: ");
-		b1.color = sc.next();
-		System.out.print("버스 문의 갯수 입력: ");
-		b1.door = sc.nextInt();
-		System.out.print("버스 창문 갯수 입력: ");
-		b1.window = sc.nextInt();
-		
-		System.out.println("버스 ("+ b1.color + ", 문 " + b1.door + "개, 창문 " + b1.window + "개) 출고합니다.");
 	}
 }
 ```
