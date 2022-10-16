@@ -466,6 +466,7 @@ print(b) # hello none
 # hello hello 100 none
 ```
 
+
 * 10 27일에 시험
 * 시험범위 4차시 27페이지까지
 * 10문제 소스코드 작성
