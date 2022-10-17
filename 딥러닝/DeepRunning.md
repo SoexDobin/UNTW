@@ -72,6 +72,33 @@
 * 손실을 줄이는 방향으로 가중치를 업데이트
 ---
 
+### 모델 정의
+```python
+model = Squential(노드 개수, output y 개수, 활성화함수)
+```
+**활성화 함수 종류**
+- linear : 데이터의 관계가 서로 직선 형태를 띠는 일자선 함수
+- sigmod : 실함수로써 유계이고 미분가능하며, 모든 점에서 음이 아닌 미분값을 가지고 단 하나의 변곡점을 가진다. S선 함수
+- softmax : 세 개 이상으로 분류하는 다중 클래스 분류에서 사용되는 출력은 0~1 사이의 실수인 곡선 함수
+
+### 모델 컴파일
+```python
+model.compile(최적화 알고리즘, 손실함수, 평가지표)
+```
+**최적화 알고리즘**
+- sgd : 경사 하강법중에서도 Stochastic Gradient Descent 임의의 하나의 데이터에 대해서 에러를 구한 뒤 기울기를 계산하여, 모델의 parameter 를 업데이트 하는 방법
+- adam : Adaptive Moment Estimation
+**손실 함수**
+- mean_squared_error : 오차값이 작을수록  정답에 가깝다.
+- binary_crossentropy : 머신 러닝 분류 모델의 발견된 확률 분포와 예측 분포 사이의 차이를 측정합니다. Loss(또는 Error)는 0은 완벽한 모델로 0과 1 사이의 숫자로 측정됩니다. 일반적인 목표는 모델을 가능한 0에 가깝게 만드는 것입니다.
+- categorical_crossentropy : 클래스가 3개 이상인 멀티클래스 분류에 사용됩니다. 출력된 벡터는 각 클래스에 속할 확률이 나오며, 총합은 1이다.
+### 모델 트레이닝
+```python
+model.fit(feature, label, 최적화 회수, 콘솔 출력 타입)
+```
+* epochs : 데이터들이 한 번씩 모델을 통과한 횟수
+
+
 ### **성적 모델**
 ```python
 import numpy as np
