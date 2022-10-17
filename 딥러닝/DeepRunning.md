@@ -146,6 +146,28 @@ model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])
 ![image](https://user-images.githubusercontent.com/56966606/196001527-fc79ba19-0e68-4fda-8540-7376237adf81.png)
 ---
 
+```python
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt # 지표를 시각적으로 보기위해
+from tensorflow import keras 
+from keras import Sequential # 모델 정의에 사용
+from keras.layers import Dense # 신경망 모델 구성을 위한 layer
+
+xTime = np.array([1.0, 2.0, 4.0, 10.0, 12.0], dtype=float)
+yPass = np.array([0.0, 0.0, 0.0, 1.0, 1.0], dtype=float)
+
+model = Sequential([Dense(1, input_shape=(1, ), activation='sigmoid')])
+
+model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])
+model.fit(xTime, yPass, epochs=500, verbose=0)
+
+w, b = model.weights
+print(w.numpy(), b.numpy())
+
+print(model.predict([4]))
+```
+
 ### **Multi-Class classification**
 * 이진 분류를 n번 수행하여 예측 값 벡터 y 계산
 
