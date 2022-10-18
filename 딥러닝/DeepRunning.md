@@ -231,8 +231,26 @@ Dense(10, activation='relu'),
 Dense(3, activation='softmax'),
 ])
 
-model.compile(optimizer='adam', loss='categorical_crossentropy’,metrics=['acc'])
+model.compile(optimizer='adam', loss='categorical_crossentropy’, metrics=['acc'])
 model.fit(x_train, y_train, validation_data=(x_test, y_test),epochs=400, verbose=0)
 model.evaluate(x_test, y_test, verbose=2)
+```
+
+## Linear Regression & Binary Classification & Multi-Class Classification 코드 비교
+```python
+model = Sequential(Dense[1, input_shape=(1, ), activation='linear'])
+model = Sequential(Dense[1, input_shape=(1, ), activation='sigmoid'])
+model = Sequential(Dense[1, input_shape=(1, ), activation='softmax'])
+
+model.compile(optimizer='sgd', loss='mse')
+model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['acc'])
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
+
+model.fit(x, y, epoch=500, verbose=0)
+model.evaluate(x, y)
+w, b = model,weights
+print(w.numpy(), b.numpy())
+
+model.predict([x])
 ```
 
