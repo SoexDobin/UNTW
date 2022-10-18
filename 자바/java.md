@@ -399,7 +399,7 @@ public class Test2 {
 }
 ```
 
-# 객체지향
+## 객체지향
 * 객체지향 특성 3가지
 	1. 다형성
 	2. 캡슐화
@@ -426,12 +426,95 @@ pulbic class Test3 {
 		System.out.println("Swap()함수 호출 후: (" + d1.value + ", "+ d2.value +")");		
 	}
 	// 오버로딩은 하나의 객체에서 이름이 같은 메소드를 여러개 정의하여 사용하는 것이다.
-	static void Swap(Data a, Data b) {
+	static void Swap(Data a, Data b) { // 포인트는 정적 함수로 만드는것 
 		int temp
 		temp = a.value;
 		a.value = b.value;
 		b.value = temp;
 	}
+	static void Swap(int a, int b) { 
+		int temp;
+		temp = a;
+		a = b;
+		b = temp;
+	}
 }
 ```
+
+# 5 차시
+
+## 상속
+* 클래스 정의시 클래스명 뒤에 extends 가 없으면 컴파일러는 자동으로 extends Object 추가해 준다.
+* 자바는 기본적으로 단일 상속구조를 가진다.
+* 자바의 최고 조상 클래스: Object 클래스
+
+## 생성자
+* 생성자는 멤버 초기화를 위해 사용한다
+* 모든 클래스는 1개 이상의 생성자가 존재한다.
+* 생성자가 클래스내에 존재하지 않으면 컴파일러가 기본 생성자를 추가해준다.
+
+## this. vs this() 차이점
+**this.**: 객체 자신의 주소
+**this()**: 같은 클래스내의 다른 생성자 호출
+
+## this()생성자의 특징
+* 같은 클래스의 다른 생성자를 호출한다.
+* 꼭 첫 문장으로 작성 되어야 한다.
+* this()사용할 경우 같은 함수 내에서 super()는 추가되지 않는다.
+
+## super. vs super() 차이점
+**super.**: 조상 멤버 접근시 호출
+**super()**: 조상의 생성자 호출
+
+## super()생성자의 특징
+* 생성자 첫 문장에 없으면 컴파일러가 자동으로 추가해준다.
+* 상속구조에서는 부모 생성자를 호출하지만 단일 클래스 자체에서 호출하면 Object() 클래스를 호출한다.
+
+**부모 클래스**
+```java
+public class Car{
+	// 멤버 변수
+	String color;
+	int door;
+
+	Car(){ // 기본 생성자 맨 첫줄에 위치 해야 한다
+		color = "black";
+		door = 4;
+	}
+	Car(){ // 기본 생성자 맨 첫줄에 위치 해야 한다
+		this("blue", 2);
+	}
+	Car(String c, int d){ // 매개변수 있는 생성자
+		super(); // 생성자 첫 문장에 super();를 추가해줌!, Object() 호출함! 
+		color = c;
+		door = d;
+	}
+
+	// 멤버 메서드
+	void start(){
+		System.out.println("출발~");
+	}
+}
+```
+**자식 클래스**
+```java
+public class Bus extends Car{
+	int window;
+	Bus(){
+		super(); // 부모 생성자 호출 / 없으면 자동으로 추가
+		window = 10;
+	}
+	Bus(String color, int door, int window){
+		super(color, door);
+		this.window = window;
+	}
+	// 오버라이딩(상속관계에서 조상클래스에 정의된 메소드를 자식클래스에서 재정의 하는 것) 
+	void start() {
+		System.out.println("버스가 출발~");
+		super.start(); // 조상의 메서드를 가져와서 활용
+	}
+}	
+```
+
+
 
