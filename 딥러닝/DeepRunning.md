@@ -74,7 +74,8 @@
 
 ### 모델 정의
 ```python
-model = Squential(노드 개수, output y 개수, 활성화함수)
+model = Squential(Dense[1, input_shape=(1, ), activation=''])
+model = Squential(Dense[노드 개수, output y 개수, 활성화함수])
 ```
 **활성화 함수 종류**
 - linear : 데이터의 관계가 서로 직선 형태를 띠는 일자선 함수
@@ -83,21 +84,42 @@ model = Squential(노드 개수, output y 개수, 활성화함수)
 
 ### 모델 컴파일
 ```python
+model.compile(optimizer='', loss='', metrics='')
 model.compile(최적화 알고리즘, 손실함수, 평가지표)
 ```
 **최적화 알고리즘**
 - sgd : 경사 하강법중에서도 Stochastic Gradient Descent 임의의 하나의 데이터에 대해서 에러를 구한 뒤 기울기를 계산하여, 모델의 parameter 를 업데이트 하는 방법
 - adam : Adaptive Moment Estimation
+
 **손실 함수**
 - mean_squared_error : 오차값이 작을수록  정답에 가깝다.
 - binary_crossentropy : 머신 러닝 분류 모델의 발견된 확률 분포와 예측 분포 사이의 차이를 측정합니다. Loss(또는 Error)는 0은 완벽한 모델로 0과 1 사이의 숫자로 측정됩니다. 일반적인 목표는 모델을 가능한 0에 가깝게 만드는 것입니다.
 - categorical_crossentropy : 클래스가 3개 이상인 멀티클래스 분류에 사용됩니다. 출력된 벡터는 각 클래스에 속할 확률이 나오며, 총합은 1이다.
+
 ### 모델 트레이닝
 ```python
+model.fit(x, y, epochs=n, verbose=0~2)
 model.fit(feature, label, 최적화 회수, 콘솔 출력 타입)
 ```
 * epochs : 데이터들이 한 번씩 모델을 통과한 횟수
 
+### 모델 검증
+**훈련 마친 모델 지표계산 함수 evaluate()**
+```python
+model.evaluate(x, y)
+model.evaluate(feature, label)
+```
+**훈련 마친 모델 가중치, 편향 값 산출 변수 weights**
+```python
+w, b = model.weights
+print(w.numpy(), b.numpy())
+```
+
+###모델 예측
+```python
+model.predict([x'])
+model.predict([feature'])
+```
 
 ### **성적 모델**
 ```python
@@ -154,7 +176,7 @@ model = Sequential([Dense(1, input_shape=(1,), activation='sigmoid')])
 model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])
 ```
 
-### 분류 문제 평가 지표 matrics
+### 분류 문제 평가 지표 metrics
 * Accuracy (정확도) 
   - 클래스가 불균형 분포이면 왜곡될 수 있음
 * Precision (정밀도) 
