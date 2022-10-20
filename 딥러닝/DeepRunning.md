@@ -5,7 +5,7 @@
 ---
 
 ### - 학습방법
-1. Supervised learing (지도학습)
+1. Supervised learning (지도학습)
   * Regression
   * Classification
 2. Unsupervised learning (비지도 학습)
