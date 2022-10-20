@@ -1,22 +1,24 @@
 # 파이썬 모듈
+
 <br>
-* Numpy:과학 계산을 위한 모듈
+
+* Numpy : 과학 계산을 위한 모듈
 ```python
 import numpy as np
 ```
-* Pandas:데이터 분석을 할 때 가장 많이 쓰이는 모듈
+* Pandas : 데이터 분석을 할 때 가장 많이 쓰이는 모듈
 ```python
 import pandas as pd
 ```
-* Matplotlib:데이터 시각화를 위한 모듈
+* Matplotlib : 데이터 시각화를 위한 모듈
 ```python
 import matplotlib.pyplot as plt
 ```
-* Seaborn:통계 시각화를 위한 모듈
+* Seaborn : 통계 시각화를 위한 모듈
 ```python
 import seaborn as sns
 ```
-* Random:난수 생성 관련 모듈
+* Random : 난수 생성 관련 모듈
 ```python
 import random
 ```
