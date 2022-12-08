@@ -96,7 +96,7 @@ import random
 **Vector**
 - 벡터(vector)는 크기와 방향을 갖는 개념이다
 
-**Matrix**
+**Metrics**
 - 행렬로써 수 또는 다항식 등을 직사각형 모양으로 배열한 것이다.
 
 # Linear Regression
@@ -176,7 +176,7 @@ import random
 ### 모델 정의
 ```python
 model = Squential(Dense[1, input_shape=(1, ), activation=''])
-model = Squential(Dense[노드 개수, output y 개수, 활성화함수])
+model = Squential(Dense[노드 개수(output), input x 개수, 활성화함수])
 ```
 **활성화 함수 종류**
 - linear : 데이터의 관계가 서로 직선 형태를 띠는 일자선 함수
