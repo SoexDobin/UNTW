@@ -351,3 +351,148 @@ print(w.numpy(), b.numpy())
 model.predict([x])
 ```
 
+
+## 뉴럴 모델을 통한 hidden layer 활용
+- 입력층(input_shape)과 출력층(output_shape) 사이에 넣어준다.
+- 이전 층의 가중합으로 새로운 특성을 만들어 낸다.
+- 입력 특성으로부터 새로운 특성들이 만들어 지면서 모델이 더 상세한 정보를 학습한다.
+- but 너무 많은 hidden layer 사용 시 신경망의 층이 깊어지면 gradient가 0이 되어 backpropagation이잘 작동하지 않는다. > 고로 경사 소실 문제가 발생한다.
+
+<br>
+
+### Activation함수 relu 함수
+- 양수 구간의 미분은 1, 음수 구간은 0으로 계산할 필요가 없음
+- sigmoid의 – 함수의 양끝에서 미분값이 0이 되는 Gradient 포화가 발생하여 학습 중단하듯 hidden layer을 사용할때 적절한 함수로서 사용한다.
+
+![image](https://user-images.githubusercontent.com/56966606/205503882-815936bc-50e7-4666-b088-f098e9c14c7b.png)
+
+<br>
+
+### Flattern 
+- 3차원배열을 1차원 배열로 바꿔준다.
+
+![image](https://user-images.githubusercontent.com/56966606/205503901-b7a1bb66-e481-46c7-a51e-523fff9349d2.png)
+
+**손실함수 sparse_categorical_crossentropy**
+- categorical_crossentropy와 같이 다중 클래스 분류시 사용한다.
+= sparse는 훈련데이터 값 label이 w정수형일때 사용한다.
+
+**CNN 활용해보기**
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow
+from tensorflow import keras
+from keras import Sequential
+from keras.layers import Flatten, Dense
+
+mnist = keras.datasets.mnist
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train, x_test = x_train/255.0, x_test/255.0
+
+# Flatten : 3차원 1차원 배열로 바꿔줌
+model = Sequential([
+    Flatten(input_shape=(28, 28)),
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')
+])
+model.summary()
+
+model.compile(optimizer='Adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['acc']  
+)
+history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=10, verbose=0)
+
+loss = history.history['loss']
+val_loss = history.history['val_loss']
+epochs = range(1, len(loss)+1)
+plt.plot(epochs,loss)
+plt.plot(epochs,val_loss)
+plt.xlabel('Epoch', fontsize=14)
+plt.ylabel('Loss', fontsize=14)
+plt.show()
+
+acc = history.history['acc']
+val_acc = history.history['val_acc']
+plt.plot(epochs,acc)
+plt.plot(epochs,val_acc)
+plt.xlabel('Epoch', fontsize=14)
+plt.ylabel('Accuracy', fontsize=14)
+plt.show()
+```
+
+![image](https://user-images.githubusercontent.com/56966606/206403157-b88c9063-2ab4-4f26-b69c-922ad2daba50.png)
+
+
+
+### Convolution 연산과 사용하는 요소
+- 여러 개의 필터를 사용하여 입력 이미지의 다른 특성을 학습
+- 정방형 filter(kernel)을 사용하여 이미지의 특징을 추출
+
+**Stride** : 컨벌루션 연산시 filter가 이동하는 간격
+- Stride를 2로 설정하면 특성맵의 크기가 반으로 줄어든다
+
+![image](https://user-images.githubusercontent.com/56966606/205573409-029bf131-8a7d-495c-a7ea-cfef151d8895.png)
+
+**Padding** : • 컨벌루션 신경망을 원하는 대로 깊게 만들기 위해 특성맵이 줄어들지 않도록 padding을 사용
+
+![image](https://user-images.githubusercontent.com/56966606/205573485-19c04e5f-ad5a-4648-9b39-01720cabb54b.png)
+
+**Pooling 연산**
+- Max pooling과 Average pooling이 있다.
+- 풀링 필터는 학습을 하지 않으며 채널수는 유지됨
+
+#### Convolution 연산의 성질
+- 희소 연결(sparse connectivity) 성질
+- 파라미터 공유(parameter sharing) 성질
+- 이동등변성(Translation equivariance)
+
+#### Pooling 연산의 성질
+- 위치불변성(Translation invariance) 
+  + 입력이 작게 이동했을 때 맥스 풀링의 결과는 동일
+  + 따라서 입력의 위치가 바뀌어도 같은 결과로 인식
+  + 강아지 사진의 강아지 위치가 어느 위치에 있건 상관없이 강아지로 출력
+
+![image](https://user-images.githubusercontent.com/56966606/205576141-128992cc-b2a4-4ea7-be4d-7a49ec8c7c02.png)
+
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from tensorflow import keras
+from keras.models import Sequential
+from keras.layers import Flatten, Dense, Conv2D, MaxPooling2D
+
+mnist = keras.datasets.mnist
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# 정규화 (Normalization)
+x_train, x_test = x_train/255.0, x_test/255.0
+# Convolution layer에 적용하기 위해 이미지 데이터에 채널 추가(Reshape)
+x_train = x_train.reshape(60000, 28, 28, 1)
+x_test = x_test.reshape(10000, 28, 28, 1)
+
+model = Sequential([
+  Conv2D(32, (3,3), activation='relu', input_shape(28, 28, 1)),
+  MaxPooling(2, 2),
+  Flatten(),
+  Dense(128, activation='relu'),
+  Dense(128, activation='relu'),
+  Dense(10, activation='softmax'),
+])
+
+model.compile(optimizer='Adam', loss='sparse_categorical_crossentropy', metrics=['acc'])
+histroy = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=100)
+
+loss = history.history['loss']
+val_loss = history.history['val_loss']
+epochs = range(1,len(loss)+1)
+plt.plot(epochs,loss)
+plt.plot(epochs,val_loss)
+plt.title ('Training and validation loss')
+plt.show()
+```
+
+![image](https://user-images.githubusercontent.com/56966606/206414657-27b5eb53-3974-4ed4-863a-ace34c2d84d4.png)
