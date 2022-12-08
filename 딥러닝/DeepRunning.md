@@ -435,7 +435,7 @@ plt.show()
 
 ![image](https://user-images.githubusercontent.com/56966606/205573409-029bf131-8a7d-495c-a7ea-cfef151d8895.png)
 
-**Padding** : • 컨벌루션 신경망을 원하는 대로 깊게 만들기 위해 특성맵이 줄어들지 않도록 padding을 사용
+**Padding** : 컨벌루션 신경망을 원하는 대로 깊게 만들기 위해 특성맵이 줄어들지 않도록 padding을 사용
 
 ![image](https://user-images.githubusercontent.com/56966606/205573485-19c04e5f-ad5a-4648-9b39-01720cabb54b.png)
 
@@ -457,6 +457,10 @@ plt.show()
 ![image](https://user-images.githubusercontent.com/56966606/205576141-128992cc-b2a4-4ea7-be4d-7a49ec8c7c02.png)
 
 
+**최적화 함수 RMSProp**
+- 최적화 기법 중 하나인 AdaGrad는 학습이 진행될 때 학습률(Learning rate)이 꾸준히 감소하다 나중에는 으로 수렴하여 학습이 더 이상 진행되지 않는다는 한계가 있습니다. RMSProp은 이러한 한계점을 보완한 최적화 기법
+- 변수(feature)마다 적절한 학습률을 적용하여 효율적인 학습을 진행할 수 있다
+
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
@@ -467,24 +471,29 @@ from keras.layers import Flatten, Dense, Conv2D, MaxPooling2D
 
 mnist = keras.datasets.mnist
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
+print(x_train.shape, y_train.shape)
+print(x_test.shape, y_test.shape)
 
 # 정규화 (Normalization)
 x_train, x_test = x_train/255.0, x_test/255.0
-# Convolution layer에 적용하기 위해 이미지 데이터에 채널 추가(Reshape)
+# Convolution layer에 적용하기 위해 이미지 데이터에 채널 추가 (Reshape)
 x_train = x_train.reshape(60000, 28, 28, 1)
 x_test = x_test.reshape(10000, 28, 28, 1)
+print(x_train.shape)
+print(x_test.shape)
 
 model = Sequential([
-  Conv2D(32, (3,3), activation='relu', input_shape(28, 28, 1)),
-  MaxPooling(2, 2),
-  Flatten(),
-  Dense(128, activation='relu'),
-  Dense(128, activation='relu'),
-  Dense(10, activation='softmax'),
+    Conv2D(32, (3,3), activation='relu', input_shape=(28, 28, 1)),
+    MaxPooling2D(2, 2),
+    Flatten(),
+    Dense(128, activation='relu'),  
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')
 ])
-
 model.compile(optimizer='Adam', loss='sparse_categorical_crossentropy', metrics=['acc'])
-histroy = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=100)
+history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=5)
+
+model.evaluate(x_test, y_test, verbose=2)
 
 loss = history.history['loss']
 val_loss = history.history['val_loss']
@@ -493,6 +502,110 @@ plt.plot(epochs,loss)
 plt.plot(epochs,val_loss)
 plt.title ('Training and validation loss')
 plt.show()
+
+acc = history.history['acc']
+val_acc = history.history['val_acc']
+plt.plot(epochs,acc)
+plt.plot(epochs,val_acc)
+plt.title ('Training and validation accuracy')
+plt.show()
+```
+
+
+
+```python
+import os
+import zipfile
+import numpy as np
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import tensorflow as tf
+
+from tensorflow import keras
+from keras.models import Sequential
+from keras.layers import Flatten, Dense, Conv2D, MaxPooling2D, Dropout
+from keras.preprocessing.image import ImageDataGenerator
+
+!wget --no-check-certificate \
+  https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip \
+  -O /tmp/cats_and_dogs_filtered.zip
+
+local_zip = '/tmp/cats_and_dogs_filtered.zip'
+zip_ref = zipfile.ZipFile(local_zip, 'r')
+zip_ref.extractall('/tmp')
+zip_ref.close()
+
+base_dir = '/tmp/cats_and_dogs_filtered'
+train_dir = os.path.join(base_dir, 'train')
+validation_dir = os.path.join(base_dir, 'validation')
+
+train_cats_dir = os.path.join(train_dir, 'cats')
+train_dogs_dir = os.path.join(train_dir, 'dogs')
+
+validation_cats_dir = os.path.join(validation_dir, 'cats')
+validation_dogs_dir = os.path.join(validation_dir, 'dogs')
+
+train_cat_fnames = os.listdir( train_cats_dir )
+train_dog_fnames = os.listdir( train_dogs_dir )
+
+print(train_cat_fnames[:10])
+print(train_dog_fnames[:10])
+print('total training cat images :', len(os.listdir(      train_cats_dir ) ))
+print('total training dog images :', len(os.listdir(      train_dogs_dir ) ))
+print('total validation cat images :', len(os.listdir( validation_cats_dir ) ))
+print('total validation dog images :', len(os.listdir( validation_dogs_dir ) ))
+
+model = Sequential([
+    Conv2D(32, (3,3), activation='relu', input_shape=(150, 150, 3)),
+    MaxPooling2D(2,2),
+    Conv2D(64, (3,3), activation='relu'),
+    MaxPooling2D(2,2),
+    Conv2D(128, (3,3), activation='relu'),
+    MaxPooling2D(2,2),
+    Conv2D(128, (3,3), activation='relu'),
+    MaxPooling2D(2,2),
+    Flatten(),
+    Dense(512, activation='relu'),
+    Dense(1, activation='sigmoid')
+])
+
+
+RMSprop = keras.optimizers.RMSprop(0.0001)
+model.compile(optimizer=RMSprop, loss='binary_crossentropy', metrics = ['accuracy'])
+
+# 이미지 옵션주기
+train_datagen = ImageDataGenerator(
+      rescale=1./255, 
+      rotation_range=40,
+      width_shift_range=0.2,
+      height_shift_range=0.2,
+      shear_range=0.2,
+      zoom_range=0.2,
+      horizontal_flip=True,
+      fill_mode='nearest')
+
+test_datagen  = ImageDataGenerator(rescale = 1.0/255.)
+
+train_generator = train_datagen.flow_from_directory(
+        train_dir,
+        target_size=(150, 150),
+        batch_size=20,
+        class_mode='binary')
+
+validation_generator = test_datagen.flow_from_directory(
+        validation_dir,
+        target_size=(150, 150),
+        batch_size=20,
+        class_mode='binary') 
+
+history = model.fit(
+      train_generator,
+      steps_per_epoch=100,  # 한 번의 epoch를 돌 때, 데이터를 몇 번 볼 것인가 # 2000 images = batch_size * steps
+      epochs=10,           
+      validation_data=validation_generator,
+      validation_steps=50,  # 한번의 데스트 epoch를 볼때 데이터 몇번 볼 것 인가 # 1000 images = batch_size * steps
+      verbose=2)
 ```
 
 ![image](https://user-images.githubusercontent.com/56966606/206414657-27b5eb53-3974-4ed4-863a-ace34c2d84d4.png)
+
