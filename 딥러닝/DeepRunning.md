@@ -1,3 +1,63 @@
+
+# 파이썬
+```python
+# list
+a = [1,2,3,4,5]
+len(a) # 5
+a[4] = 99
+print(a) # [1,2,3,4,99]
+
+nums = list(range(5))
+print(nums[2:4]) # [2, 3]
+print(nums[2:]) # [2, 3, 4]
+print(nums[:2]) # [0, 1]
+print(nums[:]) # [0, 1, 2, 3, 4]
+print(nums[:-1]) # [0, 1, 2, 3]
+
+# dictionary
+me = {'height':180} # me['height] = 180
+me['weight'] = 70
+print(me) # {'height:180', 'weight':70}
+
+# for
+for i in [1,2,3]:
+print(i) # 1 2 3
+
+# 함수
+def hello(object):
+  print(“Hello ”+object+“!”)
+
+# 클래스
+class Man:
+  def__init__(self, name):
+    self.name = name
+    print("초기화!")
+  def hello(self):
+    print("Hello "+self.name+"!")
+  def goodbye(self):
+    print("Goodbye"+self.name+"!")
+
+m = Man("David")
+m.hello() # Hello David!
+m.goodbye() # Goodbye David!
+
+# numpy array
+b = np.array([[1,2],[3,4],[5,6]])
+print(b.ndim) # 3
+print(b.shape) # (3, 4)
+
+print(b[:,-1]) # [2 4 6]
+print(b[-1]) # [5, 6]
+print(b[-1,:]) # [5, 6]
+print(b[-1,...]) # [5, 6]
+print(b[0:2,:]) # [[1,2] [3,4]]
+```
+
+**reshape!**
+
+![image](https://user-images.githubusercontent.com/56966606/206397542-86422059-1760-4b3f-9fd6-4a5dc7389152.png)   
+
+
 # 파이썬 모듈
 
 <br>
@@ -152,7 +212,7 @@ w, b = model.weights
 print(w.numpy(), b.numpy())
 ```
 
-###모델 예측
+### 모델 예측
 ```python
 model.predict([x'])
 model.predict([feature'])
