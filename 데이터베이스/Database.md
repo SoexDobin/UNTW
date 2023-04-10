@@ -73,7 +73,7 @@ SELECT 컬럼리스트 FROM 테이블명 WHERE... ;
 ## RDBMS에서 N:n의 관계 유형
 * 1:1 : 고유한 값을 가진 하나의 테이블의 레코드가 다른 테이블의 레코드와 하나의 대응 관계를 가지는 것.
 * 1:n : 고유한 값을 가진 하나의 테이블의 레코드가 여러 테이블 레코드와 대응 관계를 가지는 것.
-* n:m : 하나의 데이터베이스가 여러 데이터베이스와 관계를 맺을 수 있고 반대도 가능한 다대다 관계를 의미
+* n:m : 하나의 데이터베이스가 여러 데이터베이스와 관계를 맺을 수 있고 반대도 가능한 다대다 관계의 테이블을 의미
 ```
 학생 (students) 테이블:
 - 학생 ID (student ID, PK)
@@ -94,10 +94,9 @@ SELECT 컬럼리스트 FROM 테이블명 WHERE... ;
 - 과목 ID (subject ID, FK)
 - 수강 학기 (semester)
 - 수강 성적 (grade)
-- ... 
+- ... n:m 
 
 ```
-
 
 **레코드(record)는 각 테이블의 행(row), 데이터의 단일 인스턴스**
 
@@ -116,5 +115,128 @@ SELECT 컬럼리스트 FROM 테이블명 WHERE... ;
 2. 논리적 모델링 : 업무 분석의 후반부와 시스템 설계 전반부에 걸쳐서 진행
 3. 물리적 모델링 : 시스템 설계의 후반부에 진행
 
+## 요약된 SELECT문의 형식 (시험)
+SELECT select_expr 
+**결과 집합에 포함할 열을 지정합니다. 하나 이상의 열을 지정하거나 와일드카드 기호(*)를 사용하여 모든 열을 선택할 수 있습니다.**
+    [FROM table_references] : 조회할 테이블을 지정합니다. 하나 이상의 테이블을 지정할 수 있으며 JOIN 절을 사용하여 테이블을 결합할 수 있습니다.
+    [WHERE where_condition] : 결과 집합에 포함되기 위해 데이터가 충족해야 하는 조건을 지정합니다. AND 및 OR와 같은 논리 연산자를 사용하여 조건을 결합할 수 있습니다.
+    [GROUP BY group_by_expression] : 결과 집합을 하나 이상의 열로 그룹화합니다. 이것은 종종 COUNT 또는 SUM과 같은 집계 함수와 함께 사용되어 각 그룹에 대한 요약 통계를 계산합니다.
+    [HAVING having_condition] : 결과 집합에 포함되기 위해 그룹화된 데이터가 충족해야 하는 조건을 지정합니다. 이는 WHERE 절과 유사하지만 개별 행이 아닌 그룹에서 작동합니다.
+    [ORDER BY order_expression] : 행이 반환되어야 하는 순서를 지정합니다. 하나 이상의 열을 기준으로 정렬할 수 있으며 각 열에 대해 오름차순 또는 내림차순을 지정할 수 있습니다.
+
+**테이블은 새로운공간에 가져와 생성하는 것이다.**
+```sql
+Use mysql;
+SELECT * FROM employees.employees;
+```
+* mysql 스키마 사용
+* employees 데이터베이스의 employees 테이블 가져오기
+* result set으로 SELECT한 형식의 데이터 베이스 열 행을 가져온다
+
+**데이터를 가져오기위해 선정해야하는 우선순위**
+1. 단열 단행 : 특정 값의 1개의 데이터를 목저으로 자원소모를 최소한으로 정확한 값을 가져오는게 중요하다.
+2. 단열 다행
+3. 다열 다행 : 지양해야 하는 방식
+
+**워크벤치에서 스키마 지정 후 사용할 수 있는 쿼리문**
+```sql
+SELECT * FROM employees;
+SELECT * FROM titles;
+```
+
+**특정 열의 테이블 데이터 가져오기**
+```sql
+SELECT first_name FROM employees;
+SELECT first_name, last_name, gender From employees;
+```
+
+**LIMIT로 제한된 데이터 가져오기**
+```sql
+SELECT * FROM employees ORDER BY birth_date ASC LIMIT 10;
+```
+
+**INSERT INTO '테이블 명'으로 테이블에 데이터 삽입하기**
+```sql
+INSERT INTO userTBL VALUES * FROM ('YJS', '유재석', 1972, '서울', '010', '11111111', 178, '2008-8-8');
+INSERT INTO userTBL VAlUES('YJS', '유재석', 1972, '서울', '010', '11111111', 178, '2008-8-8');
+```
+
+**테이블 생성하기** 
+```sql
+CREATE TABLE userTBL
+{
+    userID CHAR(8) NOT NULL PRIMARY KEY, -- 사용자 PK
+    userName    	VARCHAR(10) NOT NULL, -- 이름
+    mDate    	DATE  -- 회원 가입일
+}
+```
+
+**쿼리문 연산자 사용 (IN 시험 문제)**
+```sql
+-- 회원 테이블에서 1970년 이후에 출생, 키 182cm 이상인 아이디 이름 조회
+SELECT userID, userNAME, FROM userTBL WHERE birthYear >= 1970 AND height >= 182;
+
+-- 회원 테이블에서 1970년 이후에 출생했거나 키 182cm 이상인 아이디 이름 조회
+SELECT userID, userNAME, FROM userTBL WHERE birthYear >= 1970 OR height >= 182;
+
+SELECT userName, addr FROM userID WHERE addr='경남' OR addr='충남' OR addr='경북';
+SELECT userName, addr FROM userID WHERE addr IN ('경남', '충남', '경북'); -- in function 힘수 중요!! 1개 라도 해당하면
+```
+
+**와일드 문자 사용**
+```sql
+SELECT userName, height FROM userTBL WHERE userName LIKE '_경규';
+        -- LIKE 김으로 시작하는 모든 것
+SELECT userName, height FROM userTBL WHERE userName LIKE '김%';
+        -- LIKE _ 언더바는 한개의 문자 어떤 한 문자와 경규가 있는 데이터를 가져옴
+```
+
+**서브 쿼리문 사용 시험**
+```sql
+SELECT userName, height FROM userTBL WHERE height > (SELECT height FROM userTBL WHERE userName = '김용만'); 
+-- userTBL에 유저 이름 '김용만'의 키보다 큰 키의 데이터의 userName, height
+
+SELECT userName, height FROM userTBL WHERE height >= (SELECT height FROM userTBL WHERE addr = '경기');
+-- 에러 코드 단일 단행이 아니다
 
 
+-- ANY
+SELECT userName, height FROM userTBL WHERE height >= ANY (SELECT height FROM userTBL WHERE addr = '경기');
+
+-- ALL
+SELECT userName, height FROM userTBL WHERE height >= ALL (SELECT height FROM userTBL WHERE addr = '경기');
+
+-- IN 서브 쿼리문
+SELECT userName, height FROM userTBL WHERE height IN (SELECT height FROM userTBL WHERE addr = '경기'); -- (180, 176) 과 구조가 같음
+```
+* 서브쿼리문은 비교를 위해 상수로 가져와야 한다
+* 첫 예시는 단열 단행을 가져오는 효율적인 문장
+
+* ANY를 통해 주소가 '경기'데이터를 가진 여러 행을 1가지 구조로 바꿔준다
+* ANY로 가져온 데이터들 중 값이 큰 아무거나로 가져오게 된다
+
+* ALL은 ANY와 같이 데이터를 가져옴
+* 대신 2가지 요건을 모두 충족하는 데이터를 가져옴 (180, 176 이상인 필드)
+
+* IN 키워드는 속한 비교값과 똑같은 값을 가져오라는 조건을 가짐
+
+**order by 키워드로 정렬하기**
+```sql
+SELECT userName, mDate FROM userTBL ORDER BY mDate ASC;
+SELECT userName, mDate FROM userTBL ORDER BY mDate DESC;
+
+-- 섞어 쓰기
+SELECT userName, height FROM userTBL ORDER BY height DESC, userName ASC; 
+```
+* ASC키워드는 오름 차순으로 받아오기 1 2 3 4 ...
+* DESC키워드는 내림 차순으로 받아오기
+* 섞어쓰기 : height로 내림차순하고 같은 값이 나오면 username으로 오름차순 정렬하기
+
+**DISTINCT 겹치는 데이터가 있으면 1개만 출력하도록 만들기**
+```sql
+-- 중복 정렬되는 주소들 확인
+SELECT addr FROM userTBL ORDER BY addr;
+
+-- DISTINCT로 1개씩만 출력되게 만들기 
+SELECT DISTINCT addr FROM userTBL; 
+```
