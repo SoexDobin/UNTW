@@ -241,8 +241,7 @@ SELECT addr FROM userTBL ORDER BY addr;
 SELECT DISTINCT addr FROM userTBL; 
 ```
 
-#
-
+```
 트리거 안나옴 
 데이터 CRUD
 데이터베이스 생성해서 관계맺기 > 데이터 베이스 관계 3가지 중에서 맺고 사용하기
@@ -251,6 +250,7 @@ SELECT DISTINCT addr FROM userTBL;
 select 정렬 (원하는 행만 가져오기 where)
             (그룹을 지어서 sum min max 등 등 사용)
             (단일 행 단일 열 단일 열 다중 행 in any all 짤수 있고 알아야함)
+```
 
 # 5주차
 
@@ -330,7 +330,7 @@ CREATE TABLE buyTBL2 (SELECT * FROM buyTBL); -- buyTBL테이블을 복사하여 
 CREATE TABLE buyTBL3 (SELECT userID, prodName FROM buyTBL); -- buyTBL 특정 열 테이블을 복사하여 새테이블 buyTBL2 생성
 ```
 
-# 집계 함수
+### 집계 함수
 1. COUNT(): 해당 칼럼의 값의 개수를 반환합니다.
 2. SUM(): 해당 칼럼의 값의 합을 반환합니다.
 3. AVG(): 해당 칼럼의 값의 평균을 반환합니다.
@@ -352,5 +352,107 @@ SELECT userID AS '사용자', SUM(price*amount) AS '총구매액'
    GROUP BY userID
    HAVING SUM(price*amount) > 1000 ;
 ```
-* where에는 집계함수 못씀
+* where에는 집계함수 못씀 그래서 조건을 주려면 having을 사용
 * pk, fk를 가진 해당 테이블 값 가저온 후 다음 테이블로 넘어가야 함
+
+### 데이터 삽입
+```sql
+USE cookDB;
+CREATE TABLE testTBL1 (id int, userName char(3), age int);
+INSERT INTO testTBL1 VALUES (1, '뽀로로', 16);
+INSERT INTO testTBL1 VALUES (2, '크롱');
+INSERT INTO testTBL1(userName, age, id) VALUES ('루피', 14, 3); -- 데이터 데이블 구조 변경
+```
+### 데이터 삽입 N:M의 관계의 데이터 베이스 생성
+```sql
+CREATE TABLE testTBL2 (id int AUTO_INCREMENT KEY, -- 시험 AUTO_INCREMENT KEY N:M의 관계 테이블 을 만들떄 주로 사용
+    userName char(3),
+    age int);
+INSERT INTO testTBL2 VALUES (NULL, '에디', 15);
+INSERT INTO testTBL2 VALUES (NULL, '포비', 12);
+```
+
+### 테이블 수정
+```sql
+ALTER TABLE testTBL2 AUTO_INCREMENT = 100;
+INSERT INTO testTBL2 VALUES (NULL, '패티', 13);
+SELECT * FROM testTBL2;
+```
+
+### 테이블 시스템 변수
+```sql
+CREATE TABLE testTBL3
+    (id INT AUTO_INCREMENT PRIMARY KEY,
+    userName char(3),
+    age int);
+
+ALTER TABLE testTBL3 AUTO_INCREMENT=1000; -- AUTO_INCREMENT의 값 1000 설정
+SET @@auto_increment_increment = 3; -- AUTO_INCREMENT의 증가 값 3 씩 설정
+INSERT INTO testTBL3 VALUES (NULL, '우디', 20);
+INSERT INTO testTBL3 VALUES (NULL, '버즈', 18);
+SELECT * FROM testTBL3;
+```
+* @test = 10 : 사용자 변수(@ 1개) 
+* @@auto_increment_increment = 3 : 시스템 변수(@@ 2개) 
+
+### INTO를 통해 이미 만들어진 테이블에 원소 추가
+```sql
+CREATE TABLE testTBL4 (id int, Fname varchar(50), Lname varchar(50));
+    INSERT INTO testTBL4
+        SELECT emp_no, first_name, last_name
+            FROM employees.employees;
+
+CREATE TABLE testTBL6 
+    (SELECT emp_no AS id, first_name AS Fname, last_name AS Lname
+        FROM employees.employees);
+SELECT * FROM testTBL6 LIMIT 3;
+```
+
+### UPDATE 
+```sql
+USE cookDB;
+UPDATE testTBL4
+    SET Lname = '없음'
+    WHERE Fname = 'Mary';
+SELECT Fname = 'Mary' FROM testTBL4;
+
+UPDATE buytbl SET price = price * 1.5;
+```
+
+### Delete
+```sql
+USE cookDB;
+CREATE TABLE bigTBL1 (SELECT * FROM employees.employees);
+CREATE TABLE bigTBL2 (SELECT * FROM employees.employees);
+CREATE TABLE bigTBL3 (SELECT * FROM employees.employees);
+
+DELETE FROM bigTBL1;
+DROP FROM bigTBL2;
+TRUNCATE bigTBL3;
+```
+* DROP : 데이터 포함 스키마까지 젠부 제거 (속도 제일 느림)
+* DELETE : 제거 로그가 뜨고 데이터만 제거 (속도 제일 빠름)
+* TRUNCATE : 스키마는 남기고 데이터만 전부 제거 (DROP에 비해 빠름 로그는 안뜸)
+
+### 쿼리 문장이 에러여도 다음 문장 실행하기
+```sql
+INSERT IGNORE INTO memberTBL VALUES ('KHD', '강호동', '미국');
+INSERT IGNORE INTO memberTBL VALUES ('KHD', '강후덜', '한국');
+```
+
+### 순위함수 OVER
+```sql
+SELECT ROW_NUMBER( ) OVER(ORDER BY height DESC) AS '키큰순위'
+    ,userName, addr, height FROM userTBL;
+SELECT ROW_NUMBER( ) OVER(ORDER BY height DESC)
+    ,userName, addr, height FROM userTBL;
+SELECT ROW_NUMBER( ) OVER(ORDER BY height DESC, userName ASC) , userName, addr, height
+	FROM userTBL;
+```
+### 윈도우 함수 PARTITION BY
+```sql
+SELECT addr, ROW_NUMBER( ) OVER(PARTITION BY addr) '지역별 키큰 순위'
+    , userName, height FROM userTBL;
+SELECT addr, ROW_NUMBER( ) OVER(PARTITION BY addr ORDER BY height DESC, userName ASC) '지역별키큰순위'
+    , userName, height FROM userTBL;
+```

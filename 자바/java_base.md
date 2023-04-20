@@ -402,3 +402,81 @@ public class Test4 {
 	}
 }
 ```
+
+## 2차원 배열
+```java
+// 로또 번호 뽑고 숫자 뒤섞기
+public class Test1 {
+
+	public static void main(String[] args) {
+		int i, j, temp, ball[] = new int[45];
+		
+		for( i = 0; i < ball.length; i++ ) {
+			ball[i] = i + 1;
+			System.out.print(ball[i] + " ");
+		}
+		System.out.println();
+		for( i = 0; i < 100; i++) {
+			j = (int)(Math.random() * 45);
+			
+			temp = ball[0];
+			ball[0] = ball[j];
+			ball[j] = temp;
+		}
+		System.out.println();
+		for( i = 0; i < 7; i++) {
+			System.out.print(ball[i] + " ");
+		}
+	}
+
+}
+```
+
+```java
+public class Test2 {
+
+	public static void main(String[] args) {
+		int arr[][] = {{1,2,3},{3,4},{5,6,7,8}};
+		
+		for(int i = 0; i < arr.length; i++) {
+			for(int j = 0; j < arr[i].length; j++) {
+				System.out.print(arr[i][j] + " ");
+			}
+			System.out.println();
+		}
+	}
+
+}
+```
+
+```java
+// 3명의 학생 국, 영, 수 점수의 총점을 구하는 프로그램
+/*
+번호 국어 영어 수학 총점
+ 1 90 78 92 xxx
+ 2 90 78 92 xxx
+ 3 90 78 92 xxx 
+*/
+public class Test3 {
+
+	public static void main(String[] args) {
+		int score[][] = {{90,78,92},{85,98,100},{100,80,75}};
+		int total = 0;
+		System.out.println("번호\t국어\t영어\t수학\t총점\t평균");
+		
+		for(int i = 0; i < score.length; i++) {
+			System.out.printf("%2d\t", i+1);
+			for(int j = 0; j < score[i].length; j++) {
+				System.out.printf("%2d\t", score[i][j]);
+				total += score[i][j];
+			}
+			System.out.print(total + "\t");
+			System.out.printf("%.2f", (double)total/score.length);
+			total = 0;
+			System.out.println();
+		}
+	}
+
+}
+
+```
