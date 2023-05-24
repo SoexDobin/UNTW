@@ -308,24 +308,6 @@ def drawRectangle(drawPosX, drawPosY, width=10, height=10):
 #drawCircle(0, 0, 50)
 drawRectangle(0,0, 50, 100)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # 숙제 모음
 
 ## 두점 사이 거리 구하기 homework
@@ -479,4 +461,196 @@ t.color("yellow")
 DrawCir(-(radius*1.25), -radius, radius)
 
 t.exitonclick()
+```
+
+
+# 파이썬 기말고사 범위
+
+## tkinter pack() & grid()
+```python
+from tkinter import *
+window = Tk()
+window.title("타이틀 작성")
+
+Label(window, text="pack() 함수 사용").pack()
+Label(window, text="grid() 함수 사용").grid(row=1, columm=1, sticky=W)
+
+label = Label(window, text="grid() 함수 사용")
+label.grid(row=2, columm=1, sticky=E)
+
+window.mainloop()
+```
+
+## tkinter Button()
+```python
+from tkinter import *
+window = Tk()
+window.title("타이틀 작성")
+
+button = Button(window, text="btn", width=25, fg="White", bg="lightgreen")
+button.grid(row=0, column=0, sticky=W)
+
+button2 = Button(window, text="as", width=50, fg="Black", bg="Black")
+button2.grid(row=2, column=0, columnspan=2 , sticky=W)
+
+window.mainloop()
+```
+
+## tkinter toolkit
+```python
+from tkinter import *
+
+window = Tk()
+window.title("로그인 페이지 만들어 보기")
+
+Label(window, text="Student ID").grid(row=0, column=0, sticky=E)
+Label(window, text="Name").grid(row=1, column=0, sticky=E)
+Label(window, text="Phone Number").grid(row=2, column=0, sticky=E)
+
+entry1 = Entry(window, width=20, bg="White")
+entry1.grid(row=0, column=1)
+entry2 = Entry(window, width=20, bg="White")
+entry2.grid(row=1, column=1)
+entry3 = Entry(window, width=20, bg="White")
+entry3.grid(row=2, column=1)
+
+Button(window, width=30, text="로그인", fg="White", bg="Black").grid(row=3, column=0, columnspan=2, rowspan=2)
+
+window.mainloop()
+```
+
+## 경고창
+```python
+import tkinter.messagebox as mb
+import tkinter.simpledialog as sd
+import tkinter.color
+
+isYes = mb.askyesno("askyesno", "계속하시겠습니까?")
+isOk = mb.askokcancel("askokcancel", "맞나요?")
+isYesNoCancel = mb.askyesnocancel("askyesnocancel", "Yes, No, Cancel?") 
+print(isYesNoCancel)
+
+name = sd.askstring("askstring", "Enter your name")
+print(name)
+age = sd.askinteger("askinteger", "Enter your age")
+print(age)
+weight = sd.askfloat("askfloat", "Enter your weight")
+print(weight)
+```
+
+## String 참조 메모리는 다르다
+```python
+s1 = "안녕하세요내나이는23"
+s2 = "안녕"
+print(id(s1))
+print(id(s2))
+
+print(len(s1))
+print(max(s1))
+print(min(s1))
+```
+
+## String 연산자
+```python
+s1 = "Welxome"
+s2 = "파이썬"
+s3 = s1 + " 여기는 " + s2
+s4 = 2 * s1
+
+print(s3)
+print(s4)
+print(s1[3 : 6])
+print('W' in s1)
+print('오' in s1)
+print(s1[-1])
+print(s1[-3 : -1])
+
+cs1 = "green"
+cs2 = "glow"
+print(cs1 == cs2)
+print(cs1 != cs2)
+print(cs1 >= cs2)
+```
+
+## String 테스트
+```python
+s = "welldone"
+print( s.isalnum() )        # True
+print( s.isalpha() )        # True
+print( s.isdigit() )        # False
+print( s.isidentifier() )   # True
+```
+
+## String 변환
+```python
+s1 = "idea for you"
+print( s1.capitalize() )        # 첫번째 대문자
+print( s1.title() )             # 문자들의 첫번째 모두 대문자
+print( "HAPPY".lower() )        # 소문자화
+print( "any".upper() )          # 대문자화
+print( "You sEE".swapcase() )   # 반대로
+print( "Alpha Beta".replace("Beta", "Delta") ) # 교체
+```
+
+## String 문자열 공백 제거
+```python
+s = "       안녕 Hoo Python\t"
+print(s)
+print( s.lstrip() ) # 좌측 공백 제거
+print( s.rstrip() ) # 우측 공백 제거
+print( s.strip() )  # 공백 제거
+```
+
+## String 정렬 전환 
+```python
+s = "Welcome"
+print( s.center(11) ) # ' welcome '
+print( s.ljust(22) ) # 'welcome     '
+print( s.rjust(33) ) # '            welcome'
+```
+
+## 16진수를 10진수로 변환
+```python
+# Hex to Decimal
+def main() : 
+    hex = input("hex 정수 값 입력: ").strip()
+    decimal = hexToDecimal(hex.upper())
+    if decimal == None :
+        print("잘못된 hex 값")
+    else : 
+        print(f"hex {hex}의 decimal 값 {decimal}")
+
+def hexToDecimal(hex) : 
+    decimalValue = 0
+    for i in range(len(hex)) : 
+        ch = hex[i]
+        if 'A' <= ch <= 'F' or '0' <= ch <= '9' :
+            decimalValue = decimalValue * 16 + hexCharToDecimal(ch)
+        else : 
+            return None
+    return decimalValue
+
+def hexCharToDecimal(ch):
+    if 'A' <= ch <= 'F' : 
+        return 10 + ord(ch) - ord('A')
+    else : 
+        return ord(ch) - ord('0')
+
+main()
+```
+
+## 2진수를 10진수로
+```python
+def binaryToDecimal(binaryStr) :
+    decimal = 0
+    length = len(binaryStr) - 1
+    for digit in binaryStr :
+        decimal += int(digit) * (2 ** length)
+        length -= 1
+    return decimal
+
+mainBinary = input("이진수 입력 : ")
+mainDecimal = binaryToDecimal(mainBinary)
+
+print(f"{mainBinary}의 십진수 값 : {mainDecimal}")
 ```
