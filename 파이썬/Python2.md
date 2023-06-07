@@ -654,3 +654,168 @@ mainDecimal = binaryToDecimal(mainBinary)
 
 print(f"{mainBinary}의 십진수 값 : {mainDecimal}")
 ```
+
+# 14 주차
+
+## 행 열 주기
+import random as r 
+
+matrix = []
+Row = eval(input("행 입력 : "))
+Col = eval(input("열 입력 : "))
+
+for row in range(0, Row) : 
+    matrix.append([])
+    for col in range(0, Col) :
+        matrix[row].append(r.randint(0, 99))
+
+print(matrix)
+
+## 행 열 추적
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] 
+total = 0
+
+for row in range(0, len(matrix)): 
+    for column in range(0, len(matrix[row])): 
+        total += matrix[row][column]
+print("총합은 : " + str(total)) 
+
+for column in range(0, len(matrix[0])) :
+    total = 0
+    for row in range(0, len(matrix)) :
+        total += matrix[row][column]
+    print(f"{str(column)}은 {str(total)}입니다.")
+
+## 조건으로 합이 가장 큰 행 찾아내기
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+maxRow = sum(matrix[0])
+
+indexOfMaxRow = 0
+for row in range(1, len(matrix)): 
+    if sum(matrix[row]) > maxRow:
+        maxRow = sum(matrix[row])
+        indexOfMaxRow = row
+
+print(f"{str(indexOfMaxRow)}번째 행 이 가장 큰 값을 가지고 있습니다.")
+
+## 배열 섞기
+import random
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] 
+
+for row in range(0, len(matrix)):
+    for column in range(0, len(matrix[row])):
+        i = random.randint(0, len(matrix)-1)
+        j = random.randint(0, len(matrix[row])-1)
+        
+        matrix[row][column], matrix[i][j] = matrix[i][j], matrix[row][column]
+
+print(matrix) 
+
+## 배열 구성 함수화
+import random as r
+def getMatrix() : 
+    matrix = []
+
+    Rows = eval(input("열 입력: "))
+    Cols = eval(input("행 입력: "))
+    for row in range(Rows) : 
+        matrix.append([])
+        for column in range(Cols) :
+            matrix[row].append(r.randint(0, 99))
+    return matrix
+
+def accumulate(m):
+    total = 0
+    for row in m:
+        total += sum(row)
+    return total
+
+
+def main() :
+    m = getMatrix()
+    print(m)
+    print(f"배열의 총 합 : {accumulate(m)}")
+
+main()
+
+## 두점 사이거리 구하기 공식으로 점사이 거리가 가장 가까운 좌표 구하기
+def distance(x1, y1, x2, y2) :
+    return ( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ** 0.5
+
+def nearestPoints(points):
+    p1, p2 = 0, 1
+    shortesDistance = distance(points[p1][0], points[p1][1], points[p2][0], points[p2][1])
+
+    for i in range(len(points)) :
+        for j in range(i + 1, len(points)) :
+            d = distance(points[i][0], points[i][1], points[j][0], points[j][1])
+
+            if shortesDistance > d :
+                p1, p2 = i, j
+                shortesDistance = d
+
+    return p1, p2
+
+
+import NearestPoints
+  
+def main():
+    numberOfPoints = eval(input("Enter the number of points: "))
+
+    points = []
+    print("Enter", numberOfPoints, "points:", end = '')
+    for i in range(numberOfPoints):
+        point = 2 * [0]
+        point[0], point[1] = \
+            eval(input("Enter coordinates separated by a comma: "))
+        points.append(point)
+
+    p1, p2 = NearestPoints.nearestPoints(points)  
+
+    print("The closest two points are (" +
+        str(points[p1][0]) + ", " + str(points[p1][1]) + ") and (" +
+        str(points[p2][0]) + ", " + str(points[p2][1]) + ")")
+
+main()
+
+## 3차원 배열 생일 날짜 구하기
+
+def main():
+    day = 0 # Day to be determined
+
+    dates = [
+        [[ 1,  3,  5,  7],
+        [ 9, 11, 13, 15],
+        [17, 19, 21, 23],
+        [25, 27, 29, 31]],
+        [[ 2,  3,  6,  7],
+        [10, 11, 14, 15],
+        [18, 19, 22, 23],
+        [26, 27, 30, 31]],
+        [[ 4,  5,  6,  7],
+        [12, 13, 14, 15],
+        [20, 21, 22, 23],
+        [28, 29, 30, 31]],
+        [[ 8,  9, 10, 11],
+        [12, 13, 14, 15],
+        [24, 25, 26, 27],
+        [28, 29, 30, 31]],
+        [[16, 17, 18, 19],
+        [20, 21, 22, 23],
+        [24, 25, 26, 27],
+        [28, 29, 30, 31]]]
+
+    for i in range(5):
+        print(f"생일이 {str(i + 1)}번째 세트 안에 있나요?")       
+        for j in range(4):
+            for k in range(4):
+                print(format(dates[i][j][k], '4d'), end = " ")
+            print()
+        answer = eval(input("Enter 0 for No and 1 for Yes: "))
+
+    if answer == 1:
+        day += dates[i][0][0]
+
+    print("당신의 생일 날은 " + str(day))
+   
+main() 
