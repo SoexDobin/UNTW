@@ -456,3 +456,380 @@ SELECT addr, ROW_NUMBER( ) OVER(PARTITION BY addr) '지역별 키큰 순위'
 SELECT addr, ROW_NUMBER( ) OVER(PARTITION BY addr ORDER BY height DESC, userName ASC) '지역별키큰순위'
     , userName, height FROM userTBL;
 ```
+
+# 기말고사 범위
+
+## 8장 
+
+### INNER JOIN
+```sql
+USE cookDB;
+    SELECT *
+        FROM buyTBL
+            INNER JOIN userTBL
+                ON buyTBL.userID = userTBL.userID
+        WHERE buyTBL.userID = 'KYM';
+
+-- 테이블을 명시하는 코드
+SELECT buyTBL.userID, userTBL.userName, buyTBL.prodName, userTBL.addr, CONCAT(mobile1, mobile2) AS '연락처'
+    FROM buyTBL
+        INNER JOIN userTBL
+            ON buyTBL.userID = userTBL.userID;
+
+-- 테이블 명시를 ID화 하여 간소화
+SELECT B.userID, U.userName, B.prodName, U.addr, CONCAT(U.mobile1, U.mobile2) AS '연락처'
+    FROM buyTBL AS U
+        INNER JOIN userTBL B
+            ON B.userID = U.userID;
+-- DISTINCT를 통해 ID 유니크하게 만들어 중복 요소를 제거
+SELECT DISTINCT U.userID, U.userName, U.addr
+    FROM userTBL U
+        INNER JOIN buyTBL B
+            ON U.userID = B.userID
+        ORDER BY U.userID;
+
+-- 2단 JOIN 
+USE cookDB;
+CREATE TABLE stdTBL 
+( stdName    VARCHAR(10) NOT NULL PRIMARY KEY,
+  addr	  CHAR(4) NOT NULL
+);
+CREATE TABLE clubTBL 
+( clubName    VARCHAR(10) NOT NULL PRIMARY KEY,
+  roomNo    CHAR(4) NOT NULL
+);
+CREATE TABLE stdclubTBL
+(  num int AUTO_INCREMENT NOT NULL PRIMARY KEY, 
+   stdName    VARCHAR(10) NOT NULL,
+   clubName    VARCHAR(10) NOT NULL,
+FOREIGN KEY(stdName) REFERENCES stdTBL(stdName),
+FOREIGN KEY(clubName) REFERENCES clubTBL(clubName)
+);
+INSERT INTO stdTBL VALUES ('강호동','경북'), ('김제동','경남'), ('김용만','서울'), ('이휘재','경기'),('박수홍','서울');
+INSERT INTO clubTBL VALUES ('수영','101호'), ('바둑','102호'), ('축구','103호'), ('봉사','104호');
+INSERT INTO stdclubTBL VALUES (NULL, '강호동','바둑'), (NULL,'강호동','축구'), (NULL,'김용만','축구'), (NULL,'이휘재','축구'), (NULL,'이휘재','봉사'), (NULL,'박수홍','봉사');
+
+-- 다대다 관계 테이블은 3단관계로 쌓여있기에 조인을 2번해야 전체적인 테이블 구조가 나온다.
+SELECT S.stdName, S.addr, C.clubName, C.roomNo
+    FROM stdTBL S
+        INNER JOIN stdclubTBL SC
+            ON S.stdName = SC.stdName
+        INNER JOIN clubTBL C
+            ON SC.clubName = C.clubName
+    ORDER BY S.stdName; -- ORDER BY C.clubName;
+```
+
+### OUTER JOIN
+```sql
+-- LEFT OUTER JOIN : 처음쓴 기준에서 데이터 테이블
+SELECT U.userID, U.userName, B.prodName, U.addr, CONCAT(U.mobile1, U.mobile2) AS '연락처'
+    FROM userTBL U
+        LEFT OUTER JOIN buyTBL B
+            ON U.userID = B.userID
+    ORDER BY U.userID;
+-- RIGHT OUTER JOIN : JOIN 문 기준에서 사용한 데이터 테이블
+SELECT U.userID, U.userName, B.prodName, U.addr, CONCAT(U.mobile1, U.mobile2) AS '연락처'
+    FROM userTBL U
+        RIGHT OUTER JOIN buyTBL B
+            ON U.userID = B.userID
+    ORDER BY U.userID;
+-- 한번도 구매하지않은 유저 목록 출력
+SELECT U.userID, U.userName, B.prodName, U.addr, CONCAT(U.mobile1, U.mobile2) AS '연락처'
+    FROM userTBL U
+        LEFT OUTER JOIN buyTBL B
+            ON U.userID = B.userID
+    WHERE B.prodName IS NULL
+    ORDER BY U.userID;
+
+-- 수영을 가져오기 위한 2단 아우터
+SELECT C.clubName, C.roomNo, S.stdName, S.addr
+    FROM stdTBL S
+        LEFT OUTER JOIN stdclubTBL SC
+            ON S.stdName = S.stdName
+        RIGHT OUTER JOIN clubTBL C
+            ON SC.stdName = C.stdName
+    ORDER BY C.clubName ;
+
+-- 동아리에 가입하지 않은 학생과 학생이 한 명도 없는 동아리도 출력
+SELECT S.stdName, S.addr, C.clubName, C.roomNo
+   FROM stdTBL S 
+      LEFT OUTER JOIN stdclubTBL SC
+          ON S.stdName = SC.stdName
+      LEFT OUTER JOIN clubTBL C
+          ON SC.clubName = C.clubName
+UNION   -- 데이블 두개를 다 연산하기 위한 유니온 (합집합) & 중복이 제거 된다.
+        -- UNION ALL : 중복되는 값도 모두 가져온다.
+SELECT S.stdName, S.addr, C.clubName, C.roomNo
+   FROM  stdTBL S
+      LEFT OUTER JOIN stdclubTBL SC
+          ON SC.stdName = S.stdName
+      RIGHT OUTER JOIN clubTBL C
+          ON SC.clubName = C.clubName;
+
+-- CROSS JOIN : 한 행에대한 비교 테이블의 보든 행을 조인함
+SELECT * 
+   FROM buyTBL 
+     CROSS JOIN userTBL ;
+```
+
+### sql if else 문
+```sql
+DROP PROCEDURE IF EXISTS ifProc2; 
+USE employees;
+DELIMITER $$
+BEGIN
+    DECLARE hireDATE DATE;
+    DECLARE curDATE DATE; 
+    DECLARE days INT;
+
+    SELECT hire_date INTO hireDATE
+        FROM employees.employees
+	    WHERE emp_no = 10001;
+    SET curDATE = CURRENT_DATE(); -- 현재 날짜
+	SET days =  DATEDIFF(curDATE, hireDATE); -- 날짜의 차이, 일 단위
+
+    IF (days/365) >= 10 THEN
+        SELECT CONCAT('10년차 이상 입사한지 ', days, '일이나 지났습니다.') AS '메시지';
+    ELSE IF (days/365) >= 5 THEN 
+        SELECT CONCAT('5년차 이상 입사한지 ', days, '일이나 지났습니다.') AS '메시지';
+    ELSE 
+        SELECT '입사한지 ' + days + '일밖에 안되었네요.' AS '메시지';
+END IF;
+END $$
+DELIMITER ;
+
+CALL ifProc2();
+```
+### sql case end 문
+```sql
+SELECT U.userID, U.userName, SUM(price*amount) AS '총구매액',
+    CASE
+        WHEN (SUM(price*amount)>=1500) THEN '최우수 고객'
+        WHEN (SUM(price*amount)>=1000) THEN '우수 고객'
+        WHEN (SUM(price*amount)>=1) THEN '일반 고객'
+        ELSE '유령고객'
+    END AS '고객 등급'
+    FROM buyTBL B
+        RIGHT OUTER JOIN userTBL U
+            ON B.userID = U.userID
+        GROUP BY U.userID, U.userName 
+        ORDER BY sum(price*amount) DESC ;
+```
+### PREPARE 
+#### PREPARE 미리 명령문을 만들어 놓고 계속 사용 가능 
+#### PREPARE를 제거해주지 않으면 메모리를 차지해 효율이 별로임 고로 사용 제거문을 만들어야함
+#### 아예 안쓰게 되면 DEALLOCATE PREPARE을 통해 할당을 빼줘야 한다
+```sql
+use cookDB;
+
+PREPARE myQuery FROM 'SELECT * FROM userTBL WHERE userID = "NHS"';
+
+EXECUTE myQuery;
+
+DEALLOCATE PREPARE myQuery;
+```
+
+### REFERENCES : 데이터 무결성을 보장해 준다.
+```sql
+CREATE TABLE buyTBL 
+(  num INT AUTO_INCREMENT NOT NULL PRIMARY KEY , 
+   userID  CHAR(8) NOT NULL, 	
+   prodName CHAR(6) NOT NULL,
+   groupName CHAR(4) NULL , 
+   price     INT  NOT NULL,
+   amount    SMALLINT  NOT NULL 
+  , FOREIGN KEY(userID) REFERENCES userTBL(userID)
+);
+```
+### CONSTRANT : 제약조건 설정
+```sql
+CREATE TABLE userTBL 
+( userID  CHAR(8) NOT NULL, 
+  userName    VARCHAR(10) NOT NULL, 
+  birthYear   INT NOT NULL,  
+  CONSTRAINT PRIMARY KEY PK_userTBL_userID (userID) 
+  -- 사용자가 기본키를 설정하면서 제약 조건의 이름을 직접 지정할 수도 있음
+);
+```
+
+### pk 지정과 수정
+```sql
+DROP TABLE IF EXISTS userTBL;
+CREATE TABLE userTBL 
+(   userID  CHAR(8) NOT NULL, 
+    userName    VARCHAR(10) NOT NULL, 
+    birthYear   INT NOT NULL
+);
+ALTER TABLE userTBL # 테이블 접근 변경
+	ADD CONSTRAINT PK_userTBL_userID # 제약조건 추가
+        PRIMARY KEY (userID); 
+
+# 2개의 열을 합쳐 하나의 키로 써의 사용
+DROP TABLE IF EXISTS prodTbl;
+CREATE TABLE prodTbl
+( prodCode CHAR(3) NOT NULL,
+  prodID   CHAR(4)  NOT NULL,
+  prodDate  DATETIME  NOT NULL,
+  prodState  CHAR(10) NULL
+);
+ALTER TABLE prodTbl
+	ADD CONSTRAINT PK_prodTbl_proCode_prodID 
+	    PRIMARY KEY (prodCode, prodID) ; -- 여러 pk를 엮어서 하나의 유니크 pk로 사용
+
+DROP TABLE IF EXISTS prodTbl;
+CREATE TABLE prodTbl
+( prodCode CHAR(3) NOT NULL,
+  prodID   CHAR(4)  NOT NULL,
+  prodDate DATETIME  NOT NULL,
+  prodState  CHAR(10) NULL,
+  CONSTRAINT PK_prodTbl_proCode_prodID 
+	PRIMARY KEY (prodCode, prodID) 
+);
+```
+
+### fk 지정과 수정
+```sql
+CREATE TABLE buyTBL 
+(  num INT AUTO_INCREMENT NOT NULL PRIMARY KEY , 
+   userID  CHAR(8) NOT NULL, 
+   prodName CHAR(6) NOT NULL,
+   FOREIGN KEY(userID) REFERENCES userTBL(userID)
+);
+DROP TABLE IF EXISTS buyTBL;
+CREATE TABLE buyTBL 
+(  num INT AUTO_INCREMENT NOT NULL PRIMARY KEY , 
+   userID  CHAR(8) NOT NULL, 
+   prodName CHAR(6) NOT NULL,
+   CONSTRAINT FK_userTBL_buyTBL FOREIGN KEY(userID) REFERENCES userTBL(userID)
+);
+-- 제약 사항 밖으로 ALTER로 설정하기
+DROP TABLE IF EXISTS buyTBL;
+CREATE TABLE buyTBL 
+(  num INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+   userID  CHAR(8) NOT NULL, 
+   prodName CHAR(6) NOT NULL 
+);
+ALTER TABLE buyTBL
+    ADD CONSTRAINT FK_userTBL_buyTBL 
+    FOREIGN KEY (userID) 
+    REFERENCES userTBL(userID);
+```
+
+### CASCADE셤 : 외래 키(Foreign Key) 제약 조건에 대한 옵션 중 하나입니다. CASCADE 옵션은 외래 키와 연관된 레코드에 대한 연쇄적인 작업을 수행하는 동작을 의미
+```sql
+ALTER TABLE buyTBL
+    ADD CONSTRAINT FK_userTBL_buyTBL
+    FOREIGN KEY (userID)
+    REFERENCES userTBL (userID)
+    ON UPDATE CASCADE;
+```
+
+### VIEW 임시 테이블
+```sql
+CREATE VIEW v_userTBL AS SELECT userID, userName, addr FROM v_userTBL;
+
+SELECT * FROM v_userTBL;
+
+CREATE VIEW v_userbuyTBL
+AS
+   SELECT U.userID AS 'USER ID', U.userName AS 'USER NAME', B.prodName AS 'PRODUCT NAME', 
+		U.addr, CONCAT(U.mobile1, U.mobile2) AS 'MOBILE PHONE'
+      FROM userTBL U
+	INNER JOIN buyTBL B
+	 ON U.userID = B.userID;
+
+SELECT `USER ID`, `USER NAME` FROM v_userbuyTBL; -- 주의! 백틱(키보드 1의 왼쪽 키)을 사용한다.
+
+
+-- 뷰 내용 수정
+ALTER VIEW v_userbuyTBL
+AS
+   SELECT U.userID AS '사용자 아이디', U.userName AS '이름', B.prodName AS '제품 이름', 
+		U.addr, CONCAT(U.mobile1, U.mobile2)  AS '전화 번호'
+      FROM userTBL U
+          INNER JOIN buyTBL B
+             ON U.userID = B.userID ;
+
+SELECT `이름`,`전화 번호` FROM v_userbuyTBL; -- 주의! 백틱을 사용한다.
+
+DROP VIEW v_userbuyTBL;
+
+-- 에러 코드 원본 userTBL에서 BirthYear notnull 이어서 똑같이 형식상 합당하지 않음
+INSERT INTO v_userTBL(userID, userName, addr) VALUES('KBM','김병만','충북') ; 
+-- view 수정이 불가한 경우 1. 제약조건 2. 집계함수 사용(sum())
+
+CREATE OR REPLACE VIEW v_sum
+AS
+	SELECT userID AS 'userID', SUM(price*amount) AS 'total'  
+	   FROM buyTBL GROUP BY userID;
+```
+
+## 인덱스
+* 클러스터형 인덱스
+    - 유니크한 열에 1개만 생성 가능
+    - 행 자동 정렬 
+    - 무조건 NOTNULL 이여야 함
+    - 참조형으로 주소안에 직접적인 값을 제어
+* 보조 인덱스
+    - 테이블 여러개 생성 가능
+    - NULL 허용
+    - 위치 주소를 가지고 값 제어
+
+* 수정, 삭제 속도 우위 : 보조
+* 검색 속도 우위 : 클러스터
+
+```sql
+CREATE TABLE userTBL -- pk는 자동으로 클러스터형 인덱스 지정을 받는다
+( userID  CHAR(8) NOT NULL PRIMARY KEY, 
+  userName    VARCHAR(10) NOT NULL, 
+  birthYear   INT NOT NULL,  
+  addr	  CHAR(2) NOT NULL,
+  mobile1	CHAR(3) NULL, 
+  mobile2   CHAR(8) NULL, 
+  height    SMALLINT NULL, 
+  mDate    DATE NULL 
+);
+```
+
+```sql
+CREATE TABLE  TBL2
+	(	a INT PRIMARY KEY, -- 클러스터형 인덱스
+		b INT UNIQUE, -- 보조 인덱스
+		c INT UNIQUE, -- 보조 인덱스
+		d INT 
+	);
+```
+
+```sql
+CREATE TABLE  TBL3
+	(	a INT UNIQUE,
+		b INT UNIQUE,
+		c INT UNIQUE,
+		d INT
+	);
+SHOW INDEX FROM TBL3;
+
+CREATE TABLE  TBL4
+	(	a INT UNIQUE NOT NULL,  -- 보조 인덱스
+		b INT UNIQUE , -- 보조 인덱스
+		c INT UNIQUE, -- 보조 인덱스
+		d INT
+	);
+SHOW INDEX FROM TBL4;
+```
+
+```sql
+CREATE TABLE  TBL5
+	(	a INT UNIQUE NOT NULL, -- 보조 인덱스
+		b INT UNIQUE , -- 보조 인덱스
+		c INT UNIQUE, -- 보조 인덱스
+		d INT PRIMARY KEY -- 클러스터형 인덱스
+	);
+SHOW INDEX FROM TBL5;
+```
+
+### 인덱스의 활용
+```sql
+CREATE UNIQUE INDEX idx_userTBL_birthYear 
+    ON userTBL(birthYear)
+```
