@@ -464,11 +464,11 @@ SELECT addr, ROW_NUMBER( ) OVER(PARTITION BY addr ORDER BY height DESC, userName
 ### INNER JOIN
 ```sql
 USE cookDB;
-    SELECT *
-        FROM buyTBL
-            INNER JOIN userTBL
-                ON buyTBL.userID = userTBL.userID
-        WHERE buyTBL.userID = 'KYM';
+SELECT *
+    FROM buyTBL
+        INNER JOIN userTBL
+            ON buyTBL.userID = userTBL.userID
+    WHERE buyTBL.userID = 'KYM';
 
 -- 테이블을 명시하는 코드
 SELECT buyTBL.userID, userTBL.userName, buyTBL.prodName, userTBL.addr, CONCAT(mobile1, mobile2) AS '연락처'
@@ -734,9 +734,9 @@ CREATE VIEW v_userbuyTBL
 AS
    SELECT U.userID AS 'USER ID', U.userName AS 'USER NAME', B.prodName AS 'PRODUCT NAME', 
 		U.addr, CONCAT(U.mobile1, U.mobile2) AS 'MOBILE PHONE'
-      FROM userTBL U
-	INNER JOIN buyTBL B
-	 ON U.userID = B.userID;
+        FROM userTBL U
+	        INNER JOIN buyTBL B
+	            ON U.userID = B.userID;
 
 SELECT `USER ID`, `USER NAME` FROM v_userbuyTBL; -- 주의! 백틱(키보드 1의 왼쪽 키)을 사용한다.
 
@@ -748,7 +748,7 @@ AS
 		U.addr, CONCAT(U.mobile1, U.mobile2)  AS '전화 번호'
       FROM userTBL U
           INNER JOIN buyTBL B
-             ON U.userID = B.userID ;
+            ON U.userID = B.userID ;
 
 SELECT `이름`,`전화 번호` FROM v_userbuyTBL; -- 주의! 백틱을 사용한다.
 
@@ -832,4 +832,66 @@ SHOW INDEX FROM TBL5;
 ```sql
 CREATE UNIQUE INDEX idx_userTBL_birthYear 
     ON userTBL(birthYear)
+```
+
+## PROCEDURE
+```sql
+DROP PROCEDURE IF EXISTS userProc;
+DELIMITER $$
+CREATE PROCEDURE userProc()
+BEGIN 
+    SELECT * FROM userTBL;
+END $$
+DELIMITER $$
+
+CALL userProc();
+```
+
+## 스토어드형 함수
+```sql
+DROP PROCEDURE IF EXISTS userProc1;
+DELIMITER $$
+CREATE PROCEDURE userProc1(IN uName VARCHAR(10))
+BEGIN
+    SELECT * FROM userTBL WHERE userName = uName;
+END $$
+DELIMITER ;
+
+CALL userProc1('이경규');
+```
+```sql
+DROP PROCEDURE IF EXISTS userProc2;
+DELIMITER $$
+    CREATE PROCEDURE userProc2(
+        IN userBirth INT,
+        IN userHeight INT
+    )
+BEGIN
+    SELECT * FROM userTBL
+        WHERE birthYear > userBirth AND height > userHeight;
+END $$
+DELIMITER ;
+
+CALL userProc2(1970, 178);
+```
+```sql
+DROP PROCEDURE IF EXISTS userProc3;
+DELIMITER $$
+CREATE PROCEDURE userProc3(
+    IN txtValue CHAR(10).
+    OUT outValue INT
+)
+BEGIN
+    INSERT INTO testTBL VALUES(NULL, txtValue);
+    SELECT MAX(id) INTO outValue FROM testTBL;
+END $$
+DELIMITER ;
+
+CREATE TABLE IF NOT EXISTS testTBL(
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    txt CHAR(10)
+);
+
+CALL userProc3 ('테스트값', @myValue);
+SELECT CONCAT('현재 입력된 ID 값 ==>', @myValue);
 ```
