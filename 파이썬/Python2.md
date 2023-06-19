@@ -819,3 +819,36 @@ def main():
     print("당신의 생일 날은 " + str(day))
    
 main() 
+
+# 딕셔너리 정리
+1. list 
+   - []대괄호로 작성, 추가&제거&수정, 순서존재, 중복값 허용 (검색, 수정이 느림)
+2. Tuple
+   - ()소괄호로 작성, 추가&제거&수정 불가능, 중복가능하지만 각 값은 고유
+3. Set
+   - {}중괄호로 작성, 순서X, 중복값X, 추가&제거&수정 가능 (검색, 수정이 빠름)
+
+* .union() : 집합요소를 합치는데 사용 중복된 값은 제거한다.
+* .intersection() : 집합요소간 중복 값을 찾아 배열로 만들어준다.
+
+students = {"a" : 1, "b" : 2}
+print( tuple(students.keys()) )
+print( tuple(students.values()) )
+print( tuple(students.items()) )
+
+students["a"] = 5
+print( students.get("a") )
+
+students["c"] = 3
+print( tuple(students.items()) )
+
+del students["b"]
+print( tuple(students.items()) )
+
+print("for문 돌려보기")
+for allKeys in students:
+    print(f"{allKeys} : {students[allKeys]}")
+
+# 기말고사 6/19 10:00 ~ 11:30
+
+

@@ -847,7 +847,7 @@ DELIMITER $$
 CALL userProc();
 ```
 
-## 스토어드형 함수
+## 스토어드형 프로시져
 ```sql
 DROP PROCEDURE IF EXISTS userProc1;
 DELIMITER $$
@@ -894,4 +894,35 @@ CREATE TABLE IF NOT EXISTS testTBL(
 
 CALL userProc3 ('테스트값', @myValue);
 SELECT CONCAT('현재 입력된 ID 값 ==>', @myValue);
+```
+
+
+## 스토어드형 함수
+#### 리턴 값을 형식과 지정해줘야 프로시져로 활성화가 안됨, 프로시저는 in out
+```sql
+DROP FUNCTION IF EXISTS userFunc;
+DELIMITER $$
+CREATE FUNCTION userFunc(value1 INT, value2 INT)
+    RETURN INT
+BEGIN
+    RETURN value1 + value2;
+END $$
+DELIMITER ;
+```
+
+```sql
+DROP FUNCTION IF EXISTS getAgeFunc;
+DELIMITER $$
+CREATE FUNCTION getAgeFunc(bYear INT)
+    RETURN INT
+BEGIN
+    DECLARE age INT;
+    SET age = YEAR(CURDATE()) - bYear;
+    RETURN age;
+END $$
+DELIMITER ;
+
+SELECT getAgeFunc(1997);
+SELECT getAgeFunc(1997) INTO @age1989;
+SELECT CONCAT('1997년과 1979년의 나이차 ==> ', (@age1979-@age1989));
 ```
